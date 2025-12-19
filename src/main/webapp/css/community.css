@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary-color: #00ffcc; /* Xanh ngọc neon */
+    --text-light: #ffffff;
+    --bg-gradient-start: #00bfa5;
+    --bg-gradient-end: #005f52;
+    --card-bg: #ffffff;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    margin: 0;
+    /* Nền Gradient đặc trưng */
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    min-height: 100vh;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+/* =========================================================
+   1. HEADER CỘNG ĐỒNG
+   ========================================================= */
+.community-header {
+    text-align: center;
+    padding: 80px 0 40px;
+    color: #fff;
+}
+.sub-heading {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+.community-header h1 { 
+    font-weight: 800; 
+    font-size: 3rem; 
+    text-transform: uppercase; 
+    margin-bottom: 15px; 
+    text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.community-header p { font-size: 1.2rem; opacity: 0.95; }
+
+/* =========================================================
+   2. THANH CÔNG CỤ (SEARCH)
+   ========================================================= */
+.section-title {
+    color: #fff;
+    font-weight: 700;
+    border-left: 5px solid var(--primary-color);
+    padding-left: 15px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: flex-end;
+}
+.search-box input {
+    padding: 10px 20px;
+    border-radius: 50px 0 0 50px;
+    border: none;
+    outline: none;
+    width: 250px;
+}
+.search-box button {
+    padding: 10px 25px;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 0 50px 50px 0;
+    color: #004d40;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: 0.3s;
+}
+.search-box button:hover { background: #fff; }
+
+/* =========================================================
+   3. BLOG CARD (THẺ BÀI VIẾT)
+   ========================================================= */
+.blog-card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.blog-img-box {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.blog-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+.blog-card:hover .blog-img-box img { transform: scale(1.1); }
+
+.blog-category {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--primary-color);
+    color: #004d40;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.blog-content {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-meta {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 15px;
+}
+.blog-meta i { color: #00bfa5; }
+
+.blog-title { margin-bottom: 15px; line-height: 1.4; }
+.blog-title a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 700;
+    transition: 0.3s;
+}
+.blog-title a:hover { color: #00bfa5; }
+
+.blog-desc {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Cắt dòng nếu dài quá 3 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.read-more-link {
+    margin-top: auto; /* Đẩy xuống đáy card */
+    text-decoration: none;
+    color: #00bfa5;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.3s;
+}
+.read-more-link:hover { gap: 10px; color: #004d40; }
+
+/* =========================================================
+   4. PHÂN TRANG
+   ========================================================= */
+.pagination-box a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50%;
+    margin: 0 5px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.pagination-box a:hover, .pagination-box a.active {
+    background: #fff;
+    color: #004d40;
+}

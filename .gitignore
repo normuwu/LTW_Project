@@ -1,0 +1,20 @@
+# Bỏ qua các file biên dịch (Java class files)
+*.class
+
+# Bỏ qua các thư mục do Eclipse/IntelliJ tự sinh ra
+/bin/
+/build/
+/dist/
+/target/
+
+# Bỏ qua file cấu hình riêng của máy (Tùy chọn, nhưng nên dùng nếu team dùng eclipse khác phiên bản)
+.metadata
+.recommenders
+*.launch
+
+# Bỏ qua file hệ thống Mac/Windows
+.DS_Store
+Thumbs.db
+
+# Nếu team dùng Maven thì bỏ qua thư mục target
+target/
