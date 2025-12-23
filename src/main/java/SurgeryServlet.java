@@ -15,7 +15,7 @@ public class SurgeryServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Chuyển hướng sang file giao diện
-		request.getRequestDispatcher("surgery.jsp").forward(request, response);
+		request.getRequestDispatcher("/Services/surgery.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

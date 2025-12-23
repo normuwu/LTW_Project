@@ -19,7 +19,7 @@ public class HotelServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Khi ai đó vào /cat-hotel, Servlet này sẽ mở file cat_hotel.jsp lên
 		// Lưu ý: Tên file trong ngoặc kép phải đúng y hệt tên file JSP bạn đã tạo
-		request.getRequestDispatcher("hotel.jsp").forward(request, response);
+		request.getRequestDispatcher("/Services/hotel.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

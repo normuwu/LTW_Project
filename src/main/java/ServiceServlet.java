@@ -18,7 +18,7 @@ public class ServiceServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Chuyển hướng sang giao diện service.jsp
-		request.getRequestDispatcher("services.jsp").forward(request, response);
+		request.getRequestDispatcher("/mainPages/services.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

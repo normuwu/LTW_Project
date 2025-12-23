@@ -30,7 +30,7 @@ public class ScheduleServlet extends HttpServlet {
 		list.add(new Appointment("LH003", "25/12/2025", "14:00", "Khám tổng quát", "Mimi (Mèo)", doc3, "Hoàn thành"));
 
 		request.setAttribute("mySchedule", list);
-		request.getRequestDispatcher("schedule.jsp").forward(request, response);
+		request.getRequestDispatcher("/mainPages/schedule.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

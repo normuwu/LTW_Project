@@ -1,305 +1,337 @@
-
-* { box-sizing: border-box; }
+/* =========================================================
+   HOME.CSS - ANIMAL DOCTORS
+   Phiên bản: Clean (Đã xóa code xung đột Bootstrap)
+   ========================================================= */
+* {
+	box-sizing: border-box;
+}
 
 /* Font */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import
+	url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap')
+	;
 
 :root {
-    --primary-color: #00bfa5;
-    --secondary-color: #008f7a;
-    --text-dark: #2c3e50;
-    --text-gray: #6c757d;
-    --bg-light: #f8f9fa;
+	--primary-color: #00bfa5;
+	--secondary-color: #008f7a;
+	--text-dark: #2c3e50;
+	--text-gray: #6c757d;
+	--bg-light: #f8f9fa;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--text-dark);
-    background-color: #fff;
-    margin: 0;
+	font-family: 'Montserrat', sans-serif;
+	color: var(--text-dark);
+	background-color: #fff;
+	margin: 0;
+	
 }
 
-a { text-decoration: none; }
-
-/* --- Container --- */
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+a {
+	text-decoration: none;
 }
 
-.container-fluid {
-    width: 100%;
-    padding: 0 30px;
-}
-
-/* --- Grid System (Flexbox) --- */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -15px;
-}
-
-[class*="col-"] {
-    padding: 0 15px;
-    width: 100%; /* Mặc định mobile 100% */
-}
-
-/* Máy tính (PC) */
-@media (min-width: 992px) {
-    .col-lg-3 { width: 25%; }
-    .col-lg-4 { width: 33.33%; }
-    .col-lg-5 { width: 41.66%; }
-    .col-lg-6 { width: 50%; }
-    .col-lg-7 { width: 58.33%; }
-    .col-lg-8 { width: 66.66%; }
-}
-
-/* --- Utilities (Tiện ích căn chỉnh) --- */
-.d-flex { display: flex; }
-.align-items-center { align-items: center; }
-.justify-content-center { justify-content: center; }
-.justify-content-between { justify-content: space-between; }
-.text-center { text-align: center; }
-.mb-4 { margin-bottom: 24px; }
-.mb-5 { margin-bottom: 48px; }
-.mt-3 { margin-top: 16px; }
-.mt-5 { margin-top: 48px; }
-.w-100 { width: 100%; }
-
-/* =========================================================
-   2. NAVBAR (MENU TỰ VIẾT - KHÔNG DÙNG BOOTSTRAP JS)
-   ========================================================= */
+/* 
+   1. NAVBAR
+ */
 .navbar {
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%;
-    z-index: 1000; 
-    background: transparent;
-    transition: 0.4s; 
-    padding: 15px 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	background: transparent;
+	transition: 0.4s;
+	padding: 15px 0;
 }
 
-/* Màu chữ ban đầu (Trắng) */
-.navbar .navbar-brand,
-.navbar .nav-link,
-.navbar .lang-select {
-    color: #ffffff !important; 
-    font-weight: 600;
+
+.navbar .navbar-brand, .navbar .nav-link, .navbar .lang-select {
+	color: #ffffff !important;
+	font-weight: 600;
 }
 
-/* Khi cuộn xuống (Nền trắng) */
+
 .navbar-scrolled {
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+	background: #ffffff;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Khi cuộn xuống (Chữ đen) */
-.navbar-scrolled .navbar-brand,
-.navbar-scrolled .nav-link,
-.navbar-scrolled .lang-select {
-    color: var(--text-dark) !important;
+/* Khi cuộn xuống  */
+.navbar-scrolled .navbar-brand, .navbar-scrolled .nav-link,
+	.navbar-scrolled .lang-select {
+	color: var(--text-dark) !important;
 }
 
 .navbar-brand {
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+	font-size: 22px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .nav-link {
-    margin: 0 10px;
-    transition: 0.3s;
+	margin: 0 10px;
+	transition: 0.3s;
 }
 
 .navbar .nav-link:hover {
-    color: var(--primary-color) !important;
+	color: var(--primary-color) !important;
 }
 
+/* Nút đặt hẹn trên Menu */
 .btn-booking {
-    background-color: var(--primary-color);
-    color: white !important;
-    padding: 10px 25px;
-    border-radius: 50px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: none;
+	background-color: var(--primary-color);
+	color: white !important;
+	padding: 10px 25px;
+	border-radius: 50px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	border: none;
+	display: inline-block; /* Đảm bảo nút hiển thị tốt */
 }
 
 .btn-booking:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
+	background-color: var(--secondary-color);
+	transform: translateY(-2px);
 }
 
-/* =========================================================
-   3. CÁC PHẦN GIAO DIỆN CHÍNH
-   ========================================================= */
-
-/* --- HERO SECTION --- */
+/*
+   2. HERO SECTION  */
 .hero-section {
-    position: relative;
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    overflow: hidden;
-    color: #fff;
+	position: relative;
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	overflow: hidden;
+	color: #fff;
 }
 
 .back-video {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -2; object-fit: cover;
-    object-position: center bottom;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -2;
+	object-fit: cover;
+	object-position: center bottom;
 }
 
 .hero-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: -1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.4);
+	z-index: -1;
 }
 
-.hero-content { z-index: 1; max-width: 800px; padding: 20px; }
+.hero-content {
+	z-index: 1;
+	max-width: 800px;
+	padding: 20px;
+}
 
 .hero-content h1 {
-    font-size: 60px; font-weight: 700; margin-bottom: 20px;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5); text-transform: uppercase;
+	font-size: 60px;
+	font-weight: 700;
+	margin-bottom: 20px;
+	text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+	text-transform: uppercase;
 }
 
 .hero-content p {
-    font-size: 20px; font-weight: 500; margin-bottom: 30px;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+	font-size: 20px;
+	font-weight: 500;
+	margin-bottom: 30px;
+	text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Nút đặt hẹn */
-.btn-booking {
-    background-color: var(--primary-color);
-    color: white !important;
-    padding: 12px 30px;
-    border-radius: 50px;
-    font-weight: 600;
-    transition: 0.3s;
-    border: none;
-    display: inline-block;
-}
-.btn-booking:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
-}
-
-/* --- FEATURES SECTION --- */
+/*
+   3. FEATURES SECTION*/
 .features-section {
-    background-color: #FFFAF4; 
-    padding: 80px 0;
-    border-radius: 50px 50px 0 0; 
-    position: relative; 
-    margin-top: -50px; 
-    z-index: 10; 
+	background-color: #FFFAF4;
+	padding: 80px 0;
+	border-radius: 50px 50px 0 0;
+	position: relative;
+	margin-top: -50px;
+	z-index: 10;
 }
 
 .section-title {
-    color: #1a2e5a; 
-    font-weight: 700; font-size: 2.5rem; margin-bottom: 40px;
+	color: #1a2e5a;
+	font-weight: 700;
+	font-size: 2.5rem;
+	margin-bottom: 40px;
 }
 
-.feature-item { padding: 10px; text-align: center; }
+.feature-item {
+	padding: 10px;
+	text-align: center;
+}
 
 .img-box {
-    width: 100%; height: 200px; 
-    border-radius: 20px; overflow: hidden; 
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+	width: 100%;
+	height: 200px;
+	border-radius: 20px;
+	overflow: hidden;
+	margin-bottom: 20px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .img-box img {
-    width: 100%; height: 100%; object-fit: cover; 
-    transition: transform 0.6s ease; 
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.6s ease;
 }
 
-.feature-item:hover .img-box img { transform: scale(1.1); }
+.feature-item:hover .img-box img {
+	transform: scale(1.1);
+}
 
 .feature-item h5 {
-    color: #1a2e5a; font-weight: 700; font-size: 1.1rem;
-    line-height: 1.4; margin-bottom: 15px; min-height: 50px;
+	color: #1a2e5a;
+	font-weight: 700;
+	font-size: 1.1rem;
+	line-height: 1.4;
+	margin-bottom: 15px;
+	min-height: 50px;
 }
 
-.feature-item p { color: #555; font-size: 0.9rem; line-height: 1.6; }
+.feature-item p {
+	color: #555;
+	font-size: 0.9rem;
+	line-height: 1.6;
+}
 
-/* --- SERVICES DARK SECTION --- */
+/* 
+   4. SERVICES DARK SECTION  */
 .services-dark-section {
-    background-color: #1a1a1a; 
-    padding: 100px 0;
-    color: #fff;
-    position: relative; overflow: hidden; 
+	background-color: #1a1a1a;
+	padding: 100px 0;
+	color: #fff;
+	position: relative;
+	overflow: hidden;
 }
 
 .service-title {
-    font-size: 2.5rem; font-weight: 700; margin-bottom: 40px; color: #f0f0f0;
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-bottom: 40px;
+	color: #f0f0f0;
 }
 
-.service-list { list-style: none; padding: 0; }
+.service-list {
+	list-style: none;
+	padding: 0;
+}
 
 .service-item {
-    font-size: 1.1rem; padding: 15px 0;
-    color: #888; cursor: pointer; transition: 0.3s;
-    border-left: 3px solid transparent; padding-left: 0;
+	font-size: 1.1rem;
+	padding: 15px 0;
+	color: #888;
+	cursor: pointer;
+	transition: 0.3s;
+	border-left: 3px solid transparent;
+	padding-left: 0;
 }
 
-.service-item:hover { color: #ccc; }
+.service-item:hover {
+	color: #ccc;
+}
 
 .service-item.active {
-    color: #fff; font-weight: 600;
-    padding-left: 15px; border-left: 3px solid #8B0000; 
+	color: #fff;
+	font-weight: 600;
+	padding-left: 15px;
+	border-left: 3px solid #8B0000;
 }
 
-/* Khung ảnh dịch vụ */
+/* Khung ảnh dịch vụ bên phải */
 .service-display {
-    position: relative; width: 100%; height: 400px; 
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    background-color: #000;
+	position: relative;
+	width: 100%;
+	height: 400px;
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+	background-color: #000;
 }
 
 .service-main-img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.5s ease;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.5s ease;
 }
 
 .service-content-overlay {
-    position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0));
-    color: #fff;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 30px;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+	color: #fff;
 }
 
 .service-content-overlay p {
-    font-size: 1rem; line-height: 1.6; margin-bottom: 20px; max-width: 80%;
+	font-size: 1rem;
+	line-height: 1.6;
+	margin-bottom: 20px;
+	max-width: 80%;
 }
 
 .btn-service-more {
-    background-color: #721c24; color: #fff;
-    padding: 8px 20px; border-radius: 5px;
-    text-decoration: none; font-size: 0.9rem;
-    transition: 0.3s; display: inline-flex; align-items: center; gap: 5px;
+	background-color: #721c24;
+	color: #fff;
+	padding: 8px 20px;
+	border-radius: 5px;
+	text-decoration: none;
+	font-size: 0.9rem;
+	transition: 0.3s;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
 }
 
-.btn-service-more:hover { background-color: #a71d2a; color: #fff; }
+.btn-service-more:hover {
+	background-color: #a71d2a;
+	color: #fff;
+}
 
-.service-dots { display: flex; justify-content: center; gap: 10px; }
+.service-dots {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
 
 .dot {
-    width: 8px; height: 8px; background-color: #555;
-    border-radius: 50%; display: inline-block; transition: 0.3s;
+	width: 8px;
+	height: 8px;
+	background-color: #555;
+	border-radius: 50%;
+	display: inline-block;
+	transition: 0.3s;
 }
 
-.dot.active { background-color: #fff; transform: scale(1.2); }
+.dot.active {
+	background-color: #fff;
+	transform: scale(1.2);
+}
 
 .decor-bottom-left {
-    position: absolute; bottom: 0; left: 20px; width: 150px;
-    opacity: 0.3; z-index: 1; filter: invert(1);
+	position: absolute;
+	bottom: 0;
+	left: 20px;
+	width: 150px;
+	opacity: 0.3;
+	z-index: 1;
+	filter: invert(1);
 }
