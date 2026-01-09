@@ -37,6 +37,14 @@ public class BookingServlet extends HttpServlet {
             String customerName = request.getParameter("customerName");
             String phone = request.getParameter("phone");
             String petName = request.getParameter("petName");
+            String petType = request.getParameter("petType");
+            String customPetType = request.getParameter("customPetType");
+            
+            // Nếu chọn "Khác" thì dùng giá trị từ ô nhập tùy chỉnh
+            if ("Khác".equals(petType) && customPetType != null && !customPetType.trim().isEmpty()) {
+                petType = customPetType.trim();
+            }
+            
             int serviceId = Integer.parseInt(request.getParameter("serviceId"));
             int doctorId = Integer.parseInt(request.getParameter("doctorId")); 
             String dateStr = request.getParameter("bookingDate"); 
@@ -44,7 +52,7 @@ public class BookingServlet extends HttpServlet {
 
             // 2. Gọi DAO lưu vào Database
             AppointmentDAO dao = new AppointmentDAO();
-            dao.insertAppointment(customerName, phone, petName, serviceId, doctorId, dateStr, note);
+            dao.insertAppointment(customerName, phone, petName, petType, serviceId, doctorId, dateStr, note);
 
             // 3. Lưu xong chuyển hướng sang trang Xem Lịch
             response.sendRedirect(request.getContextPath() + "/schedule");

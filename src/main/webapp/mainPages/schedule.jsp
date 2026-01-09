@@ -43,7 +43,10 @@
                                     ${a.customerName}<br>
                                     <small class="text-muted">${a.phone}</small>
                                 </td>
-                                <td>${a.petName}</td>
+                                <td>
+                                    <strong>${a.petName}</strong><br>
+                                    <small class="text-muted">${a.petType}</small>
+                                </td>
                                 <td><span class="badge bg-info text-dark">${a.serviceName}</span></td>
                                 <td>${a.doctorName}</td>
                                 <td>${a.bookingDate}</td>

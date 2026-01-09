@@ -11,26 +11,27 @@ import Model.Appointment;
 public class AppointmentDAO {
 
     // 1. Hàm thêm lịch hẹn mới 
-    public void insertAppointment(String name, String phone, String pet, int serviceId, int doctorId, String date, String note) {
-        String query = "INSERT INTO appointments (customer_name, phone, pet_name, service_id, doctor_id, booking_date, note, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
+    public void insertAppointment(String name, String phone, String pet, String petType, int serviceId, int doctorId, String date, String note) {
+        String query = "INSERT INTO appointments (customer_name, phone, pet_name, pet_type, service_id, doctor_id, booking_date, note, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";
         try {
             Connection conn = new DBContext().getConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, name);
             ps.setString(2, phone);
             ps.setString(3, pet);
-            ps.setInt(4, serviceId);
+            ps.setString(4, petType);
+            ps.setInt(5, serviceId);
 
            
             if (doctorId == 0) {
-                ps.setNull(5, java.sql.Types.INTEGER);
+                ps.setNull(6, java.sql.Types.INTEGER);
             } else {
-                ps.setInt(5, doctorId);
+                ps.setInt(6, doctorId);
             }
             // -----------------------------
 
-            ps.setString(6, date); 
-            ps.setString(7, note);
+            ps.setString(7, date); 
+            ps.setString(8, note);
             ps.executeUpdate();
             
             // Đóng kết nối để tránh quá tải
@@ -45,7 +46,7 @@ public class AppointmentDAO {
     public List<Appointment> getAllAppointments() {
         List<Appointment> list = new ArrayList<>();
         // Query chuẩn có JOIN bảng để lấy tên
-        String query = "SELECT a.id, a.customer_name, a.phone, a.pet_name, " +
+        String query = "SELECT a.id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
                        "s.name as service_name, d.name as doctor_name, a.booking_date, a.status " +
                        "FROM appointments a " +
                        "LEFT JOIN services s ON a.service_id = s.id " +
@@ -62,6 +63,7 @@ public class AppointmentDAO {
                 a.setCustomerName(rs.getString("customer_name"));
                 a.setPhone(rs.getString("phone"));
                 a.setPetName(rs.getString("pet_name"));
+                a.setPetType(rs.getString("pet_type"));
                 
                 // Xử lý hiển thị tên Dịch vụ / Bác sĩ
                 String sName = rs.getString("service_name");

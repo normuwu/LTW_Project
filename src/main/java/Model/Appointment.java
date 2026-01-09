@@ -7,6 +7,7 @@ public class Appointment {
     private String customerName;
     private String phone;
     private String petName;
+    private String petType;     // Loại thú cưng (Chó, Mèo, Chim, v.v.)
     private String serviceName; // Tên dịch vụ (Lấy từ bảng Services)
     private String doctorName;  // Tên bác sĩ (Lấy từ bảng Doctors)
     private Date bookingDate;
@@ -23,6 +24,8 @@ public class Appointment {
     public void setPhone(String phone) { this.phone = phone; }
     public String getPetName() { return petName; }
     public void setPetName(String petName) { this.petName = petName; }
+    public String getPetType() { return petType; }
+    public void setPetType(String petType) { this.petType = petType; }
     public String getServiceName() { return serviceName; }
     public void setServiceName(String serviceName) { this.serviceName = serviceName; }
     public String getDoctorName() { return doctorName; }

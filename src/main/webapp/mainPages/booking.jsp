@@ -38,12 +38,32 @@
                                     <input type="text" name="petName" class="form-control" placeholder="Mimi, Lu...">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Ngày muốn đặt (*)</label> 
-                                    <input type="date" name="bookingDate" class="form-control" required>
+                                    <label class="form-label fw-bold">Loại thú cưng (*)</label> 
+                                    <select name="petType" id="petTypeSelect" class="form-select" required onchange="toggleCustomPetType()">
+                                        <option value="">-- Chọn loại thú cưng --</option>
+                                        <option value="Chó">🐕 Chó</option>
+                                        <option value="Mèo">🐱 Mèo</option>
+                                        <option value="Chim">🐦 Chim</option>
+                                        <option value="Thỏ">🐰 Thỏ</option>
+                                        <option value="Hamster">🐹 Hamster</option>
+                                        <option value="Khác">🐾 Khác (Nhập bên dưới)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Ô nhập loại thú cưng khác (ẩn mặc định) -->
+                            <div class="row mb-3" id="customPetTypeRow" style="display: none;">
+                                <div class="col-md-6 offset-md-6">
+                                    <label class="form-label fw-bold">Nhập loại thú cưng của bạn (*)</label>
+                                    <input type="text" name="customPetType" id="customPetType" class="form-control" placeholder="Ví dụ: Rùa, Cá, Bò sát...">
                                 </div>
                             </div>
 
                             <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Ngày muốn đặt (*)</label> 
+                                    <input type="date" name="bookingDate" class="form-control" required>
+                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Chọn Dịch vụ</label> 
                                     <select name="serviceId" class="form-select">
@@ -54,7 +74,9 @@
                                         <option value="5">Khách Sạn Thú Cưng (200k/ngày)</option>
                                     </select>
                                 </div>
+                            </div>
 
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Chọn Bác sĩ (Không bắt buộc)</label>
                                     <select name="doctorId" class="form-select">
@@ -86,5 +108,22 @@
     <jsp:include page="/header_footer/footer.jsp" />
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleCustomPetType() {
+            var select = document.getElementById('petTypeSelect');
+            var customRow = document.getElementById('customPetTypeRow');
+            var customInput = document.getElementById('customPetType');
+            
+            if (select.value === 'Khác') {
+                customRow.style.display = 'flex';
+                customInput.required = true;
+            } else {
+                customRow.style.display = 'none';
+                customInput.required = false;
+                customInput.value = '';
+            }
+        }
+    </script>
 </body>
 </html>
