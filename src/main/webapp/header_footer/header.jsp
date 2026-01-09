@@ -27,7 +27,7 @@
         </div>
 
         <div class="d-flex align-items-center">
-            <a href="#" class="btn btn-booking text-decoration-none">Đặt Hẹn</a>
+            <a href="${pageContext.request.contextPath}/booking" class="btn btn-booking text-decoration-none">Đặt Hẹn</a>
             <div class="lang-select ms-3 text-white" style="cursor: pointer; font-weight: 600;">
                 <i class='bx bx-world'></i> Vi <i class='bx bx-chevron-down'></i>
             </div>

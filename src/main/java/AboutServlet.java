@@ -10,7 +10,7 @@ import DAO.CareItemDAO;
 import DAO.DoctorDAO;
 import DAO.FeatureDAO; // <-- Import mới
 import Model.CareItem;
-import Model.Doctor;
+import Model.Doctors;
 import Model.Feature;
 
 @WebServlet("/about")
@@ -26,7 +26,7 @@ public class AboutServlet extends HttpServlet {
 
 		// 2. Lấy Doctors từ DB
 		DoctorDAO doctorDao = new DoctorDAO();
-		List<Doctor> doctors = doctorDao.getAllDoctors();
+		List<Doctors> doctors = doctorDao.getAllDoctors();
 
 		// 3. Lấy CareItems từ DB
 		CareItemDAO careDao = new CareItemDAO();
