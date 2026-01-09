@@ -27,7 +27,7 @@
         </div>
 
         <div class="d-flex align-items-center">
-            <a href="#" class="btn btn-booking text-decoration-none">Đặt Hẹn</a>
+            <a href="${pageContext.request.contextPath}/booking" class="btn btn-booking text-decoration-none">Đặt Hẹn</a>
             
             <%-- Hiển thị nút đăng nhập/đăng xuất --%>
             <% if (session.getAttribute("user") != null) { %>

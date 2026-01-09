@@ -1,34 +1,34 @@
 package Model;
 
+import java.sql.Date;
+
 public class Appointment {
-    private String id;
-    private String date;
-    private String time;
-    private String serviceName;
+    private int id;
+    private String customerName;
+    private String phone;
     private String petName;
-    
-    private Doctor doctor; // 👈 Thay String bằng Object Doctor
-    
-    private String status;
+    private String serviceName; // Tên dịch vụ (Lấy từ bảng Services)
+    private String doctorName;  // Tên bác sĩ (Lấy từ bảng Doctors)
+    private Date bookingDate;
+    private String status;      // Trạng thái (Pending/Confirmed)
 
-    // Cập nhật Constructor nhận vào Doctor
-    public Appointment(String id, String date, String time, String serviceName, String petName, Doctor doctor, String status) {
-        this.id = id;
-        this.date = date;
-        this.time = time;
-        this.serviceName = serviceName;
-        this.petName = petName;
-        this.doctor = doctor; // Gán Object
-        this.status = status;
-    }
+    public Appointment() {}
 
-    public String getId() { return id; }
-    public String getDate() { return date; }
-    public String getTime() { return time; }
-    public String getServiceName() { return serviceName; }
+    // Constructor và Getter/Setter
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
     public String getPetName() { return petName; }
-    
-    public Doctor getDoctor() { return doctor; } // 👈 Getter trả về Doctor
-    
+    public void setPetName(String petName) { this.petName = petName; }
+    public String getServiceName() { return serviceName; }
+    public void setServiceName(String serviceName) { this.serviceName = serviceName; }
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    public Date getBookingDate() { return bookingDate; }
+    public void setBookingDate(Date bookingDate) { this.bookingDate = bookingDate; }
     public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

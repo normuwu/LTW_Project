@@ -6,11 +6,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import Context.DBContext;
-import Model.Doctor;
+import Model.Doctors;
 
 public class DoctorDAO {
-    public List<Doctor> getAllDoctors() {
-        List<Doctor> list = new ArrayList<>();
+    public List<Doctors> getAllDoctors() {
+        List<Doctors> list = new ArrayList<>();
         String query = "SELECT * FROM Doctors";
         try {
             Connection conn = new DBContext().getConnection();
@@ -18,9 +18,10 @@ public class DoctorDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 // Constructor của Doctor là (name, image)
-                list.add(new Doctor(
+                list.add(new Doctors(
                     rs.getString("name"),
-                    rs.getString("image")
+                    rs.getString("image"),
+                    rs.getInt("id")
                 ));
             }
             conn.close();
