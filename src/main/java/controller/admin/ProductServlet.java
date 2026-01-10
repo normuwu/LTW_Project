@@ -1,6 +1,9 @@
 package controller.admin;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +19,7 @@ import Util.ValidationUtil;
 @WebServlet("/pages/admin/products")
 public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final String UPLOAD_DIR = "assets/images/shop_pic";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ProductDAO dao = new ProductDAO();
@@ -45,6 +49,7 @@ public class ProductServlet extends HttpServlet {
             
             String name = form.get("name");
             String image = form.get("image");
+            String imageData = form.get("imageData"); // Base64 image data
             String priceStr = form.get("price");
             String oldPriceStr = form.get("oldPrice");
             String discountStr = form.get("discount");
@@ -79,6 +84,31 @@ public class ProductServlet extends HttpServlet {
                 session.setAttribute("messageType", messageType);
                 response.sendRedirect(request.getContextPath() + "/pages/admin/products");
                 return;
+            }
+            
+            // === HANDLE IMAGE UPLOAD ===
+            if (imageData != null && !imageData.isEmpty() && imageData.startsWith("data:image")) {
+                try {
+                    // Extract base64 data
+                    String base64Data = imageData.substring(imageData.indexOf(",") + 1);
+                    byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+                    
+                    // Get upload directory
+                    String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    
+                    // Save file
+                    String filePath = uploadPath + File.separator + image;
+                    try (FileOutputStream fos = new FileOutputStream(filePath)) {
+                        fos.write(imageBytes);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Continue without image if upload fails
+                }
             }
             
             // Parse values

@@ -114,6 +114,7 @@
     </section>
 
     <jsp:include page="/components/footer.jsp" />
+    <jsp:include page="/components/back-button.jsp" />
 
 </body>
 </html>
