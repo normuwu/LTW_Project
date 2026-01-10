@@ -192,3 +192,54 @@ INSERT INTO `users` (`username`, `password`, `fullname`, `email`, `role`) VALUES
 ('admin', '123456', 'Quản trị viên', 'admin@petvaccine.com', 'admin'),
 ('user1', '123456', 'Nguyễn Văn A', 'user1@gmail.com', 'user'),
 ('doctor1', '123456', 'Bác sĩ Ngọc Thành', 'doctor1@petvaccine.com', 'doctor');
+
+
+-- =============================================
+-- BẢNG SERVICES (DỊCH VỤ)
+-- =============================================
+
+DROP TABLE IF EXISTS `services`;
+CREATE TABLE `services` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `price` varchar(100) DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `services` (`id`, `name`, `price`, `description`) VALUES
+(1, 'Khám & Điều trị', '150,000đ', 'Khám tổng quát và điều trị bệnh'),
+(2, 'Phẫu thuật', 'Theo ca', 'Phẫu thuật các loại'),
+(3, 'Tiêm phòng Vaccine', 'Tùy loại', 'Tiêm vaccine phòng bệnh'),
+(4, 'Spa & Làm đẹp', '350,000đ', 'Tắm, cắt tỉa lông, làm đẹp'),
+(5, 'Khách Sạn Thú Cưng', '200,000đ/ngày', 'Gửi thú cưng qua đêm');
+
+-- =============================================
+-- BẢNG APPOINTMENTS (LỊCH HẸN)
+-- =============================================
+
+DROP TABLE IF EXISTS `appointments`;
+CREATE TABLE `appointments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `pet_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `pet_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'Chó',
+  `service_id` int DEFAULT NULL,
+  `doctor_id` int DEFAULT NULL,
+  `booking_date` date NOT NULL,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `status` varchar(50) DEFAULT 'Pending',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `service_id` (`service_id`),
+  KEY `doctor_id` (`doctor_id`),
+  FOREIGN KEY (`service_id`) REFERENCES `services`(`id`),
+  FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu cho appointments
+INSERT INTO `appointments` (`customer_name`, `phone`, `pet_name`, `pet_type`, `service_id`, `doctor_id`, `booking_date`, `note`, `status`) VALUES
+('Phạm Văn B', '0112233442', 'mx', 'Mèo', 3, 12, '2026-01-09', 'Tiêm vaccine định kỳ', 'Pending'),
+('Nguyễn Văn A', '0112233445', 'kiki', 'Chó', 1, 1, '2025-12-24', 'Khám sức khỏe tổng quát', 'Pending'),
+('Nguyễn Văn A', '0112233445', 'kiki', 'Mèo', 1, 1, '2025-12-24', 'Khám lại sau điều trị', 'Pending');

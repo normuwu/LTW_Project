@@ -16,10 +16,10 @@ echo.
 echo ========================================
 echo Tomcat dang khoi dong...
 echo Vui long doi 10-15 giay
-echo Sau do truy cap: http://localhost:8081/PetVaccine/home
+echo Sau do truy cap: http://localhost:8080/PetVaccine/home
 echo ========================================
 echo.
 echo Nhan phim bat ky de mo trinh duyet...
 pause
 
-start http://localhost:8081/PetVaccine/home
+start http://localhost:8080/PetVaccine/home

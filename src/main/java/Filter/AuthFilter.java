@@ -28,14 +28,33 @@ public class AuthFilter implements Filter {
         String uri = req.getRequestURI();
         String contextPath = req.getContextPath();
         
-        // Các trang không cần đăng nhập
-        boolean isPublicPage = uri.endsWith("/login") || 
+        // Các trang/resource không cần đăng nhập
+        boolean isPublicResource = uri.endsWith("/login") || 
                                uri.endsWith("/register") || 
                                uri.endsWith("/home") ||
+                               uri.endsWith("/about") ||
+                               uri.endsWith("/services") ||
+                               uri.endsWith("/community") ||
+                               uri.endsWith("/shop") ||
+                               uri.endsWith("/vaccine") ||
+                               uri.endsWith("/spa") ||
+                               uri.endsWith("/surgery") ||
+                               uri.endsWith("/medical") ||
+                               uri.endsWith("/hotel") ||
                                uri.contains("/css/") ||
-                               uri.contains("/homepage_pic/") ||
+                               uri.contains("/js/") ||
+                               uri.contains("_pic/") ||
                                uri.contains("/video/") ||
-                               uri.contains("/header_footer/");
+                               uri.contains("/header_footer/") ||
+                               uri.contains("/components/") ||
+                               uri.contains("/auth/") ||
+                               uri.contains("/Services/") ||
+                               uri.endsWith(".css") ||
+                               uri.endsWith(".js") ||
+                               uri.endsWith(".jpg") ||
+                               uri.endsWith(".png") ||
+                               uri.endsWith(".gif") ||
+                               uri.endsWith(".ico");
         
         // Các trang chỉ admin mới vào được
         boolean isAdminPage = uri.contains("/admin/");
@@ -44,8 +63,8 @@ public class AuthFilter implements Filter {
         boolean isLoggedIn = (session != null && session.getAttribute("user") != null);
         String role = (session != null) ? (String) session.getAttribute("role") : null;
         
-        if (isPublicPage) {
-            // Cho phép truy cập trang public
+        if (isPublicResource) {
+            // Cho phép truy cập trang/resource public
             chain.doFilter(request, response);
         } else if (isAdminPage) {
             // Kiểm tra quyền admin
