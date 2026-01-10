@@ -19,6 +19,9 @@ public class Product {
         this.discount = discount;
     }
 
+    // Constructor không tham số
+    public Product() {}
+
     // --- GETTERS (Bắt buộc để JSP đọc được dữ liệu) ---
     public int getId() { return id; }
     public String getName() { return name; }
@@ -26,6 +29,14 @@ public class Product {
     public double getPrice() { return price; }
     public double getOldPrice() { return oldPrice; }
     public int getDiscount() { return discount; }
+    
+    // --- SETTERS ---
+    public void setId(int id) { this.id = id; }
+    public void setName(String name) { this.name = name; }
+    public void setImage(String image) { this.image = image; }
+    public void setPrice(double price) { this.price = price; }
+    public void setOldPrice(double oldPrice) { this.oldPrice = oldPrice; }
+    public void setDiscount(int discount) { this.discount = discount; }
 
     // --- XỬ LÝ ĐỊNH DẠNG TIỀN TỆ CHO JSP ---
     // JSP gọi: ${p.formattedPrice}

@@ -1,0 +1,88 @@
+========================================
+HƯỚNG DẪN CHẠY PROJECT VỚI ĐĂNG NHẬP
+========================================
+
+BƯỚC 1: CÀI ĐẶT MYSQL
+----------------------
+Nếu chưa có MySQL, tải và cài đặt:
+- XAMPP: https://www.apachefriends.org/download.html
+  (Đơn giản nhất, chỉ cần Start MySQL trong Control Panel)
+  
+- MySQL Server: https://dev.mysql.com/downloads/mysql/
+  (Cài MySQL Installer, đặt password root là: 1111)
+
+BƯỚC 2: TẠO DATABASE VÀ BẢNG USERS
+-----------------------------------
+Sau khi MySQL đã chạy:
+
+1. Mở MySQL Workbench hoặc phpMyAdmin (nếu dùng XAMPP)
+
+2. Chạy các lệnh SQL sau:
+
+   -- Tạo database
+   CREATE DATABASE IF NOT EXISTS PetVaccine;
+   USE PetVaccine;
+
+   -- Tạo bảng Users
+   CREATE TABLE IF NOT EXISTS Users (
+       id INT PRIMARY KEY AUTO_INCREMENT,
+       username VARCHAR(50) UNIQUE NOT NULL,
+       password VARCHAR(255) NOT NULL,
+       fullname VARCHAR(100),
+       email VARCHAR(100),
+       role VARCHAR(20) DEFAULT 'user',
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+
+   -- Thêm tài khoản demo
+   INSERT INTO Users (username, password, fullname, email, role) VALUES
+   ('admin', '123456', 'Quản trị viên', 'admin@petvaccine.com', 'admin'),
+   ('user1', '123456', 'Nguyễn Văn A', 'user1@gmail.com', 'user'),
+   ('doctor1', '123456', 'Bác sĩ Ngọc Thành', 'doctor1@petvaccine.com', 'doctor');
+
+3. Hoặc chạy file: database_setup.sql (tạo tất cả bảng)
+   Sau đó chạy: add_user_table.sql (thêm bảng Users)
+
+BƯỚC 3: CHẠY TOMCAT
+--------------------
+Chạy file: start_tomcat.bat
+
+BƯỚC 4: TRUY CẬP WEBSITE
+-------------------------
+Mở trình duyệt và truy cập:
+
+- Trang chủ: http://localhost:8081/PetVaccine/home
+- Đăng nhập: http://localhost:8081/PetVaccine/login
+- Đăng ký: http://localhost:8081/PetVaccine/register
+
+TÀI KHOẢN DEMO:
+---------------
+Admin:
+  Username: admin
+  Password: 123456
+  
+User thường:
+  Username: user1
+  Password: 123456
+
+Doctor:
+  Username: doctor1
+  Password: 123456
+
+TÍNH NĂNG:
+----------
+✅ Đăng nhập/Đăng xuất
+✅ Đăng ký tài khoản mới
+✅ Phân quyền: Admin, User, Doctor
+✅ Admin Dashboard (chỉ admin mới vào được)
+✅ Filter bảo vệ các trang cần đăng nhập
+✅ Header hiển thị trạng thái đăng nhập
+
+LƯU Ý:
+-------
+- Đảm bảo MySQL đang chạy trên port 3306
+- Username MySQL: root
+- Password MySQL: 1111 (theo config trong DBContext.java)
+- Nếu password khác, sửa trong: src/main/java/Context/DBContext.java
+
+========================================
