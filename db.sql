@@ -221,6 +221,7 @@ INSERT INTO `services` (`id`, `name`, `price`, `description`) VALUES
 DROP TABLE IF EXISTS `appointments`;
 CREATE TABLE `appointments` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
   `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `phone` varchar(20) NOT NULL,
   `pet_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -234,12 +235,14 @@ CREATE TABLE `appointments` (
   PRIMARY KEY (`id`),
   KEY `service_id` (`service_id`),
   KEY `doctor_id` (`doctor_id`),
+  KEY `user_id` (`user_id`),
   FOREIGN KEY (`service_id`) REFERENCES `services`(`id`),
-  FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`)
+  FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Thêm dữ liệu mẫu cho appointments
-INSERT INTO `appointments` (`customer_name`, `phone`, `pet_name`, `pet_type`, `service_id`, `doctor_id`, `booking_date`, `note`, `status`) VALUES
-('Phạm Văn B', '0112233442', 'mx', 'Mèo', 3, 12, '2026-01-09', 'Tiêm vaccine định kỳ', 'Pending'),
-('Nguyễn Văn A', '0112233445', 'kiki', 'Chó', 1, 1, '2025-12-24', 'Khám sức khỏe tổng quát', 'Pending'),
-('Nguyễn Văn A', '0112233445', 'kiki', 'Mèo', 1, 1, '2025-12-24', 'Khám lại sau điều trị', 'Pending');
+-- Thêm dữ liệu mẫu cho appointments (user_id = 2 là user1)
+INSERT INTO `appointments` (`user_id`, `customer_name`, `phone`, `pet_name`, `pet_type`, `service_id`, `doctor_id`, `booking_date`, `note`, `status`) VALUES
+(2, 'Nguyễn Văn A', '0112233445', 'kiki', 'Chó', 1, 1, '2025-12-24', 'Khám sức khỏe tổng quát', 'Pending'),
+(2, 'Nguyễn Văn A', '0112233445', 'kiki', 'Mèo', 1, 1, '2025-12-24', 'Khám lại sau điều trị', 'Confirmed'),
+(NULL, 'Phạm Văn B', '0112233442', 'mx', 'Mèo', 3, 12, '2026-01-09', 'Tiêm vaccine định kỳ', 'Pending');

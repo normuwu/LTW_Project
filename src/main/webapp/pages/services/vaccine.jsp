@@ -10,6 +10,40 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/vaccine.css">
     
+    <style>
+        /* Why Card Link Styles */
+        .why-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .why-card-link .why-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .why-card-link:hover .why-card {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .why-card .read-more {
+            display: block;
+            margin-top: 15px;
+            color: #00bfa5;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .why-card-link:hover .read-more {
+            color: #00897b;
+        }
+        .why-card .read-more i {
+            transition: transform 0.3s;
+        }
+        .why-card-link:hover .read-more i {
+            transform: translateX(5px);
+        }
+    </style>
+    
 </head>
 <body>
 
@@ -31,25 +65,34 @@
         
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="why-card">
-                    <img src="${pageContext.request.contextPath}/assets/images/vaccine_pic/vac_dog.jpg" alt="Chó khỏe mạnh">
-                    <h4>Ngừa Bệnh Hiểm Nghèo</h4>
-                    <p>Ngăn chặn các virus gây tử vong cao như Care, Parvo (ở chó) và Giảm bạch cầu (ở mèo).</p>
-                </div>
+                <a href="${pageContext.request.contextPath}/pages/services/vaccine-disease.jsp" class="why-card-link">
+                    <div class="why-card">
+                        <img src="${pageContext.request.contextPath}/assets/images/vaccine_pic/vac_dog.jpg" alt="Chó khỏe mạnh">
+                        <h4>Ngừa Bệnh Hiểm Nghèo</h4>
+                        <p>Ngăn chặn các virus gây tử vong cao như Care, Parvo (ở chó) và Giảm bạch cầu (ở mèo).</p>
+                        <span class="read-more">Tìm hiểu thêm <i class='bx bx-right-arrow-alt'></i></span>
+                    </div>
+                </a>
             </div>
             <div class="col-md-4">
-                <div class="why-card">
-                    <img src="${pageContext.request.contextPath}/assets/images/vaccine_pic/vac_money.jpg" alt="Tiết kiệm">
-                    <h4>Tiết Kiệm Chi Phí</h4>
-                    <p>Chi phí tiêm phòng chỉ bằng 1/10 so với chi phí điều trị khi thú cưng mắc bệnh.</p>
-                </div>
+                <a href="${pageContext.request.contextPath}/pages/services/vaccine-cost.jsp" class="why-card-link">
+                    <div class="why-card">
+                        <img src="${pageContext.request.contextPath}/assets/images/vaccine_pic/vac_money.jpg" alt="Tiết kiệm">
+                        <h4>Tiết Kiệm Chi Phí</h4>
+                        <p>Chi phí tiêm phòng chỉ bằng 1/10 so với chi phí điều trị khi thú cưng mắc bệnh.</p>
+                        <span class="read-more">Tìm hiểu thêm <i class='bx bx-right-arrow-alt'></i></span>
+                    </div>
+                </a>
             </div>
             <div class="col-md-4">
-                <div class="why-card">
-                    <img src="${pageContext.request.contextPath}/assets/images/vaccine_pic/vac_law.jpg" alt="Pháp luật">
-                    <h4>Tuân Thủ Pháp Luật</h4>
-                    <p>Tiêm phòng Dại là quy định bắt buộc của nhà nước để đảm bảo an toàn cho cộng đồng.</p>
-                </div>
+                <a href="${pageContext.request.contextPath}/pages/services/vaccine-law.jsp" class="why-card-link">
+                    <div class="why-card">
+                        <img src="${pageContext.request.contextPath}/assets/images/vaccine_pic/vac_law.jpg" alt="Pháp luật">
+                        <h4>Tuân Thủ Pháp Luật</h4>
+                        <p>Tiêm phòng Dại là quy định bắt buộc của nhà nước để đảm bảo an toàn cho cộng đồng.</p>
+                        <span class="read-more">Tìm hiểu thêm <i class='bx bx-right-arrow-alt'></i></span>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
@@ -72,7 +115,7 @@
                             <li><strong>Vaccine Dại:</strong> Tiêm nhắc lại hàng năm.</li>
                         </ul>
                         <div class="text-center mt-4">
-                            <a href="${pageContext.request.contextPath}/services.jsp" class="btn-book-dog">Đặt Lịch Tiêm Chó</a>
+                            <a href="${pageContext.request.contextPath}/booking?service=2" class="btn-book-dog">Đặt Lịch Tiêm Chó</a>
                         </div>
                     </div>
                 </div>
@@ -89,7 +132,7 @@
                             <li><strong>Tẩy giun:</strong> Thực hiện trước khi tiêm 1 tuần.</li>
                         </ul>
                         <div class="text-center mt-4">
-                            <a href="${pageContext.request.contextPath}/services.jsp" class="btn-book-cat">Đặt Lịch Tiêm Mèo</a>
+                            <a href="${pageContext.request.contextPath}/booking?service=2" class="btn-book-cat">Đặt Lịch Tiêm Mèo</a>
                         </div>
                     </div>
                 </div>
@@ -164,7 +207,9 @@
 
    <jsp:include page="/components/footer.jsp" />
    <jsp:include page="/components/back-button.jsp" />
-
+   
+   <!-- Bootstrap JS -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 
