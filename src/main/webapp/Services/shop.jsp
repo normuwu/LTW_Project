@@ -15,6 +15,9 @@
     <style>
         .navbar { background-color: #fff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .navbar .nav-link, .navbar .navbar-brand { color: #333 !important; }
+        
+        /* Đảm bảo thẻ a không làm hỏng style của card */
+        .product-card a { text-decoration: none; display: block; }
     </style>
 </head>
 <body>
@@ -90,24 +93,33 @@
                             <div class="badge-discount">-${p.discount}%</div>
                         </c:if>
 
-                        <img src="${pageContext.request.contextPath}/shop_pic/${p.image}" class="product-img" alt="${p.name}">
+                        <a href="${pageContext.request.contextPath}/product-detail?id=${p.id}">
+                            <img src="${pageContext.request.contextPath}/shop_pic/${p.image}" class="product-img" alt="${p.name}">
+                        </a>
                         
                         <div class="product-info">
                             <span class="brand">Royal Canin</span>
-                            <h5 class="product-title">${p.name}</h5>
+                            
+                            <h5 class="product-title">
+                                <a href="${pageContext.request.contextPath}/product-detail?id=${p.id}" class="text-dark">
+                                    ${p.name}
+                                </a>
+                            </h5>
                             
                             <div class="price-box">
-                                <c:if test="${p.oldPrice > 0}">
-                                    <span class="old-price">${p.formattedOldPrice}</span>
-                                </c:if>
                                 <span class="new-price">${p.formattedPrice}</span>
                             </div>
                             
-                            <button class="btn-add-cart"><i class='bx bxs-cart-add'></i> Thêm</button>
+                            <form action="${pageContext.request.contextPath}/add-to-cart" method="post">
+                                <input type="hidden" name="id" value="${p.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button class="btn-add-cart"><i class='bx bxs-cart-add'></i> Thêm</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </c:forEach>
+            
             <c:if test="${empty products}">
                 <div class="col-12 text-center text-white">
                     <p>Đang cập nhật sản phẩm...</p>
@@ -119,7 +131,6 @@
 
     <jsp:include page="/header_footer/footer.jsp" />
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

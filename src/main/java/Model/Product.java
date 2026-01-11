@@ -1,4 +1,4 @@
-package Model; // Dựa theo cấu trúc thư mục trong ảnh
+package Model;
 
 import java.text.DecimalFormat;
 
@@ -6,37 +6,45 @@ public class Product {
     private int id;
     private String name;
     private String image;
-    private double price;     // Giá hiện tại
-    private double oldPrice;  // Giá cũ (nếu có)
-    private int discount;     // % Giảm giá (VD: 10)
+    private double price;    
+    private int discount;     
+    private String description; 
+    
+    public Product() {
+    }
 
-    public Product(int id, String name, String image, double price, double oldPrice, int discount) {
+    // Constructor đầy đủ 6 tham số
+    public Product(int id, String name, String image, double price, int discount, String description) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.price = price;
-        this.oldPrice = oldPrice;
         this.discount = discount;
+        this.description = description;
     }
 
-    // --- GETTERS (Bắt buộc để JSP đọc được dữ liệu) ---
+    // --- GETTERS & SETTERS ---
     public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    
     public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
     public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
+    
     public double getPrice() { return price; }
-    public double getOldPrice() { return oldPrice; }
+    public void setPrice(double price) { this.price = price; }
+    
     public int getDiscount() { return discount; }
+    public void setDiscount(int discount) { this.discount = discount; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    // --- XỬ LÝ ĐỊNH DẠNG TIỀN TỆ CHO JSP ---
-    // JSP gọi: ${p.formattedPrice}
+    // Hàm tiện ích format giá tiền
     public String getFormattedPrice() {
         DecimalFormat formatter = new DecimalFormat("###,###");
         return formatter.format(price) + "đ";
-    }
-
-    // JSP gọi: ${p.formattedOldPrice}
-    public String getFormattedOldPrice() {
-        DecimalFormat formatter = new DecimalFormat("###,###");
-        return formatter.format(oldPrice) + "đ";
     }
 }
