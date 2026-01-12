@@ -8,12 +8,13 @@ public class Product {
     private String image;
     private double price;    
     private int discount;     
-    private String description; 
+    private String description; // Giữ lại thuộc tính mới này
     
+    // 1. Constructor rỗng (Bắt buộc)
     public Product() {
     }
 
-    // Constructor đầy đủ 6 tham số
+    // 2. Constructor đầy đủ 6 tham số (Dùng cho DAO mới)
     public Product(int id, String name, String image, double price, int discount, String description) {
         this.id = id;
         this.name = name;
@@ -39,8 +40,11 @@ public class Product {
     public int getDiscount() { return discount; }
     public void setDiscount(int discount) { this.discount = discount; }
     
+    // QUAN TRỌNG: Giữ Getter/Setter cho Description
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    // (Đã XÓA setOldPrice vì không dùng nữa)
 
     // Hàm tiện ích format giá tiền
     public String getFormattedPrice() {

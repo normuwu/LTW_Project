@@ -18,3 +18,7 @@ Thumbs.db
 
 # Nếu team dùng Maven thì bỏ qua thư mục target
 target/
+
+# Personal folders - không push lên GitHub
+.shared/
+.kiro/steering/

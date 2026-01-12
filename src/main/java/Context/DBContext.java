@@ -7,7 +7,7 @@ public class DBContext {
     
     /* CẤU HÌNH TÀI KHOẢN DATABASE CỦA BẠN Ở ĐÂY */
     private final String serverName = "localhost";
-    private final String dbName = "PetVaccine";
+    private final String dbName = "petvaccine";
     private final String portNumber = "3306";
     private final String userID = "root";       
     private final String password = "1111";      

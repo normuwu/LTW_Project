@@ -36,7 +36,7 @@ public class ProductDetailServlet extends HttpServlet {
             ProductDAO pDao = new ProductDAO();
             Product p = pDao.getProductById(id);
             
-            // Nếu không tìm thấy sản phẩm (nhập ID bậy) -> về trang Shop
+            
             if (p == null) {
                 response.sendRedirect("shop");
                 return;
@@ -50,13 +50,19 @@ public class ProductDetailServlet extends HttpServlet {
             request.setAttribute("detail", p);
             request.setAttribute("listReviews", listReviews);
             
+
+            // === THÊM ĐOẠN NÀY ĐỂ HIỆN SẢN PHẨM LIÊN QUAN ===
+            // Lấy 4 sản phẩm khác để hiển thị
+            List<Product> listRelated = pDao.getRelatedProducts(id); 
+            request.setAttribute("relatedProducts", listRelated);
+  
+            
             // 5. Chuyển hướng đến file JSP giao diện
-            // Đảm bảo đường dẫn này đúng với cấu trúc thư mục của bạn
+
             request.getRequestDispatcher("/shopping/product.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
-            // Nếu lỗi hệ thống -> Về trang shop cho an toàn
             response.sendRedirect("shop");
         }
     }
