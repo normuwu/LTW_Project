@@ -1,179 +1,166 @@
-# 🐾 PetVaccine - Website Dịch Vụ Thú Y
+# 🐾 PetVaccine - Animal Doctors
 
 Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
 ## 📋 Yêu Cầu Hệ Thống
 
-- **Java JDK**: 11 trở lên
-- **Apache Tomcat**: 9.0
-- **MySQL**: 8.0
-- **Trình duyệt**: Chrome, Firefox, Edge
+| Phần mềm | Phiên bản | Link tải |
+|----------|-----------|----------|
+| Java JDK | 11+ | [Download](https://adoptium.net/) |
+| Apache Maven | 3.6+ | [Download](https://maven.apache.org/download.cgi) |
+| Apache Tomcat | 9.0 | [Download](https://tomcat.apache.org/download-90.cgi) |
+| MySQL | 8.0 | [Download](https://dev.mysql.com/downloads/mysql/) |
 
-## 🛠️ Cài Đặt
+## 🚀 Hướng Dẫn Cài Đặt
 
-### Bước 1: Cài đặt MySQL
+### Bước 1: Cài đặt phần mềm cần thiết
 
-**Cách 1: Dùng XAMPP (Khuyến nghị cho người mới)**
-1. Tải XAMPP: https://www.apachefriends.org/download.html
-2. Cài đặt và mở XAMPP Control Panel
-3. Click "Start" bên cạnh MySQL
+#### 1.1 Cài Java JDK 11+
+```bash
+# Kiểm tra Java đã cài chưa
+java -version
 
-**Cách 2: Cài MySQL Server**
-1. Tải MySQL: https://dev.mysql.com/downloads/mysql/
-2. Cài đặt với password root: `1111`
+# Nếu chưa có, tải và cài từ: https://adoptium.net/
+```
+
+#### 1.2 Cài Maven
+```bash
+# Kiểm tra Maven
+mvn -version
+
+# Nếu chưa có:
+# Windows: Tải từ https://maven.apache.org/download.cgi
+# Giải nén và thêm bin folder vào PATH
+```
+
+#### 1.3 Cài MySQL
+- **Cách 1 (Khuyến nghị)**: Dùng XAMPP - https://www.apachefriends.org/download.html
+- **Cách 2**: Cài MySQL Server - https://dev.mysql.com/downloads/mysql/
+
+#### 1.4 Cài Tomcat 9
+1. Tải từ: https://tomcat.apache.org/download-90.cgi
+2. Giải nén vào thư mục (VD: `C:\tomcat` hoặc `E:\apache-tomcat-9.0.113`)
 
 ### Bước 2: Tạo Database
 
-Mở MySQL Workbench hoặc phpMyAdmin, chạy file `db.sql`
+1. Khởi động MySQL (hoặc Start MySQL trong XAMPP)
+2. Mở MySQL Workbench hoặc phpMyAdmin
+3. Chạy file `db.sql` để tạo database và dữ liệu mẫu
 
-Hoặc chạy lệnh:
 ```bash
+# Hoặc dùng command line:
 mysql -u root -p < db.sql
 ```
 
 ### Bước 3: Cấu hình Database
 
-Mở file `src/main/java/Context/DBContext.java` và kiểm tra thông tin:
+Mở file `src/main/java/Context/DBContext.java` và sửa thông tin kết nối:
+
 ```java
 private final String serverName = "localhost";
 private final String dbName = "petvaccine";
 private final String portNumber = "3306";
 private final String userID = "root";       
-private final String password = "1111";  // Đổi nếu password MySQL khác
+private final String password = "YOUR_MYSQL_PASSWORD";  // ← Sửa password của bạn
 ```
 
-### Bước 4: Cấu hình Tomcat
+### Bước 4: Cấu hình đường dẫn Tomcat
 
-Mở file `start_tomcat.bat` và sửa đường dẫn Tomcat:
+Mở 2 file và sửa đường dẫn Tomcat cho đúng máy của bạn:
+
+**File `start_tomat.bat`:**
 ```batch
-set CATALINA_HOME=E:\apache-tomcat-9.0.113-windows-x64\apache-tomcat-9.0.113
+set CATALINA_HOME=C:\path\to\your\tomcat    ← Sửa đường dẫn
 ```
 
-### Bước 5: Chạy Project
+**File `scripts/deploy.bat`:**
+```batch
+copy /Y target\PetVaccine.war "C:\path\to\your\tomcat\webapps\"    ← Sửa đường dẫn
+```
+
+### Bước 5: Build và Deploy
 
 ```bash
-# Compile code
-javac -encoding UTF-8 -d build/classes -cp "src/main/webapp/WEB-INF/lib/*;%CATALINA_HOME%/lib/servlet-api.jar" src/main/java/Context/*.java src/main/java/Model/*.java src/main/java/DAO/*.java src/main/java/Filter/*.java src/main/java/*.java
+# Build project
+mvn clean package -DskipTests
 
-# Deploy lên Tomcat
-xcopy /E /I /Y build\classes %CATALINA_HOME%\webapps\PetVaccine\WEB-INF\classes
-xcopy /E /I /Y src\main\webapp %CATALINA_HOME%\webapps\PetVaccine
-
-# Chạy Tomcat
-start_tomcat.bat
+# Copy file WAR vào Tomcat (hoặc chạy scripts/deploy.bat)
+copy target\PetVaccine.war [TOMCAT_HOME]\webapps\
 ```
 
-## 🌐 Truy Cập Website
+### Bước 6: Chạy Tomcat
 
-| Trang | URL |
-|-------|-----|
-| Trang chủ | http://localhost:8081/PetVaccine/home |
-| Đăng nhập | http://localhost:8081/PetVaccine/login |
-| Đăng ký | http://localhost:8081/PetVaccine/register |
-| Admin | http://localhost:8081/PetVaccine/admin/dashboard |
+```bash
+# Windows - chạy file
+start_tomat.bat
+
+# Hoặc vào thư mục Tomcat/bin và chạy
+startup.bat
+```
+
+### Bước 7: Truy cập Website
+
+Mở trình duyệt: **http://localhost:8080/PetVaccine/home**
 
 ## 👤 Tài Khoản Demo
 
-| Role | Username | Password |
-|------|----------|----------|
+| Vai trò | Username | Password |
+|---------|----------|----------|
 | Admin | admin | 123456 |
 | User | user1 | 123456 |
 | Doctor | doctor1 | 123456 |
+
+## 🌐 Các Trang Chính
+
+| Trang | URL |
+|-------|-----|
+| Trang chủ | /PetVaccine/home |
+| Đăng nhập | /PetVaccine/login |
+| Đăng ký | /PetVaccine/register |
+| Đặt lịch | /PetVaccine/booking |
+| Siêu thị | /PetVaccine/shop |
+| Admin Dashboard | /PetVaccine/admin/dashboard |
 
 ## 📁 Cấu Trúc Project
 
 ```
 PetVaccine/
+├── pom.xml                         # Maven config
+├── db.sql                          # Database script
+├── start_tomat.bat                 # Script chạy Tomcat
+├── scripts/
+│   └── deploy.bat                  # Script build & deploy
 ├── src/main/java/
-│   ├── Context/
-│   │   └── DBContext.java          # Kết nối database
-│   ├── Model/
-│   │   ├── User.java               # Model người dùng
-│   │   ├── Product.java            # Model sản phẩm
-│   │   ├── BlogPost.java           # Model bài viết
-│   │   └── ...
-│   ├── DAO/
-│   │   ├── UserDAO.java            # Xử lý database user
-│   │   ├── ProductDAO.java         # Xử lý database sản phẩm
-│   │   └── ...
-│   ├── Filter/
-│   │   └── AuthFilter.java         # Filter phân quyền
-│   ├── LoginServlet.java           # Xử lý đăng nhập
-│   ├── LogoutServlet.java          # Xử lý đăng xuất
-│   ├── RegisterServlet.java        # Xử lý đăng ký
-│   └── ...Servlet.java             # Các servlet khác
-├── src/main/webapp/
-│   ├── auth/
-│   │   ├── login.jsp               # Trang đăng nhập
-│   │   └── register.jsp            # Trang đăng ký
-│   ├── admin/
-│   │   └── dashboard.jsp           # Trang quản trị
-│   ├── mainPages/
-│   │   ├── home.jsp                # Trang chủ
-│   │   ├── community.jsp           # Cộng đồng
-│   │   └── ...
-│   ├── Services/
-│   │   ├── shop.jsp                # Cửa hàng
-│   │   ├── vaccine.jsp             # Dịch vụ vaccine
-│   │   └── ...
-│   ├── header_footer/
-│   │   ├── header.jsp              # Header chung
-│   │   └── footer.jsp              # Footer chung
-│   └── WEB-INF/
-│       ├── web.xml                 # Cấu hình web
-│       └── lib/                    # Thư viện JAR
-├── database_setup.sql              # Script tạo database
-├── add_user_table.sql              # Script tạo bảng Users
-└── start_tomcat.bat                # Script chạy Tomcat
+│   ├── Context/DBContext.java      # Kết nối database
+│   ├── Model/                      # Các entity class
+│   ├── DAO/                        # Data Access Objects
+│   ├── Filter/                     # Auth filters
+│   ├── Util/                       # Utility classes
+│   └── controller/                 # Servlets
+└── src/main/webapp/
+    ├── pages/                      # JSP pages
+    ├── components/                 # Shared components
+    ├── assets/                     # CSS, JS, Images
+    └── WEB-INF/web.xml            # Web config
 ```
-
-## ✨ Tính Năng
-
-### Người dùng
-- ✅ Đăng ký / Đăng nhập / Đăng xuất
-- ✅ Xem trang chủ, dịch vụ
-- ✅ Xem cửa hàng sản phẩm
-- ✅ Đặt lịch hẹn
-- ✅ Xem bài viết cộng đồng
-
-### Admin
-- ✅ Dashboard quản trị
-- ✅ Quản lý người dùng
-- ✅ Quản lý sản phẩm
-- ✅ Quản lý lịch hẹn
-
-### Bảo mật
-- ✅ Filter phân quyền
-- ✅ Session management
-- ✅ Bảo vệ trang admin
-
-## 🔧 Công Nghệ Sử Dụng
-
-- **Backend**: Java Servlet, JSP
-- **Frontend**: HTML, CSS, Bootstrap 5, JSTL
-- **Database**: MySQL 8.0
-- **Server**: Apache Tomcat 9.0
-- **Icons**: Boxicons
 
 ## ❗ Xử Lý Lỗi Thường Gặp
 
-### Lỗi "Connection refused"
-- MySQL chưa chạy → Khởi động MySQL
+| Lỗi | Nguyên nhân | Cách fix |
+|-----|-------------|----------|
+| Connection refused | MySQL chưa chạy | Start MySQL/XAMPP |
+| Access denied | Sai password MySQL | Sửa DBContext.java |
+| 404 Not Found | Chưa deploy WAR | Chạy deploy.bat |
+| Port 8080 in use | Port bị chiếm | Đổi port trong Tomcat/conf/server.xml |
+| mvn not found | Chưa cài Maven | Cài Maven và thêm vào PATH |
 
-### Lỗi "Access denied"
-- Sai password MySQL → Kiểm tra DBContext.java
+## 🔧 Công Nghệ
 
-### Lỗi "404 Not Found"
-- Chưa deploy → Chạy lại lệnh xcopy
-- Tomcat chưa chạy → Chạy start_tomcat.bat
-
-### Lỗi "CATALINA_HOME not defined"
-- Sửa đường dẫn trong start_tomcat.bat
-
-## 📞 Liên Hệ
-
-- Email: admin@petvaccine.com
-- Website: http://localhost:8080/PetVaccine
+- **Backend**: Java Servlet, JSP, JSTL
+- **Frontend**: HTML, CSS, Bootstrap 5, JavaScript
+- **Database**: MySQL 8.0
+- **Build Tool**: Maven
+- **Server**: Apache Tomcat 9.0
 
 ---
 © 2024 PetVaccine - Animal Doctors

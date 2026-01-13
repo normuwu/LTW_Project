@@ -26,6 +26,7 @@
                 <h1 class="page-title"><i class='bx bxs-injection'></i> Quản lý Dịch vụ & Vaccine</h1>
                 <p class="page-subtitle">Quản lý các gói dịch vụ và vaccine tiêm chủng</p>
             </div>
+            <jsp:include page="/components/admin-header-dropdown.jsp" />
         </div>
 
         <!-- Stats -->

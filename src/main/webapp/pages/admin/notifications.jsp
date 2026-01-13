@@ -26,13 +26,16 @@
                 <h1 class="page-title"><i class='bx bxs-bell-ring'></i> Gửi Thông báo</h1>
                 <p class="page-subtitle">Nhắc lịch tiêm chủng cho khách hàng</p>
             </div>
-            <form method="POST" action="${pageContext.request.contextPath}/admin/notifications" class="d-flex gap-2">
-                <input type="hidden" name="action" value="sendAll">
-                <input type="hidden" name="days" value="${selectedDays}">
-                <button type="submit" class="btn btn-primary-admin" ${empty reminders ? 'disabled' : ''}>
-                    <i class='bx bx-send'></i> Gửi tất cả (${totalReminders})
-                </button>
-            </form>
+            <div class="d-flex gap-3 align-items-center">
+                <form method="POST" action="${pageContext.request.contextPath}/admin/notifications" class="d-flex gap-2">
+                    <input type="hidden" name="action" value="sendAll">
+                    <input type="hidden" name="days" value="${selectedDays}">
+                    <button type="submit" class="btn btn-primary-admin" ${empty reminders ? 'disabled' : ''}>
+                        <i class='bx bx-send'></i> Gửi tất cả (${totalReminders})
+                    </button>
+                </form>
+                <jsp:include page="/components/admin-header-dropdown.jsp" />
+            </div>
         </div>
 
         <!-- Filter -->

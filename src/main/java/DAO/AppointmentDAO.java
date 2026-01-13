@@ -113,7 +113,6 @@ public class AppointmentDAO {
     }
     
     // 2b. Lấy danh sách lịch hẹn theo User ID (cho User) - Pending lên đầu
-    // Tạm thời lấy tất cả appointments (bỏ điều kiện WHERE)
     public List<Appointment> getAppointmentsByUserId(int userId) {
         List<Appointment> list = new ArrayList<>();
         String query = "SELECT a.id, a.user_id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
@@ -122,36 +121,39 @@ public class AppointmentDAO {
                        "FROM appointments a " +
                        "LEFT JOIN services s ON a.service_id = s.id " +
                        "LEFT JOIN doctors d ON a.doctor_id = d.id " +
+                       "WHERE a.user_id = ? " +
                        "ORDER BY CASE WHEN a.status = 'Pending' THEN 0 " +
                        "WHEN a.status = 'Confirmed' THEN 1 " +
                        "WHEN a.status = 'Completed' THEN 2 " +
                        "ELSE 3 END, a.id DESC"; 
 
         try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = conn.prepareStatement(query)) {
             
-            while (rs.next()) {
-                Appointment a = new Appointment();
-                a.setId(rs.getInt("id"));
-                a.setUserId(rs.getInt("user_id"));
-                a.setCustomerName(rs.getString("customer_name"));
-                a.setPhone(rs.getString("phone"));
-                a.setPetName(rs.getString("pet_name"));
-                a.setPetType(rs.getString("pet_type"));
-                a.setServiceId(rs.getInt("service_id"));
-                a.setDoctorId(rs.getInt("doctor_id"));
-                a.setNote(rs.getString("note"));
-                
-                String sName = rs.getString("service_name");
-                String dName = rs.getString("doctor_name");
-                
-                a.setServiceName(sName != null ? sName : "Dịch vụ đã xóa");
-                a.setDoctorName(dName != null ? dName : "Chưa chỉ định");
-                
-                a.setBookingDate(rs.getDate("booking_date"));
-                a.setStatus(rs.getString("status")); 
-                list.add(a);
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Appointment a = new Appointment();
+                    a.setId(rs.getInt("id"));
+                    a.setUserId(rs.getInt("user_id"));
+                    a.setCustomerName(rs.getString("customer_name"));
+                    a.setPhone(rs.getString("phone"));
+                    a.setPetName(rs.getString("pet_name"));
+                    a.setPetType(rs.getString("pet_type"));
+                    a.setServiceId(rs.getInt("service_id"));
+                    a.setDoctorId(rs.getInt("doctor_id"));
+                    a.setNote(rs.getString("note"));
+                    
+                    String sName = rs.getString("service_name");
+                    String dName = rs.getString("doctor_name");
+                    
+                    a.setServiceName(sName != null ? sName : "Dịch vụ đã xóa");
+                    a.setDoctorName(dName != null ? dName : "Chưa chỉ định");
+                    
+                    a.setBookingDate(rs.getDate("booking_date"));
+                    a.setStatus(rs.getString("status")); 
+                    list.add(a);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -321,9 +323,9 @@ public class AppointmentDAO {
     }
 
     
-    // 10b. Xóa lịch hẹn (chỉ cho phép xóa lịch đã hủy hoặc từ chối)
+    // 10b. Xóa lịch hẹn (cho phép xóa lịch đã hủy, từ chối hoặc hoàn thành)
     public boolean deleteAppointment(int appointmentId) {
-        String query = "DELETE FROM appointments WHERE id = ? AND (status = 'Cancelled' OR status = 'Rejected')";
+        String query = "DELETE FROM appointments WHERE id = ? AND (status = 'Cancelled' OR status = 'Rejected' OR status = 'Completed')";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
@@ -338,6 +340,19 @@ public class AppointmentDAO {
     // 10c. Xóa tất cả lịch hẹn đã hủy
     public int deleteAllCancelled() {
         String query = "DELETE FROM appointments WHERE status = 'Cancelled'";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            return ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    // 10d. Xóa tất cả lịch hẹn đã hoàn thành
+    public int deleteAllCompleted() {
+        String query = "DELETE FROM appointments WHERE status = 'Completed'";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             

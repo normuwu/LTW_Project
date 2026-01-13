@@ -6,55 +6,9 @@
     <jsp:include page="/components/meta.jsp" />
     <title>Admin Dashboard - PetCare</title>
     <jsp:include page="/components/head.jsp" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="/components/admin-styles.jsp" />
     <style>
-        body {
-            background: #f1f5f9;
-            margin: 0;
-        }
-        
-        /* Main Content */
-        .admin-main {
-            margin-left: 250px;
-            padding: 28px 32px;
-            min-height: 100vh;
-        }
-        
-        /* Page Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-        }
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .page-title i {
-            color: #3b82f6;
-        }
-        .admin-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 18px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: #334155;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .admin-badge i {
-            color: #3b82f6;
-            font-size: 1.2rem;
-        }
-        
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -174,14 +128,12 @@
     <!-- Main Content -->
     <main class="admin-main">
         <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class='bx bxs-dashboard'></i> Dashboard
-            </h1>
-            <div class="admin-badge">
-                <i class='bx bxs-user-circle'></i>
-                <span>Admin: ${sessionScope.user.fullname}</span>
+        <div class="page-header-admin">
+            <div>
+                <h1 class="page-title"><i class='bx bxs-dashboard'></i> Dashboard</h1>
+                <p class="page-subtitle">Tổng quan hệ thống</p>
             </div>
+            <jsp:include page="/components/admin-header-dropdown.jsp" />
         </div>
         
         <jsp:include page="/components/alerts.jsp" />

@@ -107,6 +107,16 @@ public class AppointmentServlet extends HttpServlet {
             return;
         }
         
+        // Handle delete all completed
+        if ("delete_all_completed".equals(action)) {
+            int deleted = appointmentDAO.deleteAllCompleted();
+            message = "Đã xóa " + deleted + " lịch hẹn đã hoàn thành";
+            session.setAttribute("message", message);
+            session.setAttribute("messageType", messageType);
+            response.sendRedirect(request.getContextPath() + "/pages/admin/appointments");
+            return;
+        }
+        
         // Handle single actions
         if (action == null || idStr == null) {
             response.sendRedirect(request.getContextPath() + "/pages/admin/appointments");

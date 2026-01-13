@@ -1,6 +1,7 @@
 package controller.auth;
 
 import java.io.IOException;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -9,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import DAO.CartDAO;
 import DAO.UserDAO;
+import Model.CartItem;
 import Model.User;
 import Util.FormHelper;
 
@@ -81,6 +84,26 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", user);
             session.setAttribute("username", user.getUsername());
             session.setAttribute("role", user.getRole());
+            
+            // Load giỏ hàng từ database
+            CartDAO cartDAO = new CartDAO();
+            
+            // Nếu có giỏ hàng trong session (chưa đăng nhập mà đã thêm), sync vào database
+            Map<Integer, CartItem> sessionCart = (Map<Integer, CartItem>) session.getAttribute("cart");
+            if (sessionCart != null && !sessionCart.isEmpty()) {
+                cartDAO.syncCartFromSession(user.getId(), sessionCart);
+            }
+            
+            // Load giỏ hàng từ database vào session
+            Map<Integer, CartItem> cart = cartDAO.getCartByUserId(user.getId());
+            session.setAttribute("cart", cart);
+            
+            // Tính tổng số lượng
+            int totalQuantity = 0;
+            for (CartItem item : cart.values()) {
+                totalQuantity += item.getQuantity();
+            }
+            session.setAttribute("totalQuantity", totalQuantity);
             
             // Xử lý "Ghi nhớ đăng nhập"
             if ("on".equals(rememberMe)) {

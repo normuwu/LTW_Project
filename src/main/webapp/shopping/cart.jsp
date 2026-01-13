@@ -43,7 +43,7 @@
 </head>
 <body>
 
-    <jsp:include page="/components/layout/header-home.jsp" />
+    <jsp:include page="/components/navbar.jsp" />
 
     <div class="container mt-5 mb-5" style="min-height: 600px;">
         <h2 class="cart-title"><i class='bx bx-cart-alt'></i> Giỏ Hàng Của Bạn</h2>
@@ -76,7 +76,9 @@
                                     <tr class="cart-row">
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img src="${pageContext.request.contextPath}/shop_pic/${item.product.image}" class="cart-product-img">
+                                                <img src="${pageContext.request.contextPath}/assets/images/shop_pic/${item.product.image}" 
+                                                     class="cart-product-img"
+                                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/shop_pic/default.jpg'">
                                                 <div>
                                                     <p class="fw-bold mb-0">${item.product.name}</p>
                                                     <small class="text-muted">ID: ${item.product.id}</small>
@@ -99,7 +101,11 @@
                                         </td>
                                         
                                         <td class="text-center">
-                                            <a href="#" class="btn-remove"><i class='bx bx-trash'></i></a>
+                                            <a href="${pageContext.request.contextPath}/cart?action=remove&id=${item.product.id}" 
+                                               class="btn-remove" 
+                                               onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                                <i class='bx bx-trash'></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>

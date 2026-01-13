@@ -460,7 +460,9 @@
                                 <i class='bx bx-rename'></i> Tên thú cưng
                             </label>
                             <input type="text" name="petName" class="form-input" 
-                                   placeholder="Mimi, Lucky, Bông...">
+                                   placeholder="Mimi, Lucky, Bông..."
+                                   value="${selectedPetName != null ? selectedPetName : ''}">
+                            <input type="hidden" name="petId" value="${selectedPetId != null ? selectedPetId : ''}">
                         </div>
                         <div class="form-group">
                             <label class="form-label">
@@ -468,12 +470,12 @@
                             </label>
                             <select name="petType" id="petTypeSelect" class="form-select" required onchange="toggleCustomPetType()">
                                 <option value="">-- Chọn loại thú cưng --</option>
-                                <option value="Chó">🐕 Chó</option>
-                                <option value="Mèo">🐱 Mèo</option>
-                                <option value="Chim">🐦 Chim</option>
-                                <option value="Thỏ">🐰 Thỏ</option>
-                                <option value="Hamster">🐹 Hamster</option>
-                                <option value="Khác">🐾 Khác</option>
+                                <option value="Chó" ${selectedPetType == 'Chó' ? 'selected' : ''}>🐕 Chó</option>
+                                <option value="Mèo" ${selectedPetType == 'Mèo' ? 'selected' : ''}>🐱 Mèo</option>
+                                <option value="Chim" ${selectedPetType == 'Chim' ? 'selected' : ''}>🐦 Chim</option>
+                                <option value="Thỏ" ${selectedPetType == 'Thỏ' ? 'selected' : ''}>🐰 Thỏ</option>
+                                <option value="Hamster" ${selectedPetType == 'Hamster' ? 'selected' : ''}>🐹 Hamster</option>
+                                <option value="Khác" ${selectedPetType == 'Khác' ? 'selected' : ''}>🐾 Khác</option>
                             </select>
                         </div>
                     </div>

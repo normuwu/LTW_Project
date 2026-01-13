@@ -37,6 +37,20 @@ public class BookingServlet extends HttpServlet {
             request.setAttribute("selectedService", serviceParam);
         }
         
+        // Nhận thông tin thú cưng từ URL (từ trang "Thú cưng của tôi")
+        String petId = request.getParameter("petId");
+        String petName = request.getParameter("petName");
+        String petType = request.getParameter("petType");
+        if (petId != null && !petId.isEmpty()) {
+            request.setAttribute("selectedPetId", petId);
+        }
+        if (petName != null && !petName.isEmpty()) {
+            request.setAttribute("selectedPetName", petName);
+        }
+        if (petType != null && !petType.isEmpty()) {
+            request.setAttribute("selectedPetType", petType);
+        }
+        
         DoctorDAO doctorDAO = new DoctorDAO();
         List<Doctors> listDoctors = doctorDAO.getAllDoctors();
         request.setAttribute("listDoctors", listDoctors);

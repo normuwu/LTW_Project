@@ -119,4 +119,9 @@
     min-height: 100vh;
     background: #f1f5f9;
 }
+
+/* Reset margin-left cho các trang không phải admin */
+body:not(.admin-page) .admin-main {
+    margin-left: 0;
+}
 </style>

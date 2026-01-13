@@ -98,9 +98,14 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class='bx bx-envelope'></i></span>
                     <input type="email" class="form-control ${not empty errors.email ? 'is-invalid' : ''}" 
-                           name="email" placeholder="Nhập email" required
+                           name="email" id="emailInput" placeholder="Nhập email" required
                            value="${not empty form.email ? form.email : savedEmail}"
                            autocomplete="email">
+                    <c:if test="${not empty savedEmail}">
+                        <span class="password-toggle" id="clearEmail" title="Xóa email đã lưu">
+                            <i class='bx bx-x'></i>
+                        </span>
+                    </c:if>
                 </div>
                 <c:if test="${not empty errors.email}">
                     <div class="invalid-feedback">${errors.email}</div>
@@ -160,6 +165,22 @@
                 icon.classList.add('bx-hide');
             }
         });
+        
+        // Xóa email đã lưu
+        var clearEmailBtn = document.getElementById('clearEmail');
+        if (clearEmailBtn) {
+            clearEmailBtn.addEventListener('click', function() {
+                var emailInput = document.getElementById('emailInput');
+                emailInput.value = '';
+                emailInput.focus();
+                // Xóa cookie
+                document.cookie = 'rememberEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                // Ẩn nút xóa
+                this.style.display = 'none';
+                // Bỏ check "Ghi nhớ"
+                document.getElementById('rememberMe').checked = false;
+            });
+        }
     </script>
 </body>
 </html>

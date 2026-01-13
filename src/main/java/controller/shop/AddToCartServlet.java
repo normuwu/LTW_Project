@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import DAO.CartDAO;
 import DAO.ProductDAO;
 import Model.CartItem;
 import Model.Product;
+import Model.User;
 
 @WebServlet("/add-to-cart")
 public class AddToCartServlet extends HttpServlet {
@@ -26,14 +28,16 @@ public class AddToCartServlet extends HttpServlet {
         int quantity = Integer.parseInt(request.getParameter("quantity"));
 
         HttpSession session = request.getSession();
-        Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
+        User user = (User) session.getAttribute("user");
         
+        Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
         if (cart == null) cart = new HashMap<>();
 
         ProductDAO dao = new ProductDAO();
         Product product = dao.getProductById(productId); 
         
         if (product != null) {
+            // Cập nhật session cart
             if (cart.containsKey(productId)) {
                 CartItem existingItem = cart.get(productId);
                 existingItem.setQuantity(existingItem.getQuantity() + quantity);
@@ -42,6 +46,12 @@ public class AddToCartServlet extends HttpServlet {
             }
             
             session.setAttribute("cart", cart);
+            
+            // Nếu user đã đăng nhập, lưu vào database
+            if (user != null) {
+                CartDAO cartDAO = new CartDAO();
+                cartDAO.addToCart(user.getId(), productId, quantity);
+            }
             
             int totalQuantity = 0;
             for (CartItem item : cart.values()) {
