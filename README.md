@@ -4,14 +4,33 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
 ## 📋 Yêu Cầu Hệ Thống
 
-| Phần mềm | Phiên bản | Link tải |
-|----------|-----------|----------|
-| Java JDK | 11+ | [Download](https://adoptium.net/) |
+| Phần mềm | Phiên bản | Ghi chú |
+|----------|-----------|---------|
+| Java JDK | 11, 17, 21 | Bytecode target = 11 |
 | Apache Maven | 3.6+ | [Download](https://maven.apache.org/download.cgi) |
-| Apache Tomcat | 9.0 | [Download](https://tomcat.apache.org/download-90.cgi) |
+| Apache Tomcat | **9.x** | ⚠️ Không hỗ trợ Tomcat 10/11 |
 | MySQL | 8.0 | [Download](https://dev.mysql.com/downloads/mysql/) |
 
+> ⚠️ **Lưu ý quan trọng về Tomcat:**
+> - Project sử dụng `javax.servlet.*` (Java EE)
+> - **Tomcat 9.x**: ✅ Tương thích
+> - **Tomcat 10/11**: ❌ Không tương thích (dùng `jakarta.servlet.*`)
+> - Nếu bạn chỉ có Tomcat 10/11, cần migrate project sang Jakarta EE
+
 ## 🚀 Hướng Dẫn Cài Đặt
+
+### Bước 0: Clone và Import Project
+
+```bash
+git clone https://github.com/normuwu/LTW_Project.git
+```
+
+**Import vào Eclipse:**
+1. File → Import → Maven → Existing Maven Projects
+2. Chọn thư mục project vừa clone
+3. Eclipse sẽ tự tạo `.classpath`, `.project`, `.settings/` theo cấu hình máy của bạn
+
+> 💡 Các file Eclipse config không được commit lên Git vì mỗi máy có JDK/Tomcat khác nhau
 
 ### Bước 1: Cài đặt phần mềm cần thiết
 

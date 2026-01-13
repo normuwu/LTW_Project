@@ -1,24 +1,44 @@
-# Bỏ qua các file biên dịch (Java class files)
+# ===== COMPILED FILES =====
 *.class
+*.jar
+*.war
 
-# Bỏ qua các thư mục do Eclipse/IntelliJ tự sinh ra
+# ===== BUILD OUTPUT =====
 /bin/
 /build/
 /dist/
 /target/
 
-# Bỏ qua file cấu hình riêng của máy (Tùy chọn, nhưng nên dùng nếu team dùng eclipse khác phiên bản)
-.metadata
-.recommenders
+# ===== ECLIPSE IDE =====
+# Bỏ qua vì hardcode JDK version và Tomcat runtime name
+# Mỗi người tự cấu hình theo máy của mình
+.classpath
+.project
+.settings/
+
+# Eclipse metadata
+.metadata/
+.recommenders/
 *.launch
 
-# Bỏ qua file hệ thống Mac/Windows
+# ===== INTELLIJ IDEA =====
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ===== VS CODE =====
+.vscode/
+
+# ===== OS FILES =====
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Nếu team dùng Maven thì bỏ qua thư mục target
-target/
+# ===== LOGS =====
+*.log
+logs/
 
-# Personal folders - không push lên GitHub
+# ===== PERSONAL/LOCAL =====
 .shared/
-.kiro/steering/
+.kiro/
