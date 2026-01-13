@@ -22,8 +22,8 @@ import Util.ValidationUtil;
 public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
-    // SỬA 1: Đổi thư mục upload về 'shop_pic' cho khớp với file JSP hiển thị
-    private static final String UPLOAD_DIR = "shop_pic";
+    // Đường dẫn upload ảnh - phải khớp với đường dẫn hiển thị trong JSP
+    private static final String UPLOAD_DIR = "assets/images/shop_pic";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ProductDAO dao = new ProductDAO();

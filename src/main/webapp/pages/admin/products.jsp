@@ -259,16 +259,16 @@
                         <th style="width: 50px;">#</th>
                         <th style="width: 90px;">Ảnh</th>
                         <th>Tên sản phẩm</th>
-                        <th style="width: 140px;">Giá bán</th>
-                        <th style="width: 140px;">Giá gốc</th>
-                        <th style="width: 100px;">Giảm giá</th>
+                        <th style="width: 200px;">Mô tả</th>
+                        <th style="width: 130px;">Giá bán</th>
+                        <th style="width: 90px;">Giảm giá</th>
                         <th style="width: 110px;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="productsBody">
                     <c:if test="${empty products}">
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <div class="empty-state">
                                     <i class='bx bx-package'></i>
                                     <p>Chưa có sản phẩm nào</p>
@@ -278,7 +278,7 @@
                     </c:if>
                     <c:forEach items="${products}" var="p" varStatus="loop">
                         <tr data-id="${p.id}" data-name="${p.name}" data-image="${p.image}" 
-                            data-price="${p.price}" data-oldprice="${p.oldPrice}" data-discount="${p.discount}">
+                            data-price="${p.price}" data-discount="${p.discount}" data-description="${p.description}">
                             <td><strong>${loop.index + 1}</strong></td>
                             <td>
                                 <img src="${pageContext.request.contextPath}/assets/images/shop_pic/${p.image}" 
@@ -286,8 +286,19 @@
                                      onerror="this.src='${pageContext.request.contextPath}/assets/images/shop_pic/default.jpg'" loading="lazy">
                             </td>
                             <td><span class="product-name">${p.name}</span></td>
+                            <td>
+                                <span class="product-desc" title="${p.description}">
+                                    <c:choose>
+                                        <c:when test="${not empty p.description}">
+                                            ${p.description.length() > 50 ? p.description.substring(0, 50).concat('...') : p.description}
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span style="color: #94a3b8; font-style: italic;">Chưa có mô tả</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </td>
                             <td><span class="price-current">${p.formattedPrice}</span></td>
-                            <td><span class="price-old">${p.formattedOldPrice}</span></td>
                             <td>
                                 <c:choose>
                                     <c:when test="${p.discount > 0}">
@@ -373,22 +384,17 @@
                             <div class="price-display" id="pricePreview"></div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Giá gốc</label>
-                            <div class="price-input-wrapper">
-                                <input type="text" class="form-input" name="oldPriceDisplay" id="formOldPriceDisplay"
-                                       placeholder="VD: 200,000" oninput="formatPriceInput(this, 'formOldPrice')">
-                                <span class="price-suffix">VNĐ</span>
-                            </div>
-                            <input type="hidden" name="oldPrice" id="formOldPrice" value="0">
-                            <div class="price-display" id="oldPricePreview"></div>
+                            <label class="form-label">Giảm giá (%)</label>
+                            <input type="number" class="form-input" name="discount" id="formDiscount"
+                                   placeholder="VD: 10" min="0" max="100" value="0" step="1">
+                            <div class="input-hint">Nhập phần trăm giảm giá (0-100)</div>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Giảm giá (%)</label>
-                        <input type="number" class="form-input" name="discount" id="formDiscount"
-                               placeholder="VD: 10" min="0" max="100" value="0" step="1">
-                        <div class="input-hint">Nhập phần trăm giảm giá (0-100)</div>
+                        <label class="form-label">Mô tả sản phẩm</label>
+                        <textarea class="form-input" name="description" id="formDescription" rows="4"
+                                  placeholder="Nhập mô tả chi tiết về sản phẩm..." style="resize: vertical;"></textarea>
                     </div>
                 </div>
                 
@@ -524,11 +530,9 @@
             document.getElementById('formImage').value = '';
             document.getElementById('formPriceDisplay').value = '';
             document.getElementById('formPrice').value = '';
-            document.getElementById('formOldPriceDisplay').value = '';
-            document.getElementById('formOldPrice').value = '0';
             document.getElementById('formDiscount').value = '0';
+            document.getElementById('formDescription').value = '';
             document.getElementById('pricePreview').textContent = '';
-            document.getElementById('oldPricePreview').textContent = '';
             resetImagePreview();
             document.getElementById('productModal').classList.add('show');
         }
@@ -539,18 +543,14 @@
             document.getElementById('formId').value = row.dataset.id;
             document.getElementById('formName').value = row.dataset.name || '';
             document.getElementById('formImage').value = row.dataset.image || '';
+            document.getElementById('formDescription').value = row.dataset.description || '';
             
             // Format price for display
             var price = parseInt(row.dataset.price) || 0;
-            var oldPrice = parseInt(row.dataset.oldprice) || 0;
             
             document.getElementById('formPriceDisplay').value = price > 0 ? formatVND(price) : '';
             document.getElementById('formPrice').value = price;
             document.getElementById('pricePreview').textContent = price > 0 ? '= ' + formatVND(price) + ' đ' : '';
-            
-            document.getElementById('formOldPriceDisplay').value = oldPrice > 0 ? formatVND(oldPrice) : '';
-            document.getElementById('formOldPrice').value = oldPrice;
-            document.getElementById('oldPricePreview').textContent = oldPrice > 0 ? '= ' + formatVND(oldPrice) + ' đ' : '';
             
             document.getElementById('formDiscount').value = row.dataset.discount || '0';
             

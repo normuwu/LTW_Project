@@ -133,6 +133,57 @@
         }
         .table tr:hover { background: #f8fafc; }
         .table tr:last-child td { border-bottom: none; }
+        .table tr.clickable-row { cursor: pointer; transition: all 0.2s; }
+        .table tr.clickable-row:hover { background: #eff6ff; }
+        
+        /* User Detail Modal */
+        .user-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: linear-gradient(135deg, #0b1a33 0%, #1a3a5c 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .user-info h4 { margin: 0 0 4px 0; font-size: 1.25rem; }
+        .user-info p { margin: 0; opacity: 0.85; font-size: 0.9rem; }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .detail-item {
+            padding: 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .detail-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .detail-item span {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.95rem;
+        }
+        .detail-item.full { grid-column: span 2; }
         
         /* Badge */
         .badge {
@@ -264,7 +315,7 @@
                                 </thead>
                                 <tbody>
                                     <c:forEach var="apt" items="${todayAppointmentsList}" end="4">
-                                        <tr>
+                                        <tr class="clickable-row" onclick="showAppointmentDetail(${apt.id}, '${apt.customerName}', '${apt.petName}', '${apt.petType}', '${apt.serviceName}', '${apt.status}', '<fmt:formatDate value="${apt.bookingDate}" pattern="dd/MM/yyyy"/>', '${apt.phone}', '${apt.note}', '${apt.doctorName}')">>
                                             <td>
                                                 <div style="font-weight:600;">${apt.customerName}</div>
                                                 <small class="text-muted">${apt.petName}</small>
@@ -327,7 +378,7 @@
                                 </thead>
                                 <tbody>
                                     <c:forEach var="apt" items="${recentAppointments}">
-                                        <tr>
+                                        <tr class="clickable-row" onclick="showAppointmentDetail(${apt.id}, '${apt.customerName}', '${apt.petName}', '${apt.petType}', '${apt.serviceName}', '${apt.status}', '<fmt:formatDate value="${apt.bookingDate}" pattern="dd/MM/yyyy"/>', '${apt.phone}', '${apt.note}', '${apt.doctorName}')">>
                                             <td><strong>#${apt.id}</strong></td>
                                             <td>
                                                 <div style="font-weight:600;">${apt.customerName}</div>
@@ -378,5 +429,124 @@
     
     <jsp:include page="/components/scripts.jsp" />
     <jsp:include page="/components/admin-toast.jsp" />
+    
+    <!-- Appointment Detail Modal -->
+    <div class="modal-overlay" id="appointmentDetailModal">
+        <div class="modal-box" style="max-width: 520px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class='bx bx-detail'></i> Chi tiết lịch hẹn</h3>
+                <button class="modal-close" onclick="closeDetailModal()"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="user-detail-header">
+                    <div class="user-avatar">
+                        <i class='bx bxs-user'></i>
+                    </div>
+                    <div class="user-info">
+                        <h4 id="detailCustomerName">-</h4>
+                        <p><i class='bx bx-phone'></i> <span id="detailPhone">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>Mã lịch hẹn</label>
+                        <span id="detailId">#-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Trạng thái</label>
+                        <span id="detailStatus">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Thú cưng</label>
+                        <span id="detailPet">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Loại</label>
+                        <span id="detailPetType">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Dịch vụ</label>
+                        <span id="detailService">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Ngày hẹn</label>
+                        <span id="detailDate">-</span>
+                    </div>
+                    <div class="detail-item full">
+                        <label>Bác sĩ phụ trách</label>
+                        <span id="detailDoctor">-</span>
+                    </div>
+                    <div class="detail-item full">
+                        <label>Ghi chú</label>
+                        <span id="detailNotes">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDetailModal()">
+                    <i class='bx bx-x'></i> Đóng
+                </button>
+                <a id="detailViewLink" href="#" class="btn btn-primary">
+                    <i class='bx bx-edit'></i> Quản lý lịch hẹn
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showAppointmentDetail(id, customerName, petName, petType, serviceName, status, bookingDate, phone, note, doctorName) {
+            document.getElementById('detailId').textContent = '#' + id;
+            document.getElementById('detailCustomerName').textContent = customerName || '-';
+            document.getElementById('detailPhone').textContent = phone || 'Chưa cập nhật';
+            document.getElementById('detailPet').textContent = petName || '-';
+            document.getElementById('detailPetType').innerHTML = petType === 'Chó' 
+                ? '<i class="bx bxs-dog" style="color:#f59e0b;"></i> Chó' 
+                : '<i class="bx bxs-cat" style="color:#ec4899;"></i> Mèo';
+            document.getElementById('detailService').textContent = serviceName || '-';
+            document.getElementById('detailDate').textContent = bookingDate || '-';
+            document.getElementById('detailDoctor').textContent = doctorName || 'Chưa phân công';
+            document.getElementById('detailNotes').textContent = note || 'Không có ghi chú';
+            
+            // Status badge
+            var statusHtml = '';
+            switch(status) {
+                case 'Pending':
+                    statusHtml = '<span class="badge warning">Chờ duyệt</span>';
+                    break;
+                case 'Confirmed':
+                    statusHtml = '<span class="badge success">Đã duyệt</span>';
+                    break;
+                case 'Completed':
+                    statusHtml = '<span class="badge info">Hoàn thành</span>';
+                    break;
+                case 'Cancelled':
+                    statusHtml = '<span class="badge danger">Đã hủy</span>';
+                    break;
+                default:
+                    statusHtml = '<span class="badge">' + status + '</span>';
+            }
+            document.getElementById('detailStatus').innerHTML = statusHtml;
+            
+            // Link to appointments page
+            document.getElementById('detailViewLink').href = '${pageContext.request.contextPath}/pages/admin/appointments';
+            
+            document.getElementById('appointmentDetailModal').classList.add('show');
+        }
+        
+        function closeDetailModal() {
+            document.getElementById('appointmentDetailModal').classList.remove('show');
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('appointmentDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDetailModal();
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeDetailModal();
+        });
+    </script>
 </body>
 </html>
