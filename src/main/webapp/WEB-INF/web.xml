@@ -7,7 +7,21 @@
     See controller/ package for servlet definitions.
   -->
   
-  <!-- Filter -->
+  <!-- Character Encoding Filter - PHẢI ĐẶT ĐẦU TIÊN -->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>Filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <!-- Auth Filter -->
   <filter>
     <filter-name>AuthFilter</filter-name>
     <filter-class>Filter.AuthFilter</filter-class>

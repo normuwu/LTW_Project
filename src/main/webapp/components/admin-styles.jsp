@@ -6,10 +6,13 @@
 --%>
 <style>
     /* ===== BASE STYLES ===== */
+    * {
+        font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+    }
     body {
         background: #f1f5f9;
         margin: 0;
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
     }
     
     /* Main Content */
@@ -661,5 +664,238 @@
         .search-box {
             width: 100%;
         }
+    }
+</style>
+
+<style>
+    /* ===== NEW ADMIN STYLES ===== */
+    
+    /* Page Header Admin */
+    .page-header-admin {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .page-header-admin .page-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .page-header-admin .page-title i { color: #3b82f6; }
+    .page-header-admin .page-subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin: 4px 0 0 0;
+    }
+    
+    /* Button Primary Admin */
+    .btn-primary-admin {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .btn-primary-admin:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    /* Stat Card Admin */
+    .stat-card-admin {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s;
+    }
+    .stat-card-admin:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .stat-icon-admin {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+    .stat-icon-admin.bg-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .stat-icon-admin.bg-success { background: linear-gradient(135deg, #10b981, #059669); }
+    .stat-icon-admin.bg-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-icon-admin.bg-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .stat-icon-admin.bg-info { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    .stat-number-admin {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+    }
+    .stat-label-admin {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    
+    /* Card Admin */
+    .card-admin {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+    .card-header-admin {
+        padding: 18px 24px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+    .card-header-admin h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .card-header-admin h5 i { color: #64748b; }
+    .card-body-admin { padding: 0; }
+    
+    /* Table Admin */
+    .table-admin {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table-admin th {
+        text-align: left;
+        padding: 14px 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .table-admin td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.9rem;
+        color: #334155;
+        vertical-align: middle;
+    }
+    .table-admin tr:hover { background: #f8fafc; }
+    
+    /* Avatar Admin */
+    .avatar-admin {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+    .avatar-placeholder {
+        background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 1.2rem;
+    }
+    
+    /* Badge Admin */
+    .badge-admin {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .badge-success { background: #d1fae5; color: #047857; }
+    .badge-warning { background: #fef3c7; color: #b45309; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
+    .badge-primary { background: #dbeafe; color: #1d4ed8; }
+    .badge-secondary { background: #f1f5f9; color: #64748b; }
+    
+    /* Action Buttons */
+    .action-buttons { display: flex; gap: 8px; }
+    .btn-action-admin {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+    }
+    .btn-action-admin:hover { background: #f1f5f9; }
+    .btn-action-admin.btn-edit:hover {
+        border-color: #f59e0b;
+        color: #f59e0b;
+        background: #fffbeb;
+    }
+    .btn-action-admin.btn-delete:hover {
+        border-color: #ef4444;
+        color: #ef4444;
+        background: #fef2f2;
+    }
+    .btn-action-admin.btn-warning {
+        border-color: #f59e0b;
+        color: #f59e0b;
+        background: #fffbeb;
+    }
+    
+    /* Nav Tabs */
+    .nav-tabs {
+        border-bottom: 2px solid #e2e8f0;
+    }
+    .nav-tabs .nav-link {
+        border: none;
+        color: #64748b;
+        font-weight: 600;
+        padding: 12px 20px;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+    }
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        color: #3b82f6;
+    }
+    .nav-tabs .nav-link.active {
+        color: #3b82f6;
+        border-bottom-color: #3b82f6;
+        background: transparent;
     }
 </style>

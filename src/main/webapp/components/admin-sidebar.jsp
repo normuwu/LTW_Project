@@ -16,11 +16,27 @@
         <a href="${pageContext.request.contextPath}/pages/admin/appointments" class="<%= "appointments".equals(currentPage) ? "active" : "" %>">
             <i class='bx bxs-calendar-check'></i> Quản lý Lịch hẹn
         </a>
+        <a href="${pageContext.request.contextPath}/admin/doctors" class="<%= "doctors".equals(currentPage) ? "active" : "" %>">
+            <i class='bx bxs-user-badge'></i> Quản lý Bác sĩ
+        </a>
+        <a href="${pageContext.request.contextPath}/admin/services" class="<%= "services".equals(currentPage) ? "active" : "" %>">
+            <i class='bx bxs-injection'></i> Quản lý Dịch vụ
+        </a>
+        <a href="${pageContext.request.contextPath}/admin/users" class="<%= "users".equals(currentPage) ? "active" : "" %>">
+            <i class='bx bxs-group'></i> Quản lý Người dùng
+        </a>
         <a href="${pageContext.request.contextPath}/pages/admin/products" class="<%= "products".equals(currentPage) ? "active" : "" %>">
-            <i class='bx bxs-shopping-bag'></i> Quản lý sản phẩm
+            <i class='bx bxs-shopping-bag'></i> Quản lý Sản phẩm
         </a>
         <a href="${pageContext.request.contextPath}/pages/admin/blogs" class="<%= "blogs".equals(currentPage) ? "active" : "" %>">
-            <i class='bx bxs-news'></i> Quản lý bài viết
+            <i class='bx bxs-news'></i> Quản lý Bài viết
+        </a>
+        <div class="sidebar-divider"></div>
+        <a href="${pageContext.request.contextPath}/admin/reports" class="<%= "reports".equals(currentPage) ? "active" : "" %>">
+            <i class='bx bxs-bar-chart-alt-2'></i> Báo cáo Thống kê
+        </a>
+        <a href="${pageContext.request.contextPath}/admin/notifications" class="<%= "notifications".equals(currentPage) ? "active" : "" %>">
+            <i class='bx bxs-bell-ring'></i> Gửi Thông báo
         </a>
         <div class="sidebar-divider"></div>
         <a href="${pageContext.request.contextPath}/home">

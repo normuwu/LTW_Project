@@ -247,6 +247,6 @@
     </main>
     
     <jsp:include page="/components/scripts.jsp" />
+    <jsp:include page="/components/admin-toast.jsp" />
 </body>
 </html>
-
