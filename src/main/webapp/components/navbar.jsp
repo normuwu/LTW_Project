@@ -1,11 +1,10 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
-    NAVBAR COMPONENT - Dùng chung cho tất cả trang (trừ home)
+    NAVBAR COMPONENT - Dùng chung cho tất cả trang
     Include: <jsp:include page="/components/navbar.jsp" />
 --%>
 
-<!-- Boxicons CSS -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <style>
@@ -13,7 +12,7 @@
        NAVBAR STYLES - Component chung
        ======================================== */
     
-    /* Font chung - KHÔNG áp dụng cho icon */
+    /* Font chung */
     nav#navbar-main {
         font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
@@ -25,7 +24,6 @@
     nav#navbar-main .dropdown-item {
         font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
-    /* Icon giữ nguyên font boxicons */
     nav#navbar-main i.bx {
         font-family: 'boxicons' !important;
     }
@@ -87,7 +85,7 @@
         text-decoration: none !important;
     }
     
-    /* Nav Link Dropdown Toggle */
+    /* Nav Link Dropdown Toggle - Đã lấy từ nhánh Main để mũi tên đẹp hơn */
     nav#navbar-main .nav-link.dropdown-toggle {
         display: flex !important;
         align-items: center !important;
@@ -118,7 +116,7 @@
         height: 24px !important;
     }
     
-    /* Booking Button - Primary CTA (màu xanh lá giống trang home) */
+    /* --- BUTTONS STYLES --- */
     nav#navbar-main .btn-nav-booking {
         background: linear-gradient(135deg, #00bfa5 0%, #008f7a 100%) !important;
         color: #ffffff !important;
@@ -139,10 +137,8 @@
         box-shadow: 0 6px 20px rgba(0, 191, 165, 0.35) !important;
         background: linear-gradient(135deg, #008f7a 0%, #007a66 100%) !important;
         color: #ffffff !important;
-        text-decoration: none !important;
     }
     
-    /* Login Button */
     nav#navbar-main .btn-nav-login {
         color: #444444 !important;
         border: 2px solid #e0e0e0 !important;
@@ -161,17 +157,13 @@
         background-color: #0b1a33 !important;
         border-color: #0b1a33 !important;
         color: #ffffff !important;
-        text-decoration: none !important;
     }
     nav#navbar-main .btn-nav-login i {
         font-size: 1.1rem !important;
         color: #00bfa5 !important;
     }
-    nav#navbar-main .btn-nav-login:hover i {
-        color: #ffffff !important;
-    }
+    nav#navbar-main .btn-nav-login:hover i { color: #ffffff !important; }
     
-    /* User Dropdown Button */
     nav#navbar-main .btn-nav-user {
         background: #f5f7fa !important;
         border: 2px solid #e8eaed !important;
@@ -193,8 +185,39 @@
         font-size: 1.1rem !important;
         color: #00bfa5 !important;
     }
+
+    /* --- CART ICON STYLE (MỚI) --- */
+    nav#navbar-main .btn-nav-cart {
+        color: #444444 !important;
+        font-size: 1.5rem !important;
+        text-decoration: none !important;
+        position: relative !important;
+        padding: 8px !important;
+        border-radius: 50% !important;
+        transition: all 0.2s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-right: 5px !important;
+    }
+    nav#navbar-main .btn-nav-cart:hover {
+        color: #00bfa5 !important;
+        background-color: #f5f7fa !important;
+    }
+    nav#navbar-main .cart-badge {
+        position: absolute !important;
+        top: 0px !important;
+        right: 0px !important;
+        font-size: 0.65rem !important;
+        padding: 0.25em 0.5em !important;
+        background-color: #dc3545 !important;
+        color: white !important;
+        border-radius: 50rem !important;
+        border: 2px solid #fff !important;
+        transform: translate(25%, -25%) !important;
+    }
     
-    /* Dropdown Menu - CRITICAL: Must be higher than all other elements */
+    /* Dropdown Menu */
     nav#navbar-main .dropdown {
         position: relative !important;
     }
@@ -248,7 +271,7 @@
         border-color: #e8eaed !important;
     }
     
-    /* Language Select */
+    /* Lang Select */
     nav#navbar-main .nav-lang-select {
         color: #666666 !important;
         font-weight: 500 !important;
@@ -259,27 +282,12 @@
         gap: 5px !important;
         padding: 8px 12px !important;
         border-radius: 8px !important;
-        transition: background 0.2s !important;
-    }
-    nav#navbar-main .nav-lang-select:hover {
-        background: #f5f7fa !important;
-    }
-    nav#navbar-main .nav-lang-select i {
-        font-size: 1.1rem !important;
-        color: #00bfa5 !important;
     }
     
-    /* Body padding để tránh navbar che nội dung */
-    body {
-        padding-top: 80px !important;
-        margin-top: 0 !important;
-    }
+    body { padding-top: 80px !important; margin-top: 0 !important; }
     
-    /* Responsive */
     @media (max-width: 991px) {
-        nav#navbar-main {
-            padding: 12px 0 !important;
-        }
+        nav#navbar-main { padding: 12px 0 !important; }
         nav#navbar-main .navbar-collapse {
             background: #ffffff !important;
             padding: 20px !important;
@@ -287,10 +295,6 @@
             margin-top: 15px !important;
             box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
             border: 1px solid #e8eaed !important;
-        }
-        nav#navbar-main .nav-link {
-            padding: 14px 18px !important;
-            font-size: 1rem !important;
         }
         nav#navbar-main .navbar-nav-buttons {
             flex-direction: column !important;
@@ -305,12 +309,12 @@
             justify-content: center !important;
             padding: 14px 24px !important;
         }
-        nav#navbar-main .nav-lang-select {
-            display: none !important;
+        /* Mobile: Giỏ hàng căn giữa */
+        nav#navbar-main .btn-nav-cart {
+            margin: 10px auto !important;
         }
-        body {
-            padding-top: 70px !important;
-        }
+        nav#navbar-main .nav-lang-select { display: none !important; }
+        body { padding-top: 70px !important; }
     }
 </style>
 
@@ -373,6 +377,9 @@
                         </li>
                     </ul>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/shop">Siêu thị</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/community">Cộng đồng</a>
                 </li>
@@ -383,8 +390,18 @@
         </div>
 
         <div class="d-flex align-items-center gap-3 navbar-nav-buttons">
+            
             <a href="${pageContext.request.contextPath}/booking" class="btn-nav-booking">
                 Đặt Hẹn
+            </a>
+
+            <a href="${pageContext.request.contextPath}/shopping/cart.jsp" class="btn-nav-cart">
+                <i class='bx bx-cart'></i>
+                <c:if test="${not empty sessionScope.totalQuantity and sessionScope.totalQuantity > 0}">
+                    <span class="cart-badge">
+                        ${sessionScope.totalQuantity}
+                    </span>
+                </c:if>
             </a>
             
             <c:choose>
@@ -433,7 +450,6 @@
     </div>
 </nav>
 
-<!-- Script để xử lý dropdown thủ công nếu Bootstrap không hoạt động -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Tìm tất cả dropdown toggle trong navbar
