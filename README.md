@@ -4,11 +4,11 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
 ## 📋 Yêu Cầu Hệ Thống
 
-| Phần mềm | Phiên bản | Ghi chú |
-|----------|-----------|---------|
-| Java JDK | 11, 17, 21 | Bytecode target = 11 |
+| Phần mềm | Phiên bản | Download |
+|----------|-----------|----------|
+| Java JDK | 11, 17, 21 | [Adoptium](https://adoptium.net/) |
 | Apache Maven | 3.6+ | [Download](https://maven.apache.org/download.cgi) |
-| Apache Tomcat | **9.x** | ⚠️ Không hỗ trợ Tomcat 10/11 |
+| Apache Tomcat | **9.x** | [Download Tomcat 9](https://tomcat.apache.org/download-90.cgi) |
 | MySQL | 8.0 | [Download](https://dev.mysql.com/downloads/mysql/) |
 
 > ⚠️ **Lưu ý quan trọng về Tomcat:**
