@@ -9,14 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import DAO.AppointmentDAO;
+import DAO.UserDAO;
 import Model.Appointment;
 import Model.User;
+import Util.EmailUtil;
 
 @WebServlet("/pages/admin/appointments")
 public class AppointmentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     private AppointmentDAO appointmentDAO = new AppointmentDAO();
+    private UserDAO userDAO = new UserDAO();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -117,6 +120,8 @@ public class AppointmentServlet extends HttpServlet {
                 String result = appointmentDAO.approveAppointment(appointmentId);
                 if ("SUCCESS".equals(result)) {
                     message = "Đã duyệt lịch hẹn #" + appointmentId + " thành công!";
+                    // Gửi email thông báo duyệt lịch
+                    sendApprovalEmail(appointmentId);
                 } else if ("FULL".equals(result)) {
                     message = "Không thể duyệt! Bác sĩ đã full lịch trong ngày này.";
                     messageType = "error";
@@ -129,6 +134,8 @@ public class AppointmentServlet extends HttpServlet {
             case "reject":
                 if (appointmentDAO.rejectAppointment(appointmentId)) {
                     message = "Đã từ chối lịch hẹn #" + appointmentId;
+                    // Gửi email thông báo từ chối
+                    sendRejectionEmail(appointmentId, "Lịch hẹn không phù hợp với lịch làm việc");
                 } else {
                     message = "Có lỗi xảy ra!";
                     messageType = "error";
@@ -145,8 +152,11 @@ public class AppointmentServlet extends HttpServlet {
                 break;
                 
             case "cancel":
+                String cancelReason = request.getParameter("reason");
                 if (appointmentDAO.cancelAppointment(appointmentId)) {
                     message = "Đã hủy lịch hẹn #" + appointmentId;
+                    // Gửi email thông báo hủy
+                    sendCancellationEmail(appointmentId, cancelReason);
                 } else {
                     message = "Có lỗi xảy ra!";
                     messageType = "error";
@@ -166,6 +176,91 @@ public class AppointmentServlet extends HttpServlet {
         session.setAttribute("message", message);
         session.setAttribute("messageType", messageType);
         response.sendRedirect(request.getContextPath() + "/pages/admin/appointments");
+    }
+    
+    // Helper method: Gửi email khi duyệt lịch hẹn
+    private void sendApprovalEmail(int appointmentId) {
+        try {
+            Appointment apt = appointmentDAO.getAppointmentById(appointmentId);
+            if (apt == null || apt.getUserId() <= 0) return;
+            
+            String email = userDAO.getEmailByUserId(apt.getUserId());
+            if (email == null || email.isEmpty()) return;
+            
+            String dateStr = apt.getBookingDate() != null ? apt.getBookingDate().toString() : "Chưa xác định";
+            
+            EmailUtil.sendEmail(
+                email,
+                "Lịch hẹn đã được duyệt - PetVaccine",
+                buildApprovalEmailHtml(apt.getCustomerName(), apt.getPetName(), 
+                    apt.getServiceName(), dateStr, apt.getDoctorName())
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Helper method: Gửi email khi từ chối lịch hẹn
+    private void sendRejectionEmail(int appointmentId, String reason) {
+        try {
+            Appointment apt = appointmentDAO.getAppointmentById(appointmentId);
+            if (apt == null || apt.getUserId() <= 0) return;
+            
+            String email = userDAO.getEmailByUserId(apt.getUserId());
+            if (email == null || email.isEmpty()) return;
+            
+            String dateStr = apt.getBookingDate() != null ? apt.getBookingDate().toString() : "Chưa xác định";
+            
+            EmailUtil.sendCancellationNotification(
+                email, apt.getCustomerName(), apt.getPetName(),
+                apt.getServiceName(), dateStr, reason != null ? reason : "Không có lý do cụ thể"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Helper method: Gửi email khi hủy lịch hẹn
+    private void sendCancellationEmail(int appointmentId, String reason) {
+        try {
+            Appointment apt = appointmentDAO.getAppointmentById(appointmentId);
+            if (apt == null || apt.getUserId() <= 0) return;
+            
+            String email = userDAO.getEmailByUserId(apt.getUserId());
+            if (email == null || email.isEmpty()) return;
+            
+            String dateStr = apt.getBookingDate() != null ? apt.getBookingDate().toString() : "Chưa xác định";
+            
+            EmailUtil.sendCancellationNotification(
+                email, apt.getCustomerName(), apt.getPetName(),
+                apt.getServiceName(), dateStr, reason != null ? reason : "Theo yêu cầu"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // HTML template cho email duyệt lịch
+    private String buildApprovalEmailHtml(String customerName, String petName, 
+            String serviceName, String date, String doctorName) {
+        return "<!DOCTYPE html>" +
+            "<html><head><meta charset='UTF-8'></head>" +
+            "<body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>" +
+            "<div style='background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 30px; text-align: center;'>" +
+            "  <h1 style='color: white; margin: 0;'>✅ Lịch hẹn đã được duyệt!</h1>" +
+            "</div>" +
+            "<div style='padding: 30px; background: #f9f9f9;'>" +
+            "  <p>Xin chào <strong>" + customerName + "</strong>,</p>" +
+            "  <p>Lịch hẹn của bạn đã được xác nhận. Vui lòng đến đúng giờ!</p>" +
+            "  <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0;'>" +
+            "    <p><strong>🐕 Thú cưng:</strong> " + (petName != null ? petName : "Chưa có") + "</p>" +
+            "    <p><strong>💉 Dịch vụ:</strong> " + (serviceName != null ? serviceName : "Chưa xác định") + "</p>" +
+            "    <p><strong>📅 Ngày hẹn:</strong> " + date + "</p>" +
+            "    <p><strong>👨‍⚕️ Bác sĩ:</strong> " + (doctorName != null ? doctorName : "Sẽ được phân công") + "</p>" +
+            "  </div>" +
+            "  <p style='color: #666;'>Trân trọng,<br>Đội ngũ PetVaccine</p>" +
+            "</div>" +
+            "</body></html>";
     }
 }
 

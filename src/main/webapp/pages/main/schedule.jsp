@@ -15,6 +15,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <jsp:include page="/components/favicon.jsp" />
 
     <title>Lịch Hẹn Của Tôi - Animal Doctors</title>
     

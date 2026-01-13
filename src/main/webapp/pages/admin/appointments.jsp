@@ -1,12 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- Chuyển session messages sang request scope --%>
-<c:if test="${not empty sessionScope.message}">
-    <c:set var="message" value="${sessionScope.message}" scope="request"/>
-    <c:set var="messageType" value="${sessionScope.messageType}" scope="request"/>
-    <c:remove var="message" scope="session"/>
-    <c:remove var="messageType" scope="session"/>
-</c:if>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -67,8 +60,8 @@
             flex-wrap: wrap;
         }
         .search-box {
-            flex: 1;
-            min-width: 250px;
+            width: 280px;
+            min-width: 200px;
             position: relative;
         }
         .search-box input {
@@ -97,38 +90,43 @@
         }
         .filter-select:focus { outline: none; border-color: var(--accent-blue); }
         
-        /* Quick Filters */
+        /* Quick Filters - Left aligned below search */
         .quick-filters {
             display: flex;
+            width: 100%;
             gap: 10px;
             margin-top: 14px;
             padding-top: 14px;
             border-top: 1px solid #e2e8f0;
+            align-items: center;
+            flex-wrap: wrap;
         }
         .quick-btn {
-            padding: 8px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 9px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             background: white;
             font-size: 0.85rem;
-            color: #64748b;
+            color: #475569;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-weight: 500;
+            font-weight: 600;
         }
         .quick-btn:hover { 
             border-color: #3b82f6; 
             color: #3b82f6;
             background: #eff6ff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
         }
         .quick-btn.active { 
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
             color: white; 
             border-color: #3b82f6;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
         .filter-tag {
             display: inline-flex;
@@ -151,22 +149,26 @@
             line-height: 1;
         }
         .btn-reset {
-            padding: 8px 14px;
+            padding: 9px 16px;
             background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border: 2px solid #fecaca;
+            border-radius: 10px;
             font-size: 0.85rem;
-            color: #64748b;
+            color: #dc2626;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s;
+            font-weight: 600;
+            margin-left: auto;
         }
         .btn-reset:hover { 
-            background: #fee2e2;
-            border-color: #fecaca;
-            color: #dc2626;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-color: #ef4444;
+            color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         /* Table Section */
@@ -262,51 +264,78 @@
             background: #ecfdf5; 
         }
         
-        /* Data Table */
-        .data-table { width: 100%; border-collapse: collapse; }
+        /* Data Table - Enhanced */
+        .data-table { 
+            width: 100%; 
+            border-collapse: collapse;
+        }
         .data-table th {
             text-align: left;
-            padding: 14px 20px;
+            padding: 16px 20px;
             font-size: 0.8rem;
-            font-weight: 600;
-            color: #64748b;
+            font-weight: 700;
+            color: #475569;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
+            letter-spacing: 0.6px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 2px solid #e2e8f0;
         }
-        .data-table th.sortable { cursor: pointer; user-select: none; }
-        .data-table th.sortable:hover { color: #3b82f6; }
+        .data-table th.sortable { 
+            cursor: pointer; 
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .data-table th.sortable:hover { 
+            color: #3b82f6; 
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
         .data-table th .sort-icon { margin-left: 4px; opacity: 0.5; }
         .data-table th.sorted .sort-icon { opacity: 1; color: #3b82f6; }
         .data-table td {
-            padding: 16px 20px;
+            padding: 18px 20px;
             border-bottom: 1px solid #f1f5f9;
             font-size: 0.9rem;
             color: #334155;
             vertical-align: middle;
         }
-        .data-table tr:hover { background: #f8fafc; }
-        .data-table tr.selected { background: #eff6ff; }
+        .data-table tr:hover { 
+            background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .data-table tr.selected { 
+            background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%);
+        }
 
         /* Cell Styles */
         .cell-customer { min-width: 140px; }
-        .customer-name { font-weight: 600; color: #0f172a; }
-        .customer-phone { font-size: 0.8rem; color: #94a3b8; margin-top: 2px; }
+        .customer-name { font-weight: 700; color: #0f172a; font-size: 0.95rem; }
+        .customer-phone { font-size: 0.8rem; color: #94a3b8; margin-top: 3px; }
         
         .cell-pet { min-width: 100px; }
-        .pet-name { font-weight: 600; }
+        .pet-name { font-weight: 700; color: #1e293b; }
         .pet-badge {
             display: inline-block;
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-top: 4px;
+            border: 1px solid transparent;
         }
-        .pet-badge.dog { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #b45309; }
-        .pet-badge.cat { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); color: #be185d; }
-        .pet-badge.other { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4338ca; }
+        .pet-badge.dog { 
+            background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%); 
+            color: #92400e; 
+            border-color: #fcd34d;
+        }
+        .pet-badge.cat { 
+            background: linear-gradient(135deg, #fbcfe8 0%, #f9a8d4 100%); 
+            color: #831843; 
+            border-color: #f9a8d4;
+        }
+        .pet-badge.other { 
+            background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%); 
+            color: #3730a3; 
+            border-color: #a5b4fc;
+        }
         
         .service-badge {
             display: inline-block;
@@ -327,22 +356,48 @@
             font-size: 0.85rem;
         }
         
-        /* Status Badges - Modern Design */
+        /* Status Badges - Enhanced Bold Colors */
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 14px;
+            padding: 7px 16px;
             border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
+            border: 2px solid transparent;
         }
-        .status-badge i { font-size: 0.9rem; }
-        .status-pending { background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); color: #a16207; }
-        .status-confirmed { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #15803d; }
-        .status-completed { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); color: #7e22ce; }
-        .status-rejected { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #b91c1c; }
-        .status-cancelled { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); color: #4b5563; }
+        .status-badge i { font-size: 1rem; }
+        .status-pending { 
+            background: linear-gradient(135deg, #fef08a 0%, #fde047 100%); 
+            color: #854d0e; 
+            border-color: #fde047;
+            box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
+        }
+        .status-confirmed { 
+            background: linear-gradient(135deg, #86efac 0%, #4ade80 100%); 
+            color: #14532d; 
+            border-color: #4ade80;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+        }
+        .status-completed { 
+            background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%); 
+            color: #581c87; 
+            border-color: #a855f7;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+        }
+        .status-rejected { 
+            background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%); 
+            color: #7f1d1d; 
+            border-color: #f87171;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+        .status-cancelled { 
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%); 
+            color: #1f2937; 
+            border-color: #9ca3af;
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+        }
         
         /* Actions Menu */
         .actions-cell { position: relative; }
@@ -387,19 +442,46 @@
             font-size: 0.9rem;
             color: #334155;
             cursor: pointer;
-            transition: background 0.15s;
+            transition: all 0.2s;
             border: none;
             background: none;
             width: 100%;
             text-align: left;
-            font-weight: 500;
+            font-weight: 600;
         }
-        .action-menu-item:hover { background: #f8fafc; }
-        .action-menu-item.success { color: #10b981; }
-        .action-menu-item.success:hover { background: #ecfdf5; }
-        .action-menu-item.danger { color: #ef4444; }
-        .action-menu-item.danger:hover { background: #fef2f2; }
-        .action-menu-item i { font-size: 1.1rem; width: 20px; }
+        .action-menu-item:hover { 
+            background: #f8fafc; 
+            transform: translateX(2px);
+        }
+        .action-menu-item.success { 
+            color: #059669; 
+        }
+        .action-menu-item.success:hover { 
+            background: linear-gradient(90deg, #ecfdf5 0%, #d1fae5 100%); 
+            color: #047857;
+        }
+        .action-menu-item.danger { 
+            color: #dc2626; 
+        }
+        .action-menu-item.danger:hover { 
+            background: linear-gradient(90deg, #fef2f2 0%, #fee2e2 100%); 
+            color: #b91c1c;
+        }
+        .action-menu-item.warning { 
+            color: #d97706; 
+        }
+        .action-menu-item.warning:hover { 
+            background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%); 
+            color: #b45309;
+        }
+        .action-menu-item.info { 
+            color: #2563eb; 
+        }
+        .action-menu-item.info:hover { 
+            background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%); 
+            color: #1d4ed8;
+        }
+        .action-menu-item i { font-size: 1.2rem; width: 20px; }
         .action-divider { height: 1px; background: #e2e8f0; margin: 4px 0; }
 
         /* Drawer */
@@ -570,7 +652,7 @@
         }
         .empty-state i { font-size: 4rem; margin-bottom: 20px; opacity: 0.4; }
         
-        /* Checkbox */
+        /* Checkbox - Black Checkmark */
         .custom-checkbox {
             width: 20px;
             height: 20px;
@@ -579,11 +661,18 @@
             cursor: pointer;
             appearance: none;
             transition: all 0.15s;
+            background-color: white;
+        }
+        .custom-checkbox:hover {
+            border-color: #cbd5e1;
         }
         .custom-checkbox:checked {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            border-color: #3b82f6;
-            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-color: white;
+            border-color: #0f172a;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%230f172a' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         
         /* Alert */
@@ -634,18 +723,6 @@
                 <i class='bx bxs-user-circle'></i> ${sessionScope.user.fullname}
             </div>
         </div>
-
-        <!-- Alert Message -->
-        <c:if test="${not empty message}">
-            <div class="alert alert-${messageType == 'error' ? 'error' : 'success'}">
-                <i class='bx ${messageType == "error" ? "bx-error-circle" : "bx-check-circle"}'></i>
-                ${message}
-                <button class="alert-close" onclick="this.parentElement.remove()">
-                    <i class='bx bx-x'></i>
-                </button>
-            </div>
-        </c:if>
-
         <!-- Stats Cards - Giống Dashboard -->
         <div class="stats-grid">
             <div class="stat-card orange" data-filter="Pending" onclick="filterByStatus('Pending')">
@@ -687,22 +764,20 @@
                     <option value="Mèo">Mèo</option>
                     <option value="Khác">Khác</option>
                 </select>
-                <input type="date" class="filter-select" id="filterDateFrom" onchange="applyFilters()" title="Từ ngày">
-                <input type="date" class="filter-select" id="filterDateTo" onchange="applyFilters()" title="Đến ngày">
+                <input type="date" class="filter-select" id="filterDate" onchange="applyFilters()" placeholder="Chọn ngày" title="Tìm theo ngày cụ thể">
             </div>
             <div class="quick-filters">
-                <button class="quick-btn" onclick="quickFilter('today')">
-                    <i class='bx bx-calendar'></i> Hôm nay
+                <button class="quick-btn" onclick="quickFilter('today', this)">
+                    <i class='bx bx-calendar-check'></i> Hôm nay
                 </button>
-                <button class="quick-btn" onclick="quickFilter('week')">
+                <button class="quick-btn" onclick="quickFilter('week', this)">
                     <i class='bx bx-calendar-week'></i> 7 ngày tới
                 </button>
-                <button class="quick-btn" onclick="quickFilter('pending')">
-                    <i class='bx bx-loader-circle'></i> Chưa xử lý
+                <button class="quick-btn" onclick="quickFilter('pending', this)">
+                    <i class='bx bx-time-five'></i> Chờ duyệt
                 </button>
-                <div id="activeFilters" style="display: flex; gap: 8px; margin-left: auto;"></div>
-                <button class="btn-reset" onclick="resetFilters()" id="resetBtn" style="display: none;">
-                    <i class='bx bx-reset'></i> Xóa bộ lọc
+                <button class="btn-reset" onclick="resetFilters()" id="resetBtn">
+                    <i class='bx bx-x-circle'></i> Xóa bộ lọc
                 </button>
             </div>
         </div>
@@ -910,6 +985,7 @@
     </form>
 
     <jsp:include page="/components/scripts.jsp" />
+    <jsp:include page="/components/admin-toast.jsp" />
 
     <script>
         // State
@@ -983,22 +1059,35 @@
             applyFilters();
         }
 
-        function quickFilter(type) {
+        function quickFilter(type, button) {
+            // Remove active from all buttons
             document.querySelectorAll('.quick-btn').forEach(function(b) { b.classList.remove('active'); });
-            event.target.classList.add('active');
+            
+            // Add active to clicked button
+            if (button) {
+                button.classList.add('active');
+            }
             
             var today = new Date().toISOString().split('T')[0];
-            var weekLater = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0];
+            
+            // Reset filters first
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterPetType').value = '';
+            document.getElementById('filterDate').value = '';
             
             if (type === 'today') {
-                document.getElementById('filterDateFrom').value = today;
-                document.getElementById('filterDateTo').value = today;
+                // Filter by today's date
+                document.getElementById('filterDate').value = today;
             } else if (type === 'week') {
-                document.getElementById('filterDateFrom').value = today;
-                document.getElementById('filterDateTo').value = weekLater;
+                // For 7 days ahead, we'll filter by status and show message
+                // Since we only have single date filter, we'll just clear date and show all
+                document.getElementById('filterDate').value = '';
             } else if (type === 'pending') {
-                document.getElementById('filterStatus').value = '';
+                // Filter by Pending status
+                document.getElementById('filterStatus').value = 'Pending';
             }
+            
             applyFilters();
         }
 
@@ -1006,8 +1095,7 @@
             var search = document.getElementById('searchInput').value.toLowerCase();
             var status = document.getElementById('filterStatus').value;
             var petType = document.getElementById('filterPetType').value;
-            var dateFrom = document.getElementById('filterDateFrom').value;
-            var dateTo = document.getElementById('filterDateTo').value;
+            var filterDate = document.getElementById('filterDate').value;
             
             var visibleCount = 0;
             document.querySelectorAll('#appointmentsBody tr[data-id]').forEach(function(row) {
@@ -1027,8 +1115,7 @@
                 }
                 if (status && rowStatus !== status) show = false;
                 if (petType && rowPetType !== petType) show = false;
-                if (dateFrom && rowDate < dateFrom) show = false;
-                if (dateTo && rowDate > dateTo) show = false;
+                if (filterDate && rowDate !== filterDate) show = false;
                 
                 row.style.display = show ? '' : 'none';
                 if (show) visibleCount++;
@@ -1043,8 +1130,7 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('filterStatus').value = '';
             document.getElementById('filterPetType').value = '';
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterDate').value = '';
             document.querySelectorAll('.stat-card').forEach(function(c) { c.classList.remove('active'); });
             document.querySelectorAll('.quick-btn').forEach(function(b) { b.classList.remove('active'); });
             applyFilters();
@@ -1065,9 +1151,9 @@
             var hasFilters = document.getElementById('searchInput').value || 
                               document.getElementById('filterStatus').value ||
                               document.getElementById('filterPetType').value ||
-                              document.getElementById('filterDateFrom').value ||
-                              document.getElementById('filterDateTo').value;
-            document.getElementById('resetBtn').style.display = hasFilters ? '' : 'none';
+                              document.getElementById('filterDate').value ||
+                              document.querySelector('.quick-btn.active');
+            document.getElementById('resetBtn').style.display = hasFilters ? 'flex' : 'none';
         }
 
         function updateResultCount(count) {

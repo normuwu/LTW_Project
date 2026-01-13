@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- PRG: Đọc success message từ session (sau redirect) --%>
 <c:if test="${not empty sessionScope.success}">
     <c:set var="success" value="${sessionScope.success}" scope="request"/>
     <c:remove var="success" scope="session"/>
@@ -13,7 +12,7 @@
     <jsp:include page="/components/head.jsp" />
     <style>
         body {
-            background: linear-gradient(135deg, #0b1a33 0%, #1a3a5c 100%);
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,31 +21,31 @@
         .login-container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             padding: 40px;
             max-width: 420px;
             width: 100%;
         }
         .login-title {
-            color: #0b1a33;
+            color: #1976d2;
             font-weight: bold;
             margin-bottom: 30px;
             text-align: center;
         }
         .btn-login {
-            background: linear-gradient(135deg, #0b1a33 0%, #1a3a5c 100%);
+            background: #1976d2;
             border: none;
             color: white;
             padding: 12px;
             font-weight: bold;
         }
         .btn-login:hover {
-            opacity: 0.9;
+            background: #1565c0;
             color: white;
         }
         .form-control:focus {
-            border-color: #0b1a33;
-            box-shadow: 0 0 0 0.2rem rgba(11, 26, 51, 0.25);
+            border-color: #1976d2;
+            box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
         }
         .form-control.is-invalid {
             border-color: #dc3545;
@@ -56,6 +55,34 @@
             color: #dc3545;
             font-size: 0.85rem;
             margin-top: 4px;
+        }
+        .form-check-input:checked {
+            background-color: #1976d2;
+            border-color: #1976d2;
+        }
+        .input-group-text {
+            background: #e3f2fd;
+            border-color: #90caf9;
+            color: #1976d2;
+        }
+        .password-toggle {
+            cursor: pointer;
+            padding: 0.375rem 0.75rem;
+            background: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-left: none;
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+        }
+        .password-toggle:hover {
+            color: #1976d2;
+        }
+        a {
+            color: #1976d2;
+        }
+        a:hover {
+            color: #1565c0;
         }
     </style>
 </head>
@@ -67,28 +94,44 @@
         
         <form method="post" action="${pageContext.request.contextPath}/login">
             <div class="mb-3">
-                <label class="form-label fw-bold">Tên đăng nhập</label>
+                <label class="form-label fw-bold">Email</label>
                 <div class="input-group">
-                    <span class="input-group-text"><i class='bx bx-user'></i></span>
-                    <input type="text" class="form-control ${not empty errors.username ? 'is-invalid' : ''}" 
-                           name="username" placeholder="Nhập tên đăng nhập" required
-                           value="${form.username}">
+                    <span class="input-group-text"><i class='bx bx-envelope'></i></span>
+                    <input type="email" class="form-control ${not empty errors.email ? 'is-invalid' : ''}" 
+                           name="email" placeholder="Nhập email" required
+                           value="${not empty form.email ? form.email : savedEmail}"
+                           autocomplete="email">
                 </div>
-                <c:if test="${not empty errors.username}">
-                    <div class="invalid-feedback">${errors.username}</div>
+                <c:if test="${not empty errors.email}">
+                    <div class="invalid-feedback">${errors.email}</div>
                 </c:if>
             </div>
             
-            <div class="mb-4">
+            <div class="mb-3">
                 <label class="form-label fw-bold">Mật khẩu</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class='bx bx-lock-alt'></i></span>
                     <input type="password" class="form-control ${not empty errors.password ? 'is-invalid' : ''}" 
-                           name="password" placeholder="Nhập mật khẩu" required>
+                           name="password" id="password" placeholder="Nhập mật khẩu" required
+                           autocomplete="current-password">
+                    <span class="password-toggle" id="togglePassword">
+                        <i class='bx bx-hide'></i>
+                    </span>
                 </div>
                 <c:if test="${not empty errors.password}">
                     <div class="invalid-feedback">${errors.password}</div>
                 </c:if>
+            </div>
+            
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe"
+                           ${not empty savedEmail ? 'checked' : ''}>
+                    <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                </div>
+                <a href="${pageContext.request.contextPath}/forgot-password" class="text-decoration-none small">
+                    Quên mật khẩu?
+                </a>
             </div>
             
             <button type="submit" class="btn btn-login w-100 mb-3">
@@ -100,15 +143,23 @@
                 <p><a href="${pageContext.request.contextPath}/home" class="text-muted"><i class='bx bx-arrow-back'></i> Quay về trang chủ</a></p>
             </div>
         </form>
-        
-        <hr>
-        <div class="text-muted small text-center">
-            <strong>Tài khoản demo:</strong><br>
-            Admin: admin / 123456<br>
-            User: user1 / 123456
-        </div>
     </div>
     
     <jsp:include page="/components/scripts.jsp" />
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const input = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bx-hide');
+                icon.classList.add('bx-show');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bx-show');
+                icon.classList.add('bx-hide');
+            }
+        });
+    </script>
 </body>
 </html>

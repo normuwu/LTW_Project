@@ -12,8 +12,10 @@ import javax.servlet.http.HttpSession;
 
 import DAO.AppointmentDAO;
 import DAO.DoctorDAO;
+import DAO.ServiceDAO;
 import Model.Doctors;
 import Model.User;
+import Util.EmailUtil;
 import Util.FormHelper;
 import Util.ValidationUtil;
 
@@ -127,8 +129,25 @@ public class BookingServlet extends HttpServlet {
             AppointmentDAO dao = new AppointmentDAO();
             dao.insertAppointment(userId, customerName, phone, petName, petType, serviceId, doctorId, dateStr, note);
 
+            // Gửi email xác nhận đặt lịch (nếu user đã đăng nhập và có email)
+            if (user != null && user.getEmail() != null && !user.getEmail().isEmpty()) {
+                // Lấy tên dịch vụ
+                ServiceDAO serviceDAO = new ServiceDAO();
+                String serviceName = serviceDAO.getServiceNameById(serviceId);
+                if (serviceName == null) serviceName = "Dịch vụ tiêm vaccine";
+                
+                EmailUtil.sendBookingConfirmation(
+                    user.getEmail(),
+                    customerName,
+                    petName != null ? petName : "Thú cưng",
+                    serviceName,
+                    dateStr,
+                    "Sẽ được thông báo sau khi duyệt"
+                );
+            }
+
             // Hiển thị thông báo thành công trên trang booking thay vì redirect
-            request.setAttribute("success", "Đặt lịch hẹn thành công!");
+            request.setAttribute("success", "Đặt lịch hẹn thành công! Kiểm tra email để xem chi tiết.");
             request.setAttribute("listDoctors", doctorDAO.getAllDoctors());
             request.getRequestDispatcher("/pages/main/booking.jsp").forward(request, response);
 

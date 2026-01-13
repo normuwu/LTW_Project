@@ -421,6 +421,16 @@
                             </c:if>
                             <c:if test="${sessionScope.role != 'admin'}">
                                 <li>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-pets">
+                                        <i class='bx bxs-dog'></i> Thú cưng của tôi
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/user/vaccination-history">
+                                        <i class='bx bx-injection'></i> Lịch sử tiêm chủng
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" href="${pageContext.request.contextPath}/schedule">
                                         <i class='bx bxs-calendar'></i> Lịch hẹn của tôi
                                     </a>

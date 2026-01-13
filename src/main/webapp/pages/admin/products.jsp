@@ -1,12 +1,5 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- Chuyển session messages sang request scope --%>
-<c:if test="${not empty sessionScope.message}">
-    <c:set var="message" value="${sessionScope.message}" scope="request"/>
-    <c:set var="messageType" value="${sessionScope.messageType}" scope="request"/>
-    <c:remove var="message" scope="session"/>
-    <c:remove var="messageType" scope="session"/>
-</c:if>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -86,86 +79,94 @@
         }
         .no-discount { color: #94a3b8; }
 
-        /* Image Upload Styles */
-        .image-upload-area {
+        /* Image Upload Styles - Match blogs.jsp */
+        .image-upload-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .image-preview-area {
+            width: 100%;
+            height: 180px;
             border: 2px dashed #e2e8f0;
-            border-radius: 14px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            background: #f8fafc;
-            min-height: 120px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
         }
-        .image-upload-area.dragover {
+        .image-preview-area:hover {
             border-color: #3b82f6;
             background: #eff6ff;
         }
-        .upload-placeholder i {
-            font-size: 2.5rem;
-            color: #94a3b8;
-            margin-bottom: 10px;
+        .image-preview-area.has-image {
+            border-style: solid;
+            border-color: #3b82f6;
         }
-        .upload-placeholder p {
-            margin: 4px 0;
-            color: #64748b;
+        .image-preview-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .preview-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+        }
+        .preview-placeholder i {
+            font-size: 2.5rem;
+            color: #cbd5e1;
+        }
+        .preview-placeholder span {
             font-size: 0.9rem;
         }
-        .upload-placeholder .upload-hint {
-            font-size: 0.8rem;
-            color: #94a3b8;
+        .image-upload-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        .upload-btn {
-            display: inline-block;
-            padding: 8px 18px;
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin: 8px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
         }
-        .upload-btn:hover {
+        .btn-upload:hover {
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
         }
-        .image-preview {
-            position: relative;
-            display: inline-block;
-        }
-        .image-preview img {
-            max-width: 180px;
-            max-height: 120px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .remove-image {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            width: 26px;
-            height: 26px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
+        .btn-remove-image {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+            gap: 6px;
+            padding: 10px 18px;
+            background: white;
+            color: #ef4444;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.2s;
         }
-        .remove-image:hover {
-            transform: scale(1.1);
+        .btn-remove-image:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
         }
         
         /* Price Input with VND format */
@@ -205,14 +206,6 @@
                 <i class='bx bxs-user-circle'></i> ${sessionScope.user.fullname}
             </div>
         </div>
-
-        <c:if test="${not empty message}">
-            <div class="alert alert-${messageType == 'error' ? 'error' : 'success'}">
-                <i class='bx ${messageType == "error" ? "bx-error-circle" : "bx-check-circle"}'></i>
-                ${message}
-                <button class="alert-close" onclick="this.parentElement.remove()"><i class='bx bx-x'></i></button>
-            </div>
-        </c:if>
 
         <!-- Stats Cards - Giống Dashboard -->
         <div class="stats-grid">
@@ -345,27 +338,29 @@
                     
                     <div class="form-group">
                         <label class="form-label">Ảnh sản phẩm</label>
-                        
-                        <!-- Image Upload Area -->
-                        <div class="image-upload-area" id="imageUploadArea">
-                            <div class="upload-placeholder" id="uploadPlaceholder">
-                                <i class='bx bx-cloud-upload'></i>
-                                <p>Kéo thả ảnh vào đây hoặc</p>
-                                <label for="imageFile" class="upload-btn">Chọn file</label>
-                                <p class="upload-hint">Hoặc nhấn Ctrl+V để dán ảnh</p>
+                        <div class="image-upload-wrapper">
+                            <div class="image-preview-area" id="imagePreviewArea">
+                                <img src="" alt="Preview" id="previewImg" style="display: none;">
+                                <div class="preview-placeholder" id="previewPlaceholder">
+                                    <i class='bx bx-image-add'></i>
+                                    <span>Chọn ảnh hoặc kéo thả vào đây</span>
+                                </div>
                             </div>
-                            <div class="image-preview" id="imagePreview" style="display: none;">
-                                <img id="previewImg" src="" alt="Preview">
-                                <button type="button" class="remove-image" onclick="removeImage()">
-                                    <i class='bx bx-x'></i>
+                            <div class="image-upload-actions">
+                                <label class="btn-upload" for="imageFile">
+                                    <i class='bx bx-upload'></i> Chọn ảnh
+                                </label>
+                                <input type="file" id="imageFile" name="imageFile" accept="image/*" 
+                                       onchange="handleFileSelect(event)" style="display: none;">
+                                <button type="button" class="btn-remove-image" id="btnRemoveImage" 
+                                        onclick="removeImage()" style="display: none;">
+                                    <i class='bx bx-trash'></i> Xóa ảnh
                                 </button>
                             </div>
+                            <span class="input-hint">Chấp nhận: JPG, PNG, GIF, WebP. Tối đa 5MB. Hoặc nhấn Ctrl+V để dán ảnh</span>
                         </div>
-                        <input type="file" id="imageFile" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
                         <input type="hidden" name="image" id="formImage">
                         <input type="hidden" name="imageData" id="formImageData">
-                        
-                        <div class="input-hint">Hỗ trợ: JPG, PNG, GIF. Tối đa 5MB</div>
                     </div>
                     
                     <div class="form-row">
@@ -440,6 +435,7 @@
     </div>
 
     <jsp:include page="/components/scripts.jsp" />
+    <jsp:include page="/components/admin-toast.jsp" />
 
     <script>
         // ========== FORMAT PRICE VND ==========
@@ -535,7 +531,7 @@
             document.getElementById('formDiscount').value = '0';
             document.getElementById('pricePreview').textContent = '';
             document.getElementById('oldPricePreview').textContent = '';
-            removeImage();
+            resetImagePreview();
             document.getElementById('productModal').classList.add('show');
         }
 
@@ -563,15 +559,11 @@
             // Show existing image
             var existingImage = row.dataset.image;
             if (existingImage) {
-                document.getElementById('previewImg').src = '${pageContext.request.contextPath}/assets/images/shop_pic/' + existingImage;
-                document.getElementById('previewImg').onerror = function() {
-                    removeImage();
-                };
-                document.getElementById('uploadPlaceholder').style.display = 'none';
-                document.getElementById('imagePreview').style.display = 'block';
+                var imgUrl = '${pageContext.request.contextPath}/assets/images/shop_pic/' + existingImage;
+                showImagePreview(imgUrl);
                 document.getElementById('formImageData').value = '';
             } else {
-                removeImage();
+                resetImagePreview();
             }
             
             document.getElementById('productModal').classList.add('show');
@@ -604,27 +596,37 @@
         });
 
         // ========== IMAGE UPLOAD FUNCTIONS ==========
-        var uploadArea = document.getElementById('imageUploadArea');
-        var uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        var imagePreview = document.getElementById('imagePreview');
+        var previewArea = document.getElementById('imagePreviewArea');
+        var previewPlaceholder = document.getElementById('previewPlaceholder');
         var previewImg = document.getElementById('previewImg');
+        var btnRemoveImage = document.getElementById('btnRemoveImage');
         var formImage = document.getElementById('formImage');
         var formImageData = document.getElementById('formImageData');
 
+        // Click to upload
+        previewArea.addEventListener('click', function() {
+            document.getElementById('imageFile').click();
+        });
+
         // Drag and Drop
-        uploadArea.addEventListener('dragover', function(e) {
+        previewArea.addEventListener('dragover', function(e) {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            previewArea.style.borderColor = '#3b82f6';
+            previewArea.style.background = '#eff6ff';
         });
 
-        uploadArea.addEventListener('dragleave', function(e) {
+        previewArea.addEventListener('dragleave', function(e) {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
+            if (!previewArea.classList.contains('has-image')) {
+                previewArea.style.borderColor = '#e2e8f0';
+                previewArea.style.background = '#f8fafc';
+            }
         });
 
-        uploadArea.addEventListener('drop', function(e) {
+        previewArea.addEventListener('drop', function(e) {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
+            previewArea.style.borderColor = '#e2e8f0';
+            previewArea.style.background = '#f8fafc';
             var files = e.dataTransfer.files;
             if (files.length > 0 && files[0].type.startsWith('image/')) {
                 processImage(files[0]);
@@ -663,10 +665,7 @@
 
             var reader = new FileReader();
             reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                uploadPlaceholder.style.display = 'none';
-                imagePreview.style.display = 'block';
-                
+                showImagePreview(e.target.result);
                 formImageData.value = e.target.result;
                 
                 var ext = file.name.split('.').pop() || 'jpg';
@@ -676,14 +675,30 @@
             reader.readAsDataURL(file);
         }
 
+        // Show image preview
+        function showImagePreview(src) {
+            previewImg.src = src;
+            previewImg.style.display = 'block';
+            previewPlaceholder.style.display = 'none';
+            btnRemoveImage.style.display = 'inline-flex';
+            previewArea.classList.add('has-image');
+        }
+
+        // Reset image preview
+        function resetImagePreview() {
+            previewImg.src = '';
+            previewImg.style.display = 'none';
+            previewPlaceholder.style.display = 'flex';
+            btnRemoveImage.style.display = 'none';
+            previewArea.classList.remove('has-image');
+            document.getElementById('imageFile').value = '';
+        }
+
         // Remove Image
         function removeImage() {
-            previewImg.src = '';
-            uploadPlaceholder.style.display = 'block';
-            imagePreview.style.display = 'none';
+            resetImagePreview();
             formImage.value = '';
             formImageData.value = '';
-            document.getElementById('imageFile').value = '';
         }
     </script>
 </body>

@@ -1,12 +1,5 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- Chuyển session messages sang request scope --%>
-<c:if test="${not empty sessionScope.message}">
-    <c:set var="message" value="${sessionScope.message}" scope="request"/>
-    <c:set var="messageType" value="${sessionScope.messageType}" scope="request"/>
-    <c:remove var="message" scope="session"/>
-    <c:remove var="messageType" scope="session"/>
-</c:if>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -68,14 +61,6 @@
                 <i class='bx bxs-user-circle'></i> ${sessionScope.user.fullname}
             </div>
         </div>
-
-        <c:if test="${not empty message}">
-            <div class="alert alert-${messageType == 'error' ? 'error' : 'success'}">
-                <i class='bx ${messageType == "error" ? "bx-error-circle" : "bx-check-circle"}'></i>
-                ${message}
-                <button class="alert-close" onclick="this.parentElement.remove()"><i class='bx bx-x'></i></button>
-            </div>
-        </c:if>
 
         <!-- Stats Cards - Giống Dashboard -->
         <div class="stats-grid">
@@ -158,7 +143,7 @@
                          data-image="${blog.image}" data-summary="${blog.summary}" data-date="${blog.date}">
                         <div class="blog-image-wrapper">
                             <img src="${pageContext.request.contextPath}/assets/images/community_pic/${blog.image}" 
-                                 alt="${blog.title}" class="blog-image"
+                                 alt="${blog.title}" class="blog-image" loading="lazy"
                                  onerror="this.src='${pageContext.request.contextPath}/assets/images/community_pic/default.jpg'">
                             <span class="blog-category">${blog.category}</span>
                         </div>
@@ -206,7 +191,7 @@
                                 <td><strong>${loop.index + 1}</strong></td>
                                 <td>
                                     <img src="${pageContext.request.contextPath}/assets/images/community_pic/${blog.image}" 
-                                         alt="" class="table-thumb"
+                                         alt="" class="table-thumb" loading="lazy"
                                          onerror="this.src='${pageContext.request.contextPath}/assets/images/community_pic/default.jpg'">
                                 </td>
                                 <td>
@@ -243,10 +228,11 @@
             <span class="modal-title" id="modalTitle">Thêm bài viết mới</span>
             <button class="modal-close" onclick="closeModal()"><i class='bx bx-x'></i></button>
         </div>
-        <form id="blogForm" method="post">
+        <form id="blogForm" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" id="formAction" value="add">
             <input type="hidden" name="id" id="formId">
             <input type="hidden" name="date" id="formDate">
+            <input type="hidden" name="existingImage" id="formExistingImage">
             
             <div class="modal-body">
                 <div class="form-group">
@@ -258,18 +244,21 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Danh mục <span class="required">*</span></label>
-                        <select class="form-select" name="category" id="formCategory" required>
-                            <option value="">Chọn danh mục</option>
-                            <option value="Sức khỏe">Sức khỏe</option>
-                            <option value="Dinh dưỡng">Dinh dưỡng</option>
-                            <option value="Chăm sóc">Chăm sóc</option>
-                            <option value="Huấn luyện">Huấn luyện</option>
-                            <option value="Tâm lý thú cưng">Tâm lý thú cưng</option>
-                            <option value="Review Sản phẩm">Review Sản phẩm</option>
-                            <option value="Chuyện bên lề">Chuyện bên lề</option>
-                            <option value="Cấp cứu">Cấp cứu</option>
-                            <option value="Góc nhìn">Góc nhìn</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select class="form-select" name="category" id="formCategory" required>
+                                <option value="">Chọn danh mục</option>
+                                <option value="Sức khỏe">Sức khỏe</option>
+                                <option value="Dinh dưỡng">Dinh dưỡng</option>
+                                <option value="Chăm sóc">Chăm sóc</option>
+                                <option value="Huấn luyện">Huấn luyện</option>
+                                <option value="Tâm lý thú cưng">Tâm lý thú cưng</option>
+                                <option value="Review Sản phẩm">Review Sản phẩm</option>
+                                <option value="Chuyện bên lề">Chuyện bên lề</option>
+                                <option value="Cấp cứu">Cấp cứu</option>
+                                <option value="Góc nhìn">Góc nhìn</option>
+                            </select>
+                            <i class='bx bx-chevron-down select-icon'></i>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tác giả <span class="required">*</span></label>
@@ -280,10 +269,26 @@
                 
                 <div class="form-group">
                     <label class="form-label">Ảnh bìa</label>
-                    <div class="image-input-wrapper">
-                        <input type="text" class="form-input" name="image" id="formImage" 
-                               placeholder="vd: blog1.jpg">
-                        <span class="input-hint">Đặt file ảnh vào thư mục /community_pic/</span>
+                    <div class="image-upload-wrapper">
+                        <div class="image-preview" id="imagePreview">
+                            <img src="" alt="Preview" id="previewImg" style="display: none;">
+                            <div class="preview-placeholder" id="previewPlaceholder">
+                                <i class='bx bx-image-add'></i>
+                                <span>Chọn ảnh hoặc kéo thả vào đây</span>
+                            </div>
+                        </div>
+                        <div class="image-upload-actions">
+                            <label class="btn-upload" for="imageFile">
+                                <i class='bx bx-upload'></i> Chọn ảnh
+                            </label>
+                            <input type="file" name="imageFile" id="imageFile" accept="image/*" 
+                                   onchange="previewImage(this)" style="display: none;">
+                            <button type="button" class="btn-remove-image" id="btnRemoveImage" 
+                                    onclick="removeImage()" style="display: none;">
+                                <i class='bx bx-trash'></i> Xóa ảnh
+                            </button>
+                        </div>
+                        <span class="input-hint">Chấp nhận: JPG, PNG, GIF, WebP. Tối đa 10MB</span>
                     </div>
                 </div>
                 
@@ -295,7 +300,9 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    <i class='bx bx-x'></i> Hủy bỏ
+                </button>
                 <button type="submit" class="btn btn-primary" id="submitBtn">
                     <i class='bx bx-save'></i> Lưu bài viết
                 </button>
@@ -330,9 +337,10 @@
 </div>
 
 <jsp:include page="/components/scripts.jsp" />
+<jsp:include page="/components/admin-toast.jsp" />
 
 <style>
-    /* Blog Grid - Modern Design */
+    /* Blog Grid - Modern Design with Performance Optimization */
     .blog-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -345,15 +353,20 @@
         border: 1px solid #e2e8f0;
         border-radius: 14px;
         overflow: hidden;
-        transition: all 0.3s ease;
         cursor: pointer;
         display: flex;
         flex-direction: column;
         box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        /* Performance: chỉ animate transform và box-shadow */
+        transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.15s ease-out;
+        will-change: transform;
+        /* Lazy render khi scroll */
+        content-visibility: auto;
+        contain-intrinsic-size: 0 420px;
     }
     .blog-card:hover { 
-        box-shadow: 0 12px 32px rgba(0,0,0,0.12); 
-        transform: translateY(-6px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1); 
+        transform: translateY(-4px);
         border-color: #3b82f6;
     }
     .blog-image-wrapper {
@@ -365,9 +378,11 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.4s ease;
+        /* Giảm animation để tăng performance */
+        transition: transform 0.2s ease-out;
+        will-change: transform;
     }
-    .blog-card:hover .blog-image { transform: scale(1.08); }
+    .blog-card:hover .blog-image { transform: scale(1.03); }
     .blog-category {
         position: absolute;
         top: 14px;
@@ -433,13 +448,12 @@
         justify-content: center;
         color: #64748b;
         font-size: 1.1rem;
-        transition: all 0.2s;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .action-btn:hover { 
         background: #eff6ff;
         color: #3b82f6; 
         border-color: #3b82f6; 
-        transform: translateY(-2px);
     }
     .action-btn.danger:hover { 
         background: #fef2f2;
@@ -673,43 +687,7 @@
     .btn-danger:hover { 
         background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-    }-select, .form-textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.9rem;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        box-sizing: border-box;
     }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-        outline: none;
-        border-color: var(--accent-blue);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-    .form-textarea { resize: vertical; min-height: 100px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .input-hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; display: block; }
-    
-    /* Buttons */
-    .btn {
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        border: none;
-        transition: all 0.2s;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .btn-secondary { background: var(--bg-primary); color: var(--text-primary); }
-    .btn-secondary:hover { background: #e2e8f0; }
-    .btn-primary { background: var(--accent-blue); color: white; }
-    .btn-primary:hover { background: #2563eb; }
-    .btn-danger { background: var(--accent-red); color: white; }
-    .btn-danger:hover { background: #dc2626; }
     
     /* Alert - Modern Design */
     .alert {
@@ -750,6 +728,119 @@
     }
     .empty-state i { font-size: 4rem; margin-bottom: 20px; opacity: 0.4; }
     .empty-state p { margin: 0 0 20px 0; font-size: 1.05rem; }
+
+    /* Select Wrapper with Icon */
+    .select-wrapper {
+        position: relative;
+    }
+    .select-wrapper .form-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 40px;
+    }
+    .select-wrapper .select-icon {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 1.2rem;
+        pointer-events: none;
+        transition: transform 0.2s;
+    }
+    .select-wrapper .form-select:focus + .select-icon {
+        color: #3b82f6;
+    }
+
+    /* Image Upload Styles */
+    .image-upload-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .image-preview {
+        width: 100%;
+        height: 180px;
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .image-preview:hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+    }
+    .image-preview.has-image {
+        border-style: solid;
+        border-color: #3b82f6;
+    }
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .preview-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: #94a3b8;
+    }
+    .preview-placeholder i {
+        font-size: 2.5rem;
+        color: #cbd5e1;
+    }
+    .preview-placeholder span {
+        font-size: 0.9rem;
+    }
+    .image-upload-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .btn-upload {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+    }
+    .btn-upload:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+    }
+    .btn-remove-image {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px;
+        background: white;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn-remove-image:hover {
+        background: #fef2f2;
+        border-color: #ef4444;
+    }
 </style>
 
 <script>
@@ -868,9 +959,13 @@
         document.getElementById('formTitle').value = '';
         document.getElementById('formCategory').value = '';
         document.getElementById('formAuthor').value = '';
-        document.getElementById('formImage').value = '';
+        document.getElementById('formExistingImage').value = '';
         document.getElementById('formSummary').value = '';
         document.getElementById('submitBtn').innerHTML = '<i class="bx bx-save"></i> Lưu bài viết';
+        
+        // Reset image preview
+        resetImagePreview();
+        
         document.getElementById('blogModal').classList.add('show');
     }
     
@@ -886,11 +981,122 @@
         document.getElementById('formTitle').value = card.dataset.title;
         document.getElementById('formCategory').value = card.dataset.category;
         document.getElementById('formAuthor').value = card.dataset.author;
-        document.getElementById('formImage').value = card.dataset.image;
+        document.getElementById('formExistingImage').value = card.dataset.image;
         document.getElementById('formSummary').value = card.dataset.summary;
         document.getElementById('submitBtn').innerHTML = '<i class="bx bx-save"></i> Cập nhật';
+        
+        // Show existing image preview
+        var existingImage = card.dataset.image;
+        if (existingImage) {
+            var imgUrl = '${pageContext.request.contextPath}/assets/images/community_pic/' + existingImage;
+            showImagePreview(imgUrl);
+        } else {
+            resetImagePreview();
+        }
+        
         document.getElementById('blogModal').classList.add('show');
     }
+    
+    // Preview image when file selected
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            
+            // Validate file size (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File quá lớn! Vui lòng chọn file nhỏ hơn 10MB.');
+                input.value = '';
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match(/^image\/(jpeg|png|gif|webp)$/)) {
+                alert('Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WebP)!');
+                input.value = '';
+                return;
+            }
+            
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                showImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // Show image preview
+    function showImagePreview(src) {
+        var previewImg = document.getElementById('previewImg');
+        var placeholder = document.getElementById('previewPlaceholder');
+        var removeBtn = document.getElementById('btnRemoveImage');
+        var previewWrapper = document.getElementById('imagePreview');
+        
+        previewImg.src = src;
+        previewImg.style.display = 'block';
+        placeholder.style.display = 'none';
+        removeBtn.style.display = 'inline-flex';
+        previewWrapper.classList.add('has-image');
+    }
+    
+    // Reset image preview
+    function resetImagePreview() {
+        var previewImg = document.getElementById('previewImg');
+        var placeholder = document.getElementById('previewPlaceholder');
+        var removeBtn = document.getElementById('btnRemoveImage');
+        var previewWrapper = document.getElementById('imagePreview');
+        var fileInput = document.getElementById('imageFile');
+        
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+        placeholder.style.display = 'flex';
+        removeBtn.style.display = 'none';
+        previewWrapper.classList.remove('has-image');
+        fileInput.value = '';
+    }
+    
+    // Remove image
+    function removeImage() {
+        resetImagePreview();
+        document.getElementById('formExistingImage').value = '';
+    }
+    
+    // Drag and drop support
+    document.addEventListener('DOMContentLoaded', function() {
+        var previewArea = document.getElementById('imagePreview');
+        if (previewArea) {
+            previewArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                previewArea.style.borderColor = '#3b82f6';
+                previewArea.style.background = '#eff6ff';
+            });
+            
+            previewArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                if (!previewArea.classList.contains('has-image')) {
+                    previewArea.style.borderColor = '#e2e8f0';
+                    previewArea.style.background = '#f8fafc';
+                }
+            });
+            
+            previewArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                previewArea.style.borderColor = '#e2e8f0';
+                previewArea.style.background = '#f8fafc';
+                
+                var files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    var fileInput = document.getElementById('imageFile');
+                    fileInput.files = files;
+                    previewImage(fileInput);
+                }
+            });
+            
+            // Click to upload
+            previewArea.addEventListener('click', function() {
+                document.getElementById('imageFile').click();
+            });
+        }
+    });
     
     // Close Modal
     function closeModal() {
