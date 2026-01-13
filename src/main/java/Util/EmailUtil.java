@@ -107,6 +107,32 @@ public class EmailUtil {
         sendEmailAsync(toEmail, subject, htmlContent);
     }
     
+    /**
+     * Gửi email thông báo lịch hẹn đã được duyệt
+     */
+    public static void sendAppointmentApproved(String toEmail, String customerName,
+            String petName, String serviceName, String appointmentDate, String doctorName) {
+        
+        String subject = "✅ Lịch hẹn đã được xác nhận - PetVaccine";
+        String htmlContent = buildApprovalEmail(customerName, petName, 
+                serviceName, appointmentDate, doctorName);
+        
+        sendEmailAsync(toEmail, subject, htmlContent);
+    }
+    
+    /**
+     * Gửi email thông báo lịch hẹn bị từ chối
+     */
+    public static void sendAppointmentRejected(String toEmail, String customerName,
+            String petName, String serviceName, String appointmentDate, String reason) {
+        
+        String subject = "❌ Lịch hẹn không được duyệt - PetVaccine";
+        String htmlContent = buildRejectionEmail(customerName, petName, 
+                serviceName, appointmentDate, reason);
+        
+        sendEmailAsync(toEmail, subject, htmlContent);
+    }
+    
     // ============ HTML EMAIL TEMPLATES ============
     
     private static String buildBookingConfirmationEmail(String customerName, String petName,
@@ -179,6 +205,66 @@ public class EmailUtil {
             "    <p><strong>📝 Lý do:</strong> " + (reason != null ? reason : "Không có") + "</p>" +
             "  </div>" +
             "  <p>Nếu bạn muốn đặt lịch mới, vui lòng truy cập website của chúng tôi.</p>" +
+            "  <p style='color: #666;'>Trân trọng,<br>Đội ngũ PetVaccine</p>" +
+            "</div>" +
+            "</body></html>";
+    }
+    
+    private static String buildApprovalEmail(String customerName, String petName,
+            String serviceName, String appointmentDate, String doctorName) {
+        
+        return "<!DOCTYPE html>" +
+            "<html><head><meta charset='UTF-8'></head>" +
+            "<body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>" +
+            "<div style='background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 30px; text-align: center;'>" +
+            "  <h1 style='color: white; margin: 0;'>✅ Lịch hẹn đã được xác nhận!</h1>" +
+            "</div>" +
+            "<div style='padding: 30px; background: #f9f9f9;'>" +
+            "  <p>Xin chào <strong>" + customerName + "</strong>,</p>" +
+            "  <p>Chúng tôi vui mừng thông báo lịch hẹn của bạn đã được <strong style='color: #11998e;'>XÁC NHẬN</strong>!</p>" +
+            "  <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #11998e;'>" +
+            "    <p><strong>🐕 Thú cưng:</strong> " + (petName != null ? petName : "Chưa có tên") + "</p>" +
+            "    <p><strong>💉 Dịch vụ:</strong> " + (serviceName != null ? serviceName : "Chưa xác định") + "</p>" +
+            "    <p><strong>📅 Ngày hẹn:</strong> " + appointmentDate + "</p>" +
+            "    <p><strong>👨‍⚕️ Bác sĩ:</strong> " + (doctorName != null && !doctorName.equals("Chưa chỉ định") ? doctorName : "Sẽ được phân công khi đến") + "</p>" +
+            "  </div>" +
+            "  <div style='background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 20px 0;'>" +
+            "    <p style='margin: 0; color: #2e7d32;'><strong>📍 Địa chỉ:</strong> 123 Đường ABC, Quận XYZ, TP.HCM</p>" +
+            "    <p style='margin: 10px 0 0 0; color: #2e7d32;'><strong>📞 Hotline:</strong> 1900 xxxx</p>" +
+            "  </div>" +
+            "  <p><strong>Lưu ý:</strong></p>" +
+            "  <ul style='color: #666;'>" +
+            "    <li>Vui lòng đến trước giờ hẹn 10-15 phút</li>" +
+            "    <li>Mang theo sổ tiêm chủng (nếu có)</li>" +
+            "    <li>Liên hệ hotline nếu cần thay đổi lịch</li>" +
+            "  </ul>" +
+            "  <p style='color: #666;'>Trân trọng,<br>Đội ngũ PetVaccine</p>" +
+            "</div>" +
+            "</body></html>";
+    }
+    
+    private static String buildRejectionEmail(String customerName, String petName,
+            String serviceName, String appointmentDate, String reason) {
+        
+        return "<!DOCTYPE html>" +
+            "<html><head><meta charset='UTF-8'></head>" +
+            "<body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>" +
+            "<div style='background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); padding: 30px; text-align: center;'>" +
+            "  <h1 style='color: white; margin: 0;'>❌ Lịch hẹn không được duyệt</h1>" +
+            "</div>" +
+            "<div style='padding: 30px; background: #f9f9f9;'>" +
+            "  <p>Xin chào <strong>" + customerName + "</strong>,</p>" +
+            "  <p>Rất tiếc, lịch hẹn sau đây <strong style='color: #e74c3c;'>KHÔNG ĐƯỢC DUYỆT</strong>:</p>" +
+            "  <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #e74c3c;'>" +
+            "    <p><strong>🐕 Thú cưng:</strong> " + (petName != null ? petName : "Chưa có tên") + "</p>" +
+            "    <p><strong>💉 Dịch vụ:</strong> " + (serviceName != null ? serviceName : "Chưa xác định") + "</p>" +
+            "    <p><strong>📅 Ngày hẹn:</strong> " + appointmentDate + "</p>" +
+            "    <p><strong>📝 Lý do:</strong> " + (reason != null ? reason : "Lịch không phù hợp") + "</p>" +
+            "  </div>" +
+            "  <div style='background: #fff3e0; padding: 15px; border-radius: 8px; margin: 20px 0;'>" +
+            "    <p style='margin: 0; color: #e65100;'><strong>💡 Gợi ý:</strong> Bạn có thể đặt lịch vào ngày khác hoặc liên hệ hotline để được hỗ trợ.</p>" +
+            "  </div>" +
+            "  <a href='#' style='display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; margin: 10px 0;'>Đặt lịch mới</a>" +
             "  <p style='color: #666;'>Trân trọng,<br>Đội ngũ PetVaccine</p>" +
             "</div>" +
             "</body></html>";

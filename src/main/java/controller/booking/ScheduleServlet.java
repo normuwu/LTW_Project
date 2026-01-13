@@ -88,14 +88,14 @@ public class ScheduleServlet extends HttpServlet {
                 session.setAttribute("error", "Chỉ có thể hủy lịch hẹn đang chờ xác nhận!");
             }
         } else if ("delete".equals(action)) {
-            if ("Cancelled".equals(apt.getStatus()) || "Rejected".equals(apt.getStatus())) {
+            if ("Cancelled".equals(apt.getStatus()) || "Rejected".equals(apt.getStatus()) || "Completed".equals(apt.getStatus())) {
                 if (dao.deleteAppointment(appointmentId)) {
                     session.setAttribute("success", "Đã xóa lịch hẹn thành công!");
                 } else {
                     session.setAttribute("error", "Có lỗi xảy ra khi xóa lịch hẹn!");
                 }
             } else {
-                session.setAttribute("error", "Chỉ có thể xóa lịch hẹn đã hủy hoặc bị từ chối!");
+                session.setAttribute("error", "Chỉ có thể xóa lịch hẹn đã hủy, bị từ chối hoặc đã hoàn thành!");
             }
         } else if ("update".equals(action)) {
             if ("Pending".equals(apt.getStatus())) {

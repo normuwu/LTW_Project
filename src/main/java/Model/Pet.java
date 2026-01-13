@@ -21,6 +21,7 @@ public class Pet {
     // Calculated fields
     private String age;          // Tuổi tính toán
     private int vaccinationCount; // Số mũi đã tiêm
+    private String ownerName;    // Tên chủ sở hữu (join từ users)
 
     public Pet() {}
 
@@ -69,6 +70,9 @@ public class Pet {
 
     public int getVaccinationCount() { return vaccinationCount; }
     public void setVaccinationCount(int vaccinationCount) { this.vaccinationCount = vaccinationCount; }
+    
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
     
     // Helper method to calculate age from birthDate
     public String calculateAge() {

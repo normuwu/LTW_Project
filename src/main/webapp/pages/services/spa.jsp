@@ -195,6 +195,161 @@
             color: #fff;
         }
 
+        /* Booking Section */
+        .booking-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #e8f5e9 0%, #e0f2f1 100%);
+        }
+        .booking-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 77, 64, 0.15);
+            overflow: hidden;
+        }
+        .booking-header {
+            background: linear-gradient(135deg, #00bfa5 0%, #004d40 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+        .booking-header i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .booking-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0 0 10px;
+        }
+        .booking-header p {
+            opacity: 0.9;
+            margin: 0;
+        }
+        .booking-form {
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 0;
+        }
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #004d40;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .form-group label i {
+            color: #00bfa5;
+            font-size: 1.2rem;
+        }
+        .form-group .required {
+            color: #ef4444;
+        }
+        .form-control, .form-select {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #00bfa5;
+            box-shadow: 0 0 0 4px rgba(0, 191, 165, 0.15);
+        }
+        
+        /* Spa Packages */
+        .spa-packages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .spa-package {
+            cursor: pointer;
+        }
+        .spa-package input {
+            display: none;
+        }
+        .package-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        .spa-package:hover .package-content {
+            border-color: #80cbc4;
+            background: #e0f7f4;
+        }
+        .spa-package input:checked + .package-content {
+            border-color: #00bfa5;
+            background: linear-gradient(135deg, #e0f7f4 0%, #b2dfdb 100%);
+            box-shadow: 0 4px 15px rgba(0, 191, 165, 0.25);
+        }
+        .package-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00bfa5 0%, #004d40 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        .spa-package.premium .package-icon {
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+        }
+        .package-info h5 {
+            margin: 0 0 4px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #004d40;
+        }
+        .package-info span {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .package-price {
+            margin-left: auto;
+            font-weight: 800;
+            color: #00bfa5;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+        
+        /* Submit Button */
+        .btn-submit-booking {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00bfa5 0%, #004d40 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 77, 64, 0.35);
+            transition: all 0.3s;
+        }
+        .btn-submit-booking:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 77, 64, 0.45);
+        }
+        .btn-submit-booking i {
+            font-size: 1.3rem;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .gallery-grid {
@@ -308,18 +463,210 @@
                     <img src="${pageContext.request.contextPath}/assets/images/spa_pic/webpic32.jpg" alt="Grooming 7">
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="text-center mt-5">
-                <a href="${pageContext.request.contextPath}/booking?service=4" class="btn-main-booking">
-                    <i class='bx bxs-calendar-plus'></i> Đặt hẹn ngay
-                </a>
+    <!-- Booking Section -->
+    <section class="booking-section" id="booking">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <i class='bx bxs-spa'></i>
+                            <h2>Đặt Lịch Spa & Grooming</h2>
+                            <p>Điền thông tin để đặt lịch làm đẹp cho thú cưng của bạn</p>
+                        </div>
+                        
+                        <form action="${pageContext.request.contextPath}/booking" method="POST" class="booking-form">
+                            <input type="hidden" name="serviceId" value="4">
+                            <input type="hidden" name="source" value="spa">
+                            
+                            <div class="row g-4">
+                                <!-- Thông tin khách hàng -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class='bx bx-user'></i> Họ và tên <span class="required">*</span></label>
+                                        <input type="text" name="customerName" class="form-control" required 
+                                               placeholder="Nhập họ tên của bạn"
+                                               value="${sessionScope.user != null ? sessionScope.user.fullname : ''}">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class='bx bx-phone'></i> Số điện thoại <span class="required">*</span></label>
+                                        <input type="tel" name="phone" class="form-control" required 
+                                               placeholder="0901234567" pattern="[0-9]{10,11}"
+                                               value="${sessionScope.user != null ? sessionScope.user.phone : ''}">
+                                    </div>
+                                </div>
+                                
+                                <!-- Thông tin thú cưng -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class='bx bxs-dog'></i> Tên thú cưng <span class="required">*</span></label>
+                                        <input type="text" name="petName" class="form-control" required 
+                                               placeholder="Tên bé cưng của bạn">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class='bx bx-category'></i> Loại thú cưng <span class="required">*</span></label>
+                                        <select name="petType" class="form-select" required>
+                                            <option value="">-- Chọn loại --</option>
+                                            <option value="Chó">🐕 Chó</option>
+                                            <option value="Mèo">🐱 Mèo</option>
+                                            <option value="Thỏ">🐰 Thỏ</option>
+                                            <option value="Khác">🐾 Khác</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Gói dịch vụ Spa -->
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label><i class='bx bxs-spa'></i> Chọn gói dịch vụ <span class="required">*</span></label>
+                                        <div class="spa-packages">
+                                            <label class="spa-package">
+                                                <input type="radio" name="spaPackage" value="Tắm vệ sinh (< 5kg) - 150.000đ" required>
+                                                <div class="package-content">
+                                                    <div class="package-icon"><i class='bx bxs-droplet'></i></div>
+                                                    <div class="package-info">
+                                                        <h5>Tắm vệ sinh</h5>
+                                                        <span>Dưới 5kg</span>
+                                                    </div>
+                                                    <div class="package-price">150.000đ</div>
+                                                </div>
+                                            </label>
+                                            
+                                            <label class="spa-package">
+                                                <input type="radio" name="spaPackage" value="Tắm vệ sinh (> 5kg) - 250.000đ">
+                                                <div class="package-content">
+                                                    <div class="package-icon"><i class='bx bxs-droplet'></i></div>
+                                                    <div class="package-info">
+                                                        <h5>Tắm vệ sinh</h5>
+                                                        <span>Trên 5kg</span>
+                                                    </div>
+                                                    <div class="package-price">250.000đ</div>
+                                                </div>
+                                            </label>
+                                            
+                                            <label class="spa-package">
+                                                <input type="radio" name="spaPackage" value="Cắt tỉa toàn thân (< 5kg) - 350.000đ">
+                                                <div class="package-content">
+                                                    <div class="package-icon"><i class='bx bxs-cut'></i></div>
+                                                    <div class="package-info">
+                                                        <h5>Cắt tỉa toàn thân</h5>
+                                                        <span>Dưới 5kg</span>
+                                                    </div>
+                                                    <div class="package-price">350.000đ</div>
+                                                </div>
+                                            </label>
+                                            
+                                            <label class="spa-package">
+                                                <input type="radio" name="spaPackage" value="Cắt tỉa toàn thân (> 5kg) - 500.000đ">
+                                                <div class="package-content">
+                                                    <div class="package-icon"><i class='bx bxs-cut'></i></div>
+                                                    <div class="package-info">
+                                                        <h5>Cắt tỉa toàn thân</h5>
+                                                        <span>Trên 5kg</span>
+                                                    </div>
+                                                    <div class="package-price">500.000đ</div>
+                                                </div>
+                                            </label>
+                                            
+                                            <label class="spa-package premium">
+                                                <input type="radio" name="spaPackage" value="Combo VIP (Tắm + Cắt tỉa + Nhuộm) - Liên hệ">
+                                                <div class="package-content">
+                                                    <div class="package-icon"><i class='bx bxs-crown'></i></div>
+                                                    <div class="package-info">
+                                                        <h5>Combo VIP</h5>
+                                                        <span>Tắm + Cắt + Nhuộm</span>
+                                                    </div>
+                                                    <div class="package-price">Liên hệ</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ngày hẹn -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class='bx bx-calendar'></i> Ngày hẹn <span class="required">*</span></label>
+                                        <input type="date" name="bookingDate" class="form-control" required id="spaBookingDate">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><i class='bx bx-time'></i> Khung giờ mong muốn</label>
+                                        <select name="preferredTime" class="form-select">
+                                            <option value="Sáng (9h-12h)">🌅 Sáng (9h - 12h)</option>
+                                            <option value="Chiều (14h-17h)">🌤️ Chiều (14h - 17h)</option>
+                                            <option value="Tối (17h-19h)">🌙 Tối (17h - 19h)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ghi chú -->
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label><i class='bx bx-note'></i> Ghi chú / Yêu cầu đặc biệt</label>
+                                        <textarea name="note" class="form-control" rows="3" 
+                                                  placeholder="Ví dụ: Bé nhát người, cần cắt kiểu Teddy bear, dị ứng sữa tắm..."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <!-- Submit -->
+                                <div class="col-12">
+                                    <button type="submit" class="btn-submit-booking">
+                                        <i class='bx bxs-calendar-check'></i> Xác nhận đặt lịch
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <jsp:include page="/components/footer.jsp" />
     <jsp:include page="/components/back-button.jsp" />
+    <jsp:include page="/components/toast.jsp" />
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set min date for booking (tomorrow)
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('spaBookingDate');
+            if (dateInput) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                dateInput.min = tomorrow.toISOString().split('T')[0];
+                
+                // Set max date (30 days from now)
+                const maxDate = new Date();
+                maxDate.setDate(maxDate.getDate() + 30);
+                dateInput.max = maxDate.toISOString().split('T')[0];
+            }
+            
+            // Smooth scroll to booking section if hash is #booking
+            if (window.location.hash === '#booking') {
+                document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        
+        // Update booking button to scroll to form
+        document.querySelectorAll('.btn-booking-spa').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
 </body>
 </html>

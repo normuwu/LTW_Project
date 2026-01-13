@@ -17,7 +17,7 @@
     
     /* Main Content */
     .admin-main {
-        margin-left: 250px;
+        margin-left: 250px !important;
         padding: 28px 32px;
         min-height: 100vh;
     }

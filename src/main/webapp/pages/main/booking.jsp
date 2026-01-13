@@ -506,18 +506,18 @@
                         </label>
                         <label class="service-card" onclick="selectService(this, '2')">
                             <input type="radio" name="serviceId" value="2" ${selectedService == '2' ? 'checked' : ''}>
-                            <div class="service-icon"><i class='bx bx-injection'></i></div>
-                            <div class="service-info">
-                                <h4>Tiêm phòng Vaccine</h4>
-                                <p>Tùy loại vaccine</p>
-                            </div>
-                        </label>
-                        <label class="service-card" onclick="selectService(this, '3')">
-                            <input type="radio" name="serviceId" value="3" ${selectedService == '3' ? 'checked' : ''}>
                             <div class="service-icon"><i class='bx bx-cut'></i></div>
                             <div class="service-info">
                                 <h4>Phẫu thuật</h4>
                                 <p>Theo ca phẫu thuật</p>
+                            </div>
+                        </label>
+                        <label class="service-card" onclick="selectService(this, '3')">
+                            <input type="radio" name="serviceId" value="3" ${selectedService == '3' ? 'checked' : ''}>
+                            <div class="service-icon"><i class='bx bx-injection'></i></div>
+                            <div class="service-info">
+                                <h4>Tiêm phòng Vaccine</h4>
+                                <p>Tùy loại vaccine</p>
                             </div>
                         </label>
                         <label class="service-card" onclick="selectService(this, '4')">

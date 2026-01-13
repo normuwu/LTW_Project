@@ -199,13 +199,18 @@ public class AppointmentServlet extends HttpServlet {
             
             String dateStr = apt.getBookingDate() != null ? apt.getBookingDate().toString() : "Chưa xác định";
             
-            EmailUtil.sendEmail(
+            // Sử dụng method mới trong EmailUtil
+            EmailUtil.sendAppointmentApproved(
                 email,
-                "Lịch hẹn đã được duyệt - PetVaccine",
-                buildApprovalEmailHtml(apt.getCustomerName(), apt.getPetName(), 
-                    apt.getServiceName(), dateStr, apt.getDoctorName())
+                apt.getCustomerName(),
+                apt.getPetName(),
+                apt.getServiceName(),
+                dateStr,
+                apt.getDoctorName()
             );
+            System.out.println("Sent approval email to: " + email);
         } catch (Exception e) {
+            System.err.println("Failed to send approval email for appointment #" + appointmentId);
             e.printStackTrace();
         }
     }
@@ -221,11 +226,18 @@ public class AppointmentServlet extends HttpServlet {
             
             String dateStr = apt.getBookingDate() != null ? apt.getBookingDate().toString() : "Chưa xác định";
             
-            EmailUtil.sendCancellationNotification(
-                email, apt.getCustomerName(), apt.getPetName(),
-                apt.getServiceName(), dateStr, reason != null ? reason : "Không có lý do cụ thể"
+            // Sử dụng method mới trong EmailUtil
+            EmailUtil.sendAppointmentRejected(
+                email,
+                apt.getCustomerName(),
+                apt.getPetName(),
+                apt.getServiceName(),
+                dateStr,
+                reason != null ? reason : "Lịch không phù hợp với lịch làm việc"
             );
+            System.out.println("Sent rejection email to: " + email);
         } catch (Exception e) {
+            System.err.println("Failed to send rejection email for appointment #" + appointmentId);
             e.printStackTrace();
         }
     }
@@ -245,32 +257,11 @@ public class AppointmentServlet extends HttpServlet {
                 email, apt.getCustomerName(), apt.getPetName(),
                 apt.getServiceName(), dateStr, reason != null ? reason : "Theo yêu cầu"
             );
+            System.out.println("Sent cancellation email to: " + email);
         } catch (Exception e) {
+            System.err.println("Failed to send cancellation email for appointment #" + appointmentId);
             e.printStackTrace();
         }
-    }
-    
-    // HTML template cho email duyệt lịch
-    private String buildApprovalEmailHtml(String customerName, String petName, 
-            String serviceName, String date, String doctorName) {
-        return "<!DOCTYPE html>" +
-            "<html><head><meta charset='UTF-8'></head>" +
-            "<body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>" +
-            "<div style='background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 30px; text-align: center;'>" +
-            "  <h1 style='color: white; margin: 0;'>✅ Lịch hẹn đã được duyệt!</h1>" +
-            "</div>" +
-            "<div style='padding: 30px; background: #f9f9f9;'>" +
-            "  <p>Xin chào <strong>" + customerName + "</strong>,</p>" +
-            "  <p>Lịch hẹn của bạn đã được xác nhận. Vui lòng đến đúng giờ!</p>" +
-            "  <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0;'>" +
-            "    <p><strong>🐕 Thú cưng:</strong> " + (petName != null ? petName : "Chưa có") + "</p>" +
-            "    <p><strong>💉 Dịch vụ:</strong> " + (serviceName != null ? serviceName : "Chưa xác định") + "</p>" +
-            "    <p><strong>📅 Ngày hẹn:</strong> " + date + "</p>" +
-            "    <p><strong>👨‍⚕️ Bác sĩ:</strong> " + (doctorName != null ? doctorName : "Sẽ được phân công") + "</p>" +
-            "  </div>" +
-            "  <p style='color: #666;'>Trân trọng,<br>Đội ngũ PetVaccine</p>" +
-            "</div>" +
-            "</body></html>";
     }
 }
 

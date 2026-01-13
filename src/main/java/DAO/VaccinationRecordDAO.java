@@ -10,6 +10,33 @@ import Model.VaccinationRecord;
 
 public class VaccinationRecordDAO {
 
+    // Lấy tất cả lịch sử tiêm (cho Admin)
+    public List<VaccinationRecord> getAllRecords() {
+        List<VaccinationRecord> list = new ArrayList<>();
+        String query = "SELECT vr.*, p.name as pet_name, p.species as pet_species, " +
+                       "v.name as vaccine_name, d.name as doctor_name, u.fullname as owner_name " +
+                       "FROM vaccination_records vr " +
+                       "LEFT JOIN pets p ON vr.pet_id = p.id " +
+                       "LEFT JOIN users u ON p.user_id = u.id " +
+                       "LEFT JOIN vaccines v ON vr.vaccine_id = v.id " +
+                       "LEFT JOIN doctors d ON vr.doctor_id = d.id " +
+                       "ORDER BY vr.vaccination_date DESC";
+        
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                VaccinationRecord r = mapResultSetToRecord(rs);
+                try { r.setOwnerName(rs.getString("owner_name")); } catch (Exception e) {}
+                list.add(r);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // Lấy lịch sử tiêm của thú cưng
     public List<VaccinationRecord> getRecordsByPetId(int petId) {
         List<VaccinationRecord> list = new ArrayList<>();

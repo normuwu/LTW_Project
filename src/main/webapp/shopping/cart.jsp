@@ -44,6 +44,7 @@
 <body>
 
     <jsp:include page="/components/navbar.jsp" />
+    <jsp:include page="/components/toast.jsp" />
 
     <div class="container mt-5 mb-5" style="min-height: 600px;">
         <h2 class="cart-title"><i class='bx bx-cart-alt'></i> Giỏ Hàng Của Bạn</h2>

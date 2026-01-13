@@ -119,6 +119,30 @@
         border: 2px solid rgba(255,255,255,0.8) !important;
         transform: translate(25%, -25%) !important;
     }
+    
+    /* User Dropdown - style riêng */
+    #userDropdown {
+        position: relative !important;
+    }
+    #userDropdownMenu {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+        z-index: 999999 !important;
+        display: none !important;
+        min-width: 220px !important;
+        background: rgba(255,255,255,0.98) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+        border-radius: 12px !important;
+        padding: 10px 0 !important;
+        margin-top: 10px !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    #userDropdownMenu.show {
+        display: block !important;
+    }
 </style>
 
 <nav class="navbar navbar-expand-lg" id="navbar">
@@ -206,11 +230,11 @@
             
             <c:choose>
                 <c:when test="${not empty sessionScope.user}">
-                    <div class="dropdown">
-                        <button class="btn-user-dropdown dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class='bx bxs-user'></i> ${sessionScope.username}
+                    <div class="dropdown" id="userDropdown">
+                        <button class="btn-user-dropdown" type="button" id="userDropdownBtn">
+                            <i class='bx bxs-user'></i> ${sessionScope.username} <i class='bx bx-chevron-down'></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end" id="userDropdownMenu">
                             <c:if test="${sessionScope.role == 'admin'}">
                                 <li>
                                     <a class="dropdown-item" href="${pageContext.request.contextPath}/pages/admin/dashboard">
@@ -262,35 +286,48 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Dropdown toggle cho trang home
-    var dropdownToggles = document.querySelectorAll('#navbar .dropdown-toggle');
-    
-    dropdownToggles.forEach(function(toggle) {
-        toggle.addEventListener('click', function(e) {
+    // Dropdown toggle cho services menu
+    var servicesDropdown = document.querySelector('#navbar .nav-item.dropdown .dropdown-toggle');
+    if (servicesDropdown) {
+        servicesDropdown.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
-            var dropdownMenu = this.nextElementSibling;
-            var isOpen = dropdownMenu.classList.contains('show');
-            
-            // Đóng tất cả dropdown khác
-            document.querySelectorAll('#navbar .dropdown-menu.show').forEach(function(menu) {
-                menu.classList.remove('show');
-            });
-            
-            // Toggle dropdown hiện tại
-            if (!isOpen) {
-                dropdownMenu.classList.add('show');
+            var menu = this.nextElementSibling;
+            if (menu) {
+                var isOpen = menu.classList.contains('show');
+                closeAllDropdowns();
+                if (!isOpen) menu.classList.add('show');
             }
         });
-    });
+    }
+    
+    // User dropdown toggle - xử lý riêng
+    var userBtn = document.getElementById('userDropdownBtn');
+    var userMenu = document.getElementById('userDropdownMenu');
+    
+    if (userBtn && userMenu) {
+        userBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var isOpen = userMenu.classList.contains('show');
+            closeAllDropdowns();
+            if (!isOpen) {
+                userMenu.classList.add('show');
+            }
+        });
+    }
+    
+    // Đóng tất cả dropdown
+    function closeAllDropdowns() {
+        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+            menu.classList.remove('show');
+        });
+    }
     
     // Đóng dropdown khi click ra ngoài
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('#navbar .dropdown')) {
-            document.querySelectorAll('#navbar .dropdown-menu.show').forEach(function(menu) {
-                menu.classList.remove('show');
-            });
+        if (!e.target.closest('.dropdown') && !e.target.closest('.nav-item.dropdown')) {
+            closeAllDropdowns();
         }
     });
 });

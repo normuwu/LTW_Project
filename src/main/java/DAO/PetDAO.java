@@ -145,6 +145,23 @@ public class PetDAO {
         return 0;
     }
     
+    // Đếm tổng số thú cưng
+    public int countAll() {
+        String query = "SELECT COUNT(*) FROM pets";
+        
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
     // Kiểm tra thú cưng có thuộc về user không
     public boolean isPetOwnedByUser(int petId, int userId) {
         String query = "SELECT COUNT(*) FROM pets WHERE id = ? AND user_id = ?";

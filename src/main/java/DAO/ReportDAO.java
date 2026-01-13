@@ -83,6 +83,38 @@ public class ReportDAO {
         }
         return list;
     }
+    
+    // Thống kê appointments theo tháng với chi tiết trạng thái
+    public List<Map<String, Object>> getAppointmentsByMonthWithStatus(int year) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String query = "SELECT MONTH(booking_date) as month, " +
+                       "SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending, " +
+                       "SUM(CASE WHEN status = 'Confirmed' THEN 1 ELSE 0 END) as confirmed, " +
+                       "SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed, " +
+                       "COUNT(*) as total " +
+                       "FROM appointments WHERE YEAR(booking_date) = ? " +
+                       "GROUP BY MONTH(booking_date) ORDER BY month";
+        
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            ps.setInt(1, year);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("month", rs.getInt("month"));
+                    row.put("pending", rs.getInt("pending"));
+                    row.put("confirmed", rs.getInt("confirmed"));
+                    row.put("completed", rs.getInt("completed"));
+                    row.put("total", rs.getInt("total"));
+                    list.add(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     // Thống kê vaccinations theo tháng
     public List<Map<String, Object>> getVaccinationsByMonth(int year) {

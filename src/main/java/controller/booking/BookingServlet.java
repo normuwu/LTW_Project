@@ -76,6 +76,41 @@ public class BookingServlet extends HttpServlet {
         String doctorIdStr = form.get("doctorId");
         String dateStr = form.get("bookingDate");
         String note = form.get("note");
+        String source = form.get("source"); // Nguồn đặt lịch (spa, hotel, etc.)
+        String spaPackage = form.get("spaPackage"); // Gói spa đã chọn
+        String preferredTime = form.get("preferredTime"); // Khung giờ mong muốn
+        
+        // Hotel specific fields
+        String roomType = form.get("roomType"); // Loại phòng khách sạn
+        String checkOutDate = form.get("checkOutDate"); // Ngày trả phòng
+        String petWeight = form.get("petWeight"); // Cân nặng thú cưng
+        String[] extraServices = request.getParameterValues("extraServices"); // Dịch vụ bổ sung
+        
+        // Nếu có thông tin spa package, thêm vào note
+        if (spaPackage != null && !spaPackage.isEmpty()) {
+            note = (note != null && !note.isEmpty()) 
+                ? "Gói: " + spaPackage + " | Giờ: " + preferredTime + " | " + note
+                : "Gói: " + spaPackage + " | Giờ: " + preferredTime;
+        }
+        
+        // Nếu có thông tin hotel, thêm vào note
+        if (roomType != null && !roomType.isEmpty()) {
+            StringBuilder hotelNote = new StringBuilder();
+            hotelNote.append("Loại phòng: ").append(roomType);
+            if (petWeight != null && !petWeight.isEmpty()) {
+                hotelNote.append(" | Cân nặng: ").append(petWeight);
+            }
+            if (checkOutDate != null && !checkOutDate.isEmpty()) {
+                hotelNote.append(" | Ngày trả phòng: ").append(checkOutDate);
+            }
+            if (extraServices != null && extraServices.length > 0) {
+                hotelNote.append(" | Dịch vụ thêm: ").append(String.join(", ", extraServices));
+            }
+            if (note != null && !note.isEmpty()) {
+                hotelNote.append(" | Ghi chú: ").append(note);
+            }
+            note = hotelNote.toString();
+        }
         
         // Load lại danh sách bác sĩ cho form
         DoctorDAO doctorDAO = new DoctorDAO();
@@ -160,10 +195,19 @@ public class BookingServlet extends HttpServlet {
                 );
             }
 
-            // Hiển thị thông báo thành công trên trang booking thay vì redirect
-            request.setAttribute("success", "Đặt lịch hẹn thành công! Kiểm tra email để xem chi tiết.");
-            request.setAttribute("listDoctors", doctorDAO.getAllDoctors());
-            request.getRequestDispatcher("/pages/main/booking.jsp").forward(request, response);
+            // Hiển thị thông báo thành công
+            session.setAttribute("toastMessage", "Đặt lịch hẹn thành công! Chúng tôi sẽ liên hệ xác nhận sớm nhất.");
+            session.setAttribute("toastType", "success");
+            
+            // Redirect về trang nguồn hoặc trang schedule
+            if ("spa".equals(source)) {
+                response.sendRedirect(request.getContextPath() + "/spa#booking");
+            } else if ("hotel".equals(source)) {
+                response.sendRedirect(request.getContextPath() + "/hotel");
+            } else {
+                // Redirect về trang schedule để xem lịch hẹn
+                response.sendRedirect(request.getContextPath() + "/schedule");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

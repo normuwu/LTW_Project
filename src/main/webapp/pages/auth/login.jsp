@@ -101,11 +101,9 @@
                            name="email" id="emailInput" placeholder="Nhập email" required
                            value="${not empty form.email ? form.email : savedEmail}"
                            autocomplete="email">
-                    <c:if test="${not empty savedEmail}">
-                        <span class="password-toggle" id="clearEmail" title="Xóa email đã lưu">
-                            <i class='bx bx-x'></i>
-                        </span>
-                    </c:if>
+                    <span class="password-toggle" id="clearEmail" title="Xóa email" style="display: none;">
+                        <i class='bx bx-x'></i>
+                    </span>
                 </div>
                 <c:if test="${not empty errors.email}">
                     <div class="invalid-feedback">${errors.email}</div>
@@ -166,21 +164,93 @@
             }
         });
         
-        // Xóa email đã lưu
+        // Xử lý nút xóa email
+        var emailInput = document.getElementById('emailInput');
         var clearEmailBtn = document.getElementById('clearEmail');
-        if (clearEmailBtn) {
-            clearEmailBtn.addEventListener('click', function() {
-                var emailInput = document.getElementById('emailInput');
-                emailInput.value = '';
-                emailInput.focus();
-                // Xóa cookie
-                document.cookie = 'rememberEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                // Ẩn nút xóa
-                this.style.display = 'none';
-                // Bỏ check "Ghi nhớ"
-                document.getElementById('rememberMe').checked = false;
-            });
+        var lastUserValue = emailInput.value; // Lưu giá trị người dùng nhập
+        var isUserEditing = false;
+        
+        // Hiển thị/ẩn nút xóa
+        function updateClearButton() {
+            if (emailInput.value.length > 0) {
+                clearEmailBtn.style.display = 'flex';
+            } else {
+                clearEmailBtn.style.display = 'none';
+            }
         }
+        
+        // Kiểm tra khi load trang
+        updateClearButton();
+        
+        // Theo dõi khi người dùng đang nhập
+        emailInput.addEventListener('keydown', function(e) {
+            isUserEditing = true;
+        });
+        
+        emailInput.addEventListener('input', function(e) {
+            isUserEditing = true;
+            lastUserValue = this.value;
+            updateClearButton();
+        });
+        
+        // Chặn browser autofill ghi đè
+        var autofillCheckInterval = null;
+        
+        emailInput.addEventListener('focus', function() {
+            isUserEditing = true;
+            // Kiểm tra liên tục trong 500ms để chặn autofill
+            autofillCheckInterval = setInterval(function() {
+                if (isUserEditing && emailInput.value !== lastUserValue) {
+                    // Browser đã tự động điền, khôi phục giá trị người dùng
+                    emailInput.value = lastUserValue;
+                    updateClearButton();
+                }
+            }, 10);
+            
+            setTimeout(function() {
+                clearInterval(autofillCheckInterval);
+            }, 500);
+        });
+        
+        emailInput.addEventListener('blur', function() {
+            isUserEditing = false;
+            clearInterval(autofillCheckInterval);
+        });
+        
+        // Nút xóa email
+        clearEmailBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Tắt autocomplete hoàn toàn
+            emailInput.setAttribute('autocomplete', 'off');
+            emailInput.setAttribute('readonly', true);
+            
+            // Xóa giá trị
+            emailInput.value = '';
+            lastUserValue = '';
+            
+            // Bỏ readonly sau 100ms để có thể nhập lại
+            setTimeout(function() {
+                emailInput.removeAttribute('readonly');
+                emailInput.focus();
+            }, 100);
+            
+            this.style.display = 'none';
+            
+            // Xóa cookie
+            document.cookie = 'rememberEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.getElementById('rememberMe').checked = false;
+        });
+        
+        // Chặn sự kiện change từ autofill
+        emailInput.addEventListener('change', function(e) {
+            if (!isUserEditing && this.value !== lastUserValue) {
+                // Đây là autofill, khôi phục giá trị
+                this.value = lastUserValue;
+                updateClearButton();
+            }
+        });
     </script>
 </body>
 </html>

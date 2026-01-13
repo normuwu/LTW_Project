@@ -631,6 +631,9 @@
                                                     <button class="btn-action btn-detail" style="flex: 1;">
                                                         <i class='bx bx-check-circle'></i> Cảm ơn bạn đã sử dụng dịch vụ
                                                     </button>
+                                                    <button class="btn-action btn-delete" onclick="showDeleteModal(${apt.id}, '${apt.serviceName}', '${apt.bookingDate}')">
+                                                        <i class='bx bx-trash'></i> Xóa
+                                                    </button>
                                                 </c:when>
                                             </c:choose>
                                         </div>
@@ -1029,7 +1032,7 @@
         }
 
         function confirmDelete() {
-            const btn = document.querySelector('#deleteModal .btn-confirm-cancel');
+            const btn = document.querySelector('#deleteModal button[onclick="confirmDelete()"]');
             const id = document.getElementById('deleteAppointmentId').value;
             
             btn.disabled = true;

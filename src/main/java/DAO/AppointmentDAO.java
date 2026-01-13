@@ -396,4 +396,146 @@ public class AppointmentDAO {
         }
         return 0;
     }
+    
+    // 13. Lấy danh sách lịch hẹn theo Service ID (cho Hotel, Spa)
+    public List<Appointment> getAppointmentsByServiceId(int serviceId) {
+        List<Appointment> list = new ArrayList<>();
+        String query = "SELECT a.id, a.user_id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
+                       "a.service_id, a.doctor_id, " +
+                       "s.name as service_name, d.name as doctor_name, a.booking_date, a.status, a.note " +
+                       "FROM appointments a " +
+                       "LEFT JOIN services s ON a.service_id = s.id " +
+                       "LEFT JOIN doctors d ON a.doctor_id = d.id " +
+                       "WHERE a.service_id = ? " +
+                       "ORDER BY CASE WHEN a.status = 'Pending' THEN 0 " +
+                       "WHEN a.status = 'Confirmed' THEN 1 " +
+                       "WHEN a.status = 'Completed' THEN 2 " +
+                       "ELSE 3 END, a.booking_date DESC"; 
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            ps.setInt(1, serviceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Appointment a = new Appointment();
+                    a.setId(rs.getInt("id"));
+                    a.setUserId(rs.getInt("user_id"));
+                    a.setCustomerName(rs.getString("customer_name"));
+                    a.setPhone(rs.getString("phone"));
+                    a.setPetName(rs.getString("pet_name"));
+                    a.setPetType(rs.getString("pet_type"));
+                    a.setServiceId(rs.getInt("service_id"));
+                    a.setDoctorId(rs.getInt("doctor_id"));
+                    a.setNote(rs.getString("note"));
+                    
+                    String sName = rs.getString("service_name");
+                    String dName = rs.getString("doctor_name");
+                    
+                    a.setServiceName(sName != null ? sName : "Dịch vụ đã xóa");
+                    a.setDoctorName(dName != null ? dName : "Chưa chỉ định");
+                    
+                    a.setBookingDate(rs.getDate("booking_date"));
+                    a.setStatus(rs.getString("status")); 
+                    list.add(a);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    // 14. Cập nhật trạng thái lịch hẹn (alias cho updateStatus)
+    public boolean updateAppointmentStatus(int appointmentId, String status) {
+        return updateStatus(appointmentId, status);
+    }
+    
+    // 15. Lấy danh sách lịch hẹn gần đây (cho Dashboard)
+    public List<Appointment> getRecentAppointments(int limit) {
+        List<Appointment> list = new ArrayList<>();
+        String query = "SELECT a.id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
+                       "a.service_id, a.doctor_id, " +
+                       "s.name as service_name, d.name as doctor_name, a.booking_date, a.status, a.note, a.created_at " +
+                       "FROM appointments a " +
+                       "LEFT JOIN services s ON a.service_id = s.id " +
+                       "LEFT JOIN doctors d ON a.doctor_id = d.id " +
+                       "ORDER BY a.id DESC LIMIT ?"; 
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Appointment a = new Appointment();
+                    a.setId(rs.getInt("id"));
+                    a.setCustomerName(rs.getString("customer_name"));
+                    a.setPhone(rs.getString("phone"));
+                    a.setPetName(rs.getString("pet_name"));
+                    a.setPetType(rs.getString("pet_type"));
+                    a.setServiceId(rs.getInt("service_id"));
+                    a.setDoctorId(rs.getInt("doctor_id"));
+                    a.setNote(rs.getString("note"));
+                    
+                    String sName = rs.getString("service_name");
+                    String dName = rs.getString("doctor_name");
+                    
+                    a.setServiceName(sName != null ? sName : "Dịch vụ đã xóa");
+                    a.setDoctorName(dName != null ? dName : "Chưa chỉ định");
+                    
+                    a.setBookingDate(rs.getDate("booking_date"));
+                    a.setStatus(rs.getString("status")); 
+                    list.add(a);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    // 16. Lấy danh sách lịch hẹn hôm nay (cho Dashboard)
+    public List<Appointment> getTodayAppointments() {
+        List<Appointment> list = new ArrayList<>();
+        String query = "SELECT a.id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
+                       "a.service_id, a.doctor_id, " +
+                       "s.name as service_name, d.name as doctor_name, a.booking_date, a.status, a.note " +
+                       "FROM appointments a " +
+                       "LEFT JOIN services s ON a.service_id = s.id " +
+                       "LEFT JOIN doctors d ON a.doctor_id = d.id " +
+                       "WHERE a.booking_date = CURDATE() " +
+                       "ORDER BY CASE WHEN a.status = 'Pending' THEN 0 " +
+                       "WHEN a.status = 'Confirmed' THEN 1 ELSE 2 END, a.id DESC"; 
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Appointment a = new Appointment();
+                a.setId(rs.getInt("id"));
+                a.setCustomerName(rs.getString("customer_name"));
+                a.setPhone(rs.getString("phone"));
+                a.setPetName(rs.getString("pet_name"));
+                a.setPetType(rs.getString("pet_type"));
+                a.setServiceId(rs.getInt("service_id"));
+                a.setDoctorId(rs.getInt("doctor_id"));
+                a.setNote(rs.getString("note"));
+                
+                String sName = rs.getString("service_name");
+                String dName = rs.getString("doctor_name");
+                
+                a.setServiceName(sName != null ? sName : "Dịch vụ đã xóa");
+                a.setDoctorName(dName != null ? dName : "Chưa chỉ định");
+                
+                a.setBookingDate(rs.getDate("booking_date"));
+                a.setStatus(rs.getString("status")); 
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

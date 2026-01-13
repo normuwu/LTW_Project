@@ -7,13 +7,12 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 
 /**
- * Filter để đảm bảo encoding UTF-8 cho tất cả request/response
- * Giúp hiển thị tiếng Việt đúng
+ * Filter to set UTF-8 encoding for all requests and responses
+ * This ensures Vietnamese characters are handled correctly
+ * NOTE: Configured in web.xml to ensure correct filter order
  */
-@WebFilter("/*")
 public class CharacterEncodingFilter implements Filter {
     
     private String encoding = "UTF-8";
@@ -30,16 +29,16 @@ public class CharacterEncodingFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
-        // Set encoding cho request
+        // Set encoding for request
         if (request.getCharacterEncoding() == null) {
             request.setCharacterEncoding(encoding);
         }
         
-        // Set encoding cho response
+        // Set encoding for response
         response.setCharacterEncoding(encoding);
         response.setContentType("text/html; charset=" + encoding);
         
-        // Tiếp tục filter chain
+        // Continue with the filter chain
         chain.doFilter(request, response);
     }
     

@@ -21,6 +21,7 @@ public class VaccinationRecord {
     private String vaccineName;
     private String doctorName;
     private String petSpecies;
+    private String ownerName;
 
     public VaccinationRecord() {}
 
@@ -69,6 +70,9 @@ public class VaccinationRecord {
 
     public String getPetSpecies() { return petSpecies; }
     public void setPetSpecies(String petSpecies) { this.petSpecies = petSpecies; }
+    
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
     
     // Check if next dose is due
     public boolean isDue() {

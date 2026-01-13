@@ -267,7 +267,6 @@
                                 <th>Người dùng</th>
                                 <th>Email / SĐT</th>
                                 <th style="width:100px;">Vai trò</th>
-                                <th style="width:100px;">Trạng thái</th>
                                 <th style="width:120px;">Ngày tạo</th>
                                 <th style="width:100px;">Thống kê</th>
                                 <th style="width:120px;">Thao tác</th>
@@ -311,10 +310,6 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="status-dot ${user.status == 'locked' ? 'locked' : 'active'}"></span>
-                                        ${user.status == 'locked' ? 'Đã khóa' : 'Hoạt động'}
-                                    </td>
-                                    <td>
                                         <fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy"/>
                                     </td>
                                     <td>
@@ -346,7 +341,7 @@
                                 </tr>
                             </c:forEach>
                             <c:if test="${empty users}">
-                                <tr><td colspan="8" class="text-center py-5">
+                                <tr><td colspan="7" class="text-center py-5">
                                     <i class='bx bx-user-x' style="font-size:3rem;color:#cbd5e1;"></i>
                                     <p class="text-muted mt-2 mb-0">Không tìm thấy người dùng nào</p>
                                 </td></tr>
