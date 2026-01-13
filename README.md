@@ -80,7 +80,7 @@ private final String serverName = "localhost";
 private final String dbName = "petvaccine";
 private final String portNumber = "3306";
 private final String userID = "root";       
-private final String password = "YOUR_MYSQL_PASSWORD";  // ← Sửa password của bạn
+private final String password = "MySQL Root Password"  // ← Sửa password của bạn
 ```
 
 ### Bước 4: Cấu hình đường dẫn Tomcat
@@ -121,13 +121,6 @@ startup.bat
 
 Mở trình duyệt: **http://localhost:8080/PetVaccine/home**
 
-## 👤 Tài Khoản Demo
-
-| Vai trò | Username | Password |
-|---------|----------|----------|
-| Admin | admin | 123456 |
-| User | user1 | 123456 |
-| Doctor | doctor1 | 123456 |
 
 ## 🌐 Các Trang Chính
 

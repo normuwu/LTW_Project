@@ -12,4 +12,4 @@ call startup.bat
 echo.
 echo Tomcat starting... Wait 10s
 timeout /t 10 /nobreak >nul
-start http://localhost:8080/PetVaccine/home
+start localhost:8080/PetVaccine/home
