@@ -29,6 +29,12 @@ public class BookingServlet extends HttpServlet {
             request.setAttribute("currentUser", user);
         }
         
+        // Nhận service ID từ URL parameter (từ các trang dịch vụ)
+        String serviceParam = request.getParameter("service");
+        if (serviceParam != null && !serviceParam.isEmpty()) {
+            request.setAttribute("selectedService", serviceParam);
+        }
+        
         DoctorDAO doctorDAO = new DoctorDAO();
         List<Doctors> listDoctors = doctorDAO.getAllDoctors();
         request.setAttribute("listDoctors", listDoctors);
@@ -121,8 +127,10 @@ public class BookingServlet extends HttpServlet {
             AppointmentDAO dao = new AppointmentDAO();
             dao.insertAppointment(userId, customerName, phone, petName, petType, serviceId, doctorId, dateStr, note);
 
-            session.setAttribute("success", "Đặt lịch hẹn thành công! Vui lòng chờ xác nhận từ phòng khám.");
-            response.sendRedirect(request.getContextPath() + "/schedule");
+            // Hiển thị thông báo thành công trên trang booking thay vì redirect
+            request.setAttribute("success", "Đặt lịch hẹn thành công!");
+            request.setAttribute("listDoctors", doctorDAO.getAllDoctors());
+            request.getRequestDispatcher("/pages/main/booking.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

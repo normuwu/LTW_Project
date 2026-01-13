@@ -34,11 +34,11 @@ public class ScheduleServlet extends HttpServlet {
             return;
         }
         
-        // Tạm thời hiển thị tất cả lịch hẹn cho mọi user để test
-        // Sau khi chạy SQL fix_user_id.sql thì có thể bật lại filter theo user_id
-        list = dao.getAllAppointments();
+        // Lấy lịch hẹn theo user_id HOẶC theo phone của user
+        list = dao.getAppointmentsByUserId(user.getId());
 
         request.setAttribute("mySchedule", list);
+        request.setAttribute("currentUser", user);
         request.getRequestDispatcher("/pages/main/schedule.jsp").forward(request, response);
     }
     
