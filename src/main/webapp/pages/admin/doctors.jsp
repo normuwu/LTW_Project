@@ -25,9 +25,7 @@
                 <h1 class="page-title"><i class='bx bxs-user-badge'></i> Quản lý Bác sĩ</h1>
                 <p class="page-subtitle">Thêm, sửa thông tin bác sĩ và lịch làm việc</p>
             </div>
-            <button class="btn btn-primary-admin" data-bs-toggle="modal" data-bs-target="#doctorModal" onclick="resetForm()">
-                <i class='bx bx-plus'></i> Thêm bác sĩ
-            </button>
+            <jsp:include page="/components/admin-header-dropdown.jsp" />
         </div>
 
         <!-- Stats -->
@@ -45,8 +43,11 @@
 
         <!-- Doctors Table -->
         <div class="card-admin">
-            <div class="card-header-admin">
+            <div class="card-header-admin d-flex justify-content-between align-items-center">
                 <h5><i class='bx bx-list-ul'></i> Danh sách bác sĩ</h5>
+                <button class="btn btn-primary-admin btn-sm" data-bs-toggle="modal" data-bs-target="#doctorModal" onclick="resetForm()">
+                    <i class='bx bx-plus'></i> Thêm bác sĩ
+                </button>
             </div>
             <div class="card-body-admin">
                 <div class="table-responsive">

@@ -57,9 +57,7 @@
     <main class="admin-main">
         <div class="page-header">
             <h1 class="page-title"><i class='bx bxs-news'></i> Quản lý Bài viết</h1>
-            <div class="admin-badge">
-                <i class='bx bxs-user-circle'></i> ${sessionScope.user.fullname}
-            </div>
+            <jsp:include page="/components/admin-header-dropdown.jsp" />
         </div>
 
         <!-- Stats Cards - Giống Dashboard -->

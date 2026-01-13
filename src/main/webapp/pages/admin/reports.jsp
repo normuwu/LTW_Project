@@ -30,14 +30,17 @@
                 <h1 class="page-title"><i class='bx bxs-bar-chart-alt-2'></i> Báo cáo Thống kê</h1>
                 <p class="page-subtitle">Tổng quan hoạt động và doanh thu</p>
             </div>
-            <form method="GET" class="d-flex gap-2 align-items-center">
-                <label class="fw-bold">Năm:</label>
-                <select name="year" class="form-select" style="width:120px;" onchange="this.form.submit()">
-                    <c:forEach begin="${currentYear - 5}" end="${currentYear}" var="y">
-                        <option value="${y}" ${selectedYear == y ? 'selected' : ''}>${y}</option>
-                    </c:forEach>
-                </select>
-            </form>
+            <div class="d-flex gap-3 align-items-center">
+                <form method="GET" class="d-flex gap-2 align-items-center">
+                    <label class="fw-bold">Năm:</label>
+                    <select name="year" class="form-select" style="width:120px;" onchange="this.form.submit()">
+                        <c:forEach begin="${currentYear - 5}" end="${currentYear}" var="y">
+                            <option value="${y}" ${selectedYear == y ? 'selected' : ''}>${y}</option>
+                        </c:forEach>
+                    </select>
+                </form>
+                <jsp:include page="/components/admin-header-dropdown.jsp" />
+            </div>
         </div>
 
         <!-- Overview Stats -->

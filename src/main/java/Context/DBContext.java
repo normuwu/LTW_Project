@@ -10,7 +10,7 @@ public class DBContext {
     private final String dbName = "petvaccine";
     private final String portNumber = "3306";
     private final String userID = "root";       
-    private final String password = "1111";      
+    private final String password = "MySQL Root Password";      
 
     public Connection getConnection() throws Exception {
         // 1. Khai báo Driver cho MySQL 8.0

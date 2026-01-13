@@ -51,4 +51,17 @@ public class Product {
         DecimalFormat formatter = new DecimalFormat("###,###");
         return formatter.format(price) + "đ";
     }
+    
+    // Tính giá gốc từ giá bán và % giảm giá (để hiển thị trong JSP)
+    public double getOldPrice() {
+        if (discount > 0 && discount < 100) {
+            return price / (1 - discount / 100.0);
+        }
+        return price;
+    }
+    
+    public String getFormattedOldPrice() {
+        DecimalFormat formatter = new DecimalFormat("###,###");
+        return formatter.format(getOldPrice()) + "đ";
+    }
 }

@@ -434,6 +434,10 @@
             overflow: hidden;
         }
         .action-menu.show { display: block; }
+        .action-menu.show-up {
+            top: auto;
+            bottom: 100%;
+        }
         .action-menu-item {
             display: flex;
             align-items: center;
@@ -483,6 +487,29 @@
         }
         .action-menu-item i { font-size: 1.2rem; width: 20px; }
         .action-divider { height: 1px; background: #e2e8f0; margin: 4px 0; }
+
+        /* Direct Delete Button */
+        .btn-delete-direct {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #fca5a5;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .btn-delete-direct:hover { 
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); 
+            border-color: #ef4444; 
+            color: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
 
         /* Drawer */
         .drawer-overlay {
@@ -719,9 +746,7 @@
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title"><i class='bx bx-calendar'></i> Quản lý Lịch hẹn</h1>
-            <div class="admin-badge">
-                <i class='bx bxs-user-circle'></i> ${sessionScope.user.fullname}
-            </div>
+            <jsp:include page="/components/admin-header-dropdown.jsp" />
         </div>
         <!-- Stats Cards - Giống Dashboard -->
         <div class="stats-grid">
@@ -790,6 +815,9 @@
                     <span id="resultCount" style="font-weight: normal; color: var(--text-muted); font-size: 0.85rem;"></span>
                 </span>
                 <div class="table-actions">
+                    <button class="btn-danger-outline" onclick="showDeleteAllCompletedModal()">
+                        <i class='bx bx-trash'></i> Xóa tất cả hoàn thành
+                    </button>
                     <button class="btn-danger-outline" onclick="showDeleteAllCancelledModal()">
                         <i class='bx bx-trash'></i> Xóa tất cả đã hủy
                     </button>
@@ -833,12 +861,13 @@
                         <th>Ghi chú</th>
                         <th>Trạng thái</th>
                         <th style="width: 60px;">Thao tác</th>
+                        <th style="width: 60px;">Xóa</th>
                     </tr>
                 </thead>
                 <tbody id="appointmentsBody">
                     <c:if test="${empty appointments}">
                         <tr>
-                            <td colspan="10">
+                            <td colspan="11">
                                 <div class="empty-state">
                                     <i class='bx bx-calendar-x'></i>
                                     <p>Chưa có lịch hẹn nào</p>
@@ -895,6 +924,16 @@
                                 <div class="action-menu" data-status="${apt.status}" data-id="${apt.id}">
                                     <!-- Menu items will be populated by JS based on status -->
                                 </div>
+                            </td>
+                            <td class="actions-cell">
+                                <c:if test="${apt.status == 'Cancelled' || apt.status == 'Rejected' || apt.status == 'Completed'}">
+                                    <button class="btn-delete-direct" onclick="showConfirm('delete', ${apt.id})" title="Xóa lịch hẹn">
+                                        <i class='bx bx-trash'></i>
+                                    </button>
+                                </c:if>
+                                <c:if test="${apt.status != 'Cancelled' && apt.status != 'Rejected' && apt.status != 'Completed'}">
+                                    <span style="color: #94a3b8; font-size: 0.8rem;">-</span>
+                                </c:if>
                             </td>
                         </tr>
                     </c:forEach>
@@ -1025,7 +1064,10 @@
                            '<button class="action-menu-item" onclick="openDrawer(' + id + ')">' +
                            '<i class="bx bx-show"></i> Xem chi tiết</button>';
                 } else if (status === 'Completed') {
-                    html = '<button class="action-menu-item" onclick="openDrawer(' + id + ')">' +
+                    html = '<button class="action-menu-item danger" onclick="showConfirm(\'delete\', ' + id + ')">' +
+                           '<i class="bx bx-trash"></i> Xóa</button>' +
+                           '<div class="action-divider"></div>' +
+                           '<button class="action-menu-item" onclick="openDrawer(' + id + ')">' +
                            '<i class="bx bx-show"></i> Xem chi tiết</button>';
                 } else if (status === 'Cancelled' || status === 'Rejected') {
                     html = '<button class="action-menu-item danger" onclick="showConfirm(\'delete\', ' + id + ')">' +
@@ -1043,11 +1085,26 @@
             var menu = btn.nextElementSibling;
             var wasOpen = menu.classList.contains('show');
             closeAllMenus();
-            if (!wasOpen) menu.classList.add('show');
+            if (!wasOpen) {
+                // Check if menu would go below viewport
+                var btnRect = btn.getBoundingClientRect();
+                var menuHeight = 150; // approximate menu height
+                var viewportHeight = window.innerHeight;
+                
+                if (btnRect.bottom + menuHeight > viewportHeight) {
+                    menu.classList.add('show-up');
+                } else {
+                    menu.classList.remove('show-up');
+                }
+                menu.classList.add('show');
+            }
         }
 
         function closeAllMenus() {
-            document.querySelectorAll('.action-menu').forEach(function(m) { m.classList.remove('show'); });
+            document.querySelectorAll('.action-menu').forEach(function(m) { 
+                m.classList.remove('show'); 
+                m.classList.remove('show-up');
+            });
         }
 
         // Filter Functions
@@ -1226,7 +1283,7 @@
                 document.getElementById('bulkApprove').style.display = statuses.has('Pending') ? '' : 'none';
                 document.getElementById('bulkReject').style.display = statuses.has('Pending') ? '' : 'none';
                 document.getElementById('bulkDelete').style.display = 
-                    (statuses.has('Cancelled') || statuses.has('Rejected')) ? '' : 'none';
+                    (statuses.has('Cancelled') || statuses.has('Rejected') || statuses.has('Completed')) ? '' : 'none';
             } else {
                 bulkBar.classList.remove('show');
             }
@@ -1295,6 +1352,23 @@
             );
         }
 
+        function showDeleteAllCompletedModal() {
+            var completedCount = document.querySelectorAll('tr[data-status="Completed"]').length;
+            if (completedCount === 0) {
+                alert('Không có lịch hẹn hoàn thành nào để xóa.');
+                return;
+            }
+            showModal(
+                'Xóa tất cả lịch đã hoàn thành?',
+                'Sẽ xóa vĩnh viễn ' + completedCount + ' lịch hẹn đã hoàn thành. Không thể hoàn tác!',
+                'danger',
+                function() {
+                    document.getElementById('actionType').value = 'delete_all_completed';
+                    document.getElementById('actionForm').submit();
+                }
+            );
+        }
+
         // Modal
         function showModal(title, desc, type, callback) {
             document.getElementById('modalTitle').textContent = title;
@@ -1348,7 +1422,7 @@
             } else if (status === 'Confirmed') {
                 actionsHtml = '<button class="btn btn-primary" onclick="doAction(\'complete\', ' + id + ')"><i class="bx bx-badge-check"></i> Hoàn thành</button>' +
                               '<button class="btn btn-secondary" onclick="showConfirm(\'cancel\', ' + id + ')">Hủy lịch</button>';
-            } else if (status === 'Cancelled' || status === 'Rejected') {
+            } else if (status === 'Cancelled' || status === 'Rejected' || status === 'Completed') {
                 actionsHtml = '<button class="btn btn-danger" onclick="showConfirm(\'delete\', ' + id + ')"><i class="bx bx-trash"></i> Xóa</button>';
             }
             document.getElementById('drawerActions').innerHTML = actionsHtml || '<span style="color:var(--text-muted)">Không có thao tác</span>';

@@ -196,10 +196,18 @@
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
         }
         .btn-history:hover { background: linear-gradient(135deg, #4f46e5, #4338ca); transform: translateY(-2px); color: white; }
+        .btn-booking-pet {
+            background: linear-gradient(135deg, #00bfa5, #00897b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 191, 165, 0.35);
+        }
+        .btn-booking-pet:hover { background: linear-gradient(135deg, #00897b, #00695c); transform: translateY(-2px); color: white; }
         .btn-edit-pet {
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: white;
             box-shadow: 0 4px 15px rgba(251, 191, 36, 0.35);
+            padding: 12px 14px;
+            flex: 0;
         }
         .btn-edit-pet:hover { background: linear-gradient(135deg, #f59e0b, #d97706); transform: translateY(-2px); color: white; }
         .btn-delete-pet {
@@ -467,11 +475,14 @@
                                         </div>
                                         
                                         <div class="pet-actions">
+                                            <a href="${pageContext.request.contextPath}/booking?petId=${pet.id}&petName=${pet.name}&petType=${pet.species}" class="btn-action btn-booking-pet">
+                                                <i class='bx bx-calendar-plus'></i> Đặt lịch
+                                            </a>
                                             <a href="${pageContext.request.contextPath}/user/vaccination-history?petId=${pet.id}" class="btn-action btn-history">
                                                 <i class='bx bx-history'></i> Lịch sử
                                             </a>
                                             <button class="btn-action btn-edit-pet" onclick="openEditModal(${pet.id}, '${pet.name}', '${pet.species}', '${pet.breed}', '${pet.gender}', '${pet.birthDate}', ${pet.weight}, '${pet.color}', '${pet.notes}')">
-                                                <i class='bx bx-edit'></i> Sửa
+                                                <i class='bx bx-edit'></i>
                                             </button>
                                             <button class="btn-action btn-delete-pet" onclick="confirmDelete(${pet.id}, '${pet.name}')">
                                                 <i class='bx bx-trash'></i>

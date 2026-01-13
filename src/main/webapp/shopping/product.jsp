@@ -112,7 +112,7 @@
 </head>
 <body>
 
-	<jsp:include page="/components/layout/header-home.jsp" />
+	<jsp:include page="/components/navbar.jsp" />
 
 	<div class="bg-light py-3 mb-4">
 		<div class="container">
@@ -136,18 +136,18 @@
 			<div class="col-lg-5">
 				<div class="product-img-main text-center mb-3">
 					<img id="mainImage"
-						src="${pageContext.request.contextPath}/shop_pic/${detail.image}"
+						src="${pageContext.request.contextPath}/assets/images/shop_pic/${detail.image}"
 						class="img-fluid" alt="${detail.name}" style="max-height: 400px;"
 						onerror="this.src='https://via.placeholder.com/400x400?text=No+Image'">
 				</div>
 
 				<div class="d-flex justify-content-center gap-2">
 					<img
-						src="${pageContext.request.contextPath}/shop_pic/${detail.image}"
+						src="${pageContext.request.contextPath}/assets/images/shop_pic/${detail.image}"
 						class="thumb-img active" onclick="changeImage(this)"> <img
-						src="${pageContext.request.contextPath}/shop_pic/${detail.image}"
+						src="${pageContext.request.contextPath}/assets/images/shop_pic/${detail.image}"
 						class="thumb-img" onclick="changeImage(this)"> <img
-						src="${pageContext.request.contextPath}/shop_pic/${detail.image}"
+						src="${pageContext.request.contextPath}/assets/images/shop_pic/${detail.image}"
 						class="thumb-img" onclick="changeImage(this)">
 				</div>
 			</div>
@@ -399,7 +399,7 @@
 									<a
 										href="${pageContext.request.contextPath}/product-detail?id=${rp.id}">
 										<img
-										src="${pageContext.request.contextPath}/shop_pic/${rp.image}"
+										src="${pageContext.request.contextPath}/assets/images/shop_pic/${rp.image}"
 										class="card-img-top" alt="${rp.name}"
 										style="height: 200px; object-fit: cover;"
 										onerror="this.src='https://via.placeholder.com/200'">
