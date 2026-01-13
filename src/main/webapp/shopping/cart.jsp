@@ -39,6 +39,76 @@
         .modal-header { background-color: #10314d; color: white; }
         .modal-title { font-weight: 700; }
         .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+        
+        /* CSS cho Modal xác nhận xóa */
+        .delete-modal .modal-content {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .delete-modal .modal-body {
+            padding: 30px;
+            text-align: center;
+        }
+        .delete-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .delete-icon i {
+            font-size: 2.5rem;
+            color: #dc3545;
+        }
+        .delete-modal h5 {
+            font-weight: 700;
+            color: #10314d;
+            margin-bottom: 10px;
+        }
+        .delete-modal p {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+        .delete-product-name {
+            font-weight: 600;
+            color: #10314d;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .btn-cancel-delete {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-cancel-delete:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .btn-confirm-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-confirm-delete:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -102,11 +172,10 @@
                                         </td>
                                         
                                         <td class="text-center">
-                                            <a href="${pageContext.request.contextPath}/cart?action=remove&id=${item.product.id}" 
-                                               class="btn-remove" 
-                                               onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                            <button type="button" class="btn-remove" 
+                                                    onclick="openDeleteModal(${item.product.id}, '${item.product.name}')">
                                                 <i class='bx bx-trash'></i>
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -195,10 +264,44 @@
         </div>
     </div>
 
+    <!-- Modal Xác nhận xóa sản phẩm -->
+    <div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="delete-icon">
+                        <i class='bx bx-trash'></i>
+                    </div>
+                    <h5>Xóa sản phẩm?</h5>
+                    <div class="delete-product-name" id="deleteProductName">Tên sản phẩm</div>
+                    <p>Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-cancel-delete" data-bs-dismiss="modal">
+                            <i class='bx bx-x'></i> Hủy
+                        </button>
+                        <a href="#" id="confirmDeleteBtn" class="btn btn-confirm-delete">
+                            <i class='bx bx-check'></i> Xóa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <jsp:include page="/components/footer.jsp" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // ========== DELETE MODAL FUNCTIONS ==========
+        function openDeleteModal(productId, productName) {
+            document.getElementById('deleteProductName').textContent = productName;
+            document.getElementById('confirmDeleteBtn').href = '${pageContext.request.contextPath}/cart?action=remove&id=' + productId;
+            
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+        
+        // ========== CART UPDATE FUNCTIONS ==========
         function updateCart(inputElement) {
             // 1. Tìm hàng (row) chứa ô input vừa đổi
             let row = inputElement.closest('tr');
