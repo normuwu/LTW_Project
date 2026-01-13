@@ -65,6 +65,7 @@
         </div>
     </div>
     
+    <jsp:include page="/components/toast.jsp" />
     <div class="footer-bottom text-center py-3">
         <p class="text-white-50 m-0">&copy; 2025 Animal Doctors International. All Rights Reserved.</p>
     </div>

@@ -397,18 +397,14 @@
     <jsp:include page="/components/navbar.jsp" />
     <jsp:include page="/components/toast-notification.jsp" />
 
-    <!-- Hero Section -->
     <section class="booking-hero">
         <i class='bx bxs-calendar-heart'></i>
         <h1>Đặt Lịch Khám Online</h1>
         <p>Chăm sóc sức khỏe thú cưng của bạn chỉ với vài bước đơn giản</p>
     </section>
 
-    <!-- Main Container -->
     <div class="booking-container">
-        <!-- Booking Card -->
         <div class="booking-card">
-            <!-- Progress Steps -->
             <div class="booking-steps">
                 <div class="step active">
                     <span class="step-number">1</span>
@@ -424,11 +420,9 @@
                 </div>
             </div>
             
-            <!-- Form Body -->
             <div class="booking-body">
                 <form action="${pageContext.request.contextPath}/booking" method="post" id="bookingForm">
                     
-                    <!-- Section 1: Customer Info -->
                     <div class="section-title">
                         <i class='bx bxs-user-circle'></i>
                         <h3>Thông tin chủ nuôi</h3>
@@ -455,7 +449,6 @@
                         </div>
                     </div>
 
-                    <!-- Section 2: Pet Info -->
                     <div class="section-title">
                         <i class='bx bxs-dog'></i>
                         <h3>Thông tin thú cưng</h3>
@@ -495,7 +488,6 @@
                         </div>
                     </div>
                     
-                    <!-- Section 3: Service Selection -->
                     <div class="section-title">
                         <i class='bx bxs-first-aid'></i>
                         <h3>Chọn dịch vụ</h3>
@@ -544,7 +536,6 @@
                         </label>
                     </div>
                     
-                    <!-- Section 4: Schedule -->
                     <div class="section-title" style="margin-top: 30px;">
                         <i class='bx bxs-calendar'></i>
                         <h3>Lịch hẹn</h3>
@@ -580,13 +571,11 @@
                         </div>
                     </div>
                     
-                    <!-- Info Box -->
                     <div class="info-box">
                         <i class='bx bx-info-circle'></i>
                         <p>Sau khi đặt lịch, nhân viên sẽ liên hệ xác nhận trong vòng 30 phút (giờ làm việc). Vui lòng giữ điện thoại để nhận cuộc gọi.</p>
                     </div>
                     
-                    <!-- Submit Button -->
                     <button type="submit" class="btn-submit">
                         <i class='bx bx-calendar-check'></i>
                         Xác Nhận Đặt Lịch
@@ -599,11 +588,9 @@
 
     <jsp:include page="/components/footer.jsp" />
     
-    <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; position: relative;">
-                <!-- Close Button -->
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" 
                         style="position: absolute; top: 16px; right: 16px; z-index: 10;"></button>
                 <div class="modal-body text-center" style="padding: 40px;">
@@ -754,7 +741,6 @@
         }
     </script>
     
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

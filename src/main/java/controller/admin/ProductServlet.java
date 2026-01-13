@@ -5,12 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import DAO.ProductDAO;
 import Model.Product;
 import Util.FormHelper;
@@ -19,7 +21,9 @@ import Util.ValidationUtil;
 @WebServlet("/pages/admin/products")
 public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final String UPLOAD_DIR = "assets/images/shop_pic";
+    
+    // SỬA 1: Đổi thư mục upload về 'shop_pic' cho khớp với file JSP hiển thị
+    private static final String UPLOAD_DIR = "shop_pic";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ProductDAO dao = new ProductDAO();
@@ -51,8 +55,10 @@ public class ProductServlet extends HttpServlet {
             String image = form.get("image");
             String imageData = form.get("imageData"); // Base64 image data
             String priceStr = form.get("price");
-            String oldPriceStr = form.get("oldPrice");
             String discountStr = form.get("discount");
+            
+            // SỬA 2: Lấy description thay vì oldPrice
+            String description = form.get("description"); 
             
             // === VALIDATION ===
             boolean valid = true;
@@ -67,10 +73,7 @@ public class ProductServlet extends HttpServlet {
                 valid = false;
             }
             
-            if (ValidationUtil.isNotEmpty(oldPriceStr) && !ValidationUtil.isNonNegativeNumber(oldPriceStr)) {
-                form.addError("oldPrice", "Giá gốc không hợp lệ");
-                valid = false;
-            }
+            // (Đã XÓA validation oldPrice)
             
             if (ValidationUtil.isNotEmpty(discountStr) && !form.validateDiscount("discount")) {
                 valid = false;
@@ -89,36 +92,32 @@ public class ProductServlet extends HttpServlet {
             // === HANDLE IMAGE UPLOAD ===
             if (imageData != null && !imageData.isEmpty() && imageData.startsWith("data:image")) {
                 try {
-                    // Extract base64 data
                     String base64Data = imageData.substring(imageData.indexOf(",") + 1);
                     byte[] imageBytes = Base64.getDecoder().decode(base64Data);
                     
-                    // Get upload directory
                     String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
                     File uploadDir = new File(uploadPath);
                     if (!uploadDir.exists()) {
                         uploadDir.mkdirs();
                     }
                     
-                    // Save file
                     String filePath = uploadPath + File.separator + image;
                     try (FileOutputStream fos = new FileOutputStream(filePath)) {
                         fos.write(imageBytes);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    // Continue without image if upload fails
                 }
             }
             
             // Parse values
             double price = ValidationUtil.parseDoubleOrDefault(priceStr, 0);
-            double oldPrice = ValidationUtil.parseDoubleOrDefault(oldPriceStr, 0);
             int discount = ValidationUtil.parseIntOrDefault(discountStr, 0);
             
             // === BUSINESS LOGIC ===
             if ("add".equals(action)) {
-                if (dao.addProduct(name, image, price, oldPrice, discount)) {
+                // SỬA 3: Gọi hàm addProduct MỚI (có description, bỏ oldPrice)
+                if (dao.addProduct(name, image, price, discount, description)) {
                     message = "Thêm sản phẩm thành công!";
                 } else {
                     message = "Có lỗi xảy ra khi thêm sản phẩm!";
@@ -131,7 +130,8 @@ public class ProductServlet extends HttpServlet {
                 if (id == null) {
                     message = "ID sản phẩm không hợp lệ!";
                     messageType = "error";
-                } else if (dao.updateProduct(id, name, image, price, oldPrice, discount)) {
+                // SỬA 4: Gọi hàm updateProduct MỚI
+                } else if (dao.updateProduct(id, name, image, price, discount, description)) {
                     message = "Cập nhật sản phẩm thành công!";
                 } else {
                     message = "Có lỗi xảy ra khi cập nhật!";
@@ -161,4 +161,3 @@ public class ProductServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/pages/admin/products");
     }
 }
-

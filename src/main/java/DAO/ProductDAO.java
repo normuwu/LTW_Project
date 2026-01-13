@@ -11,67 +11,82 @@ import Model.Product;
 
 public class ProductDAO {
 
-    // Hàm lấy danh sách tất cả sản phẩm
+    // 1. Lấy danh sách tất cả (Cho trang Shop)
+    // Dùng logic của bạn (HEAD) để lấy description
     public List<Product> getAllProducts() {
         List<Product> list = new ArrayList<>();
-        String query = "SELECT * FROM Products ORDER BY id DESC"; 
+        String query = "SELECT * FROM Products"; 
 
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        try {
+            Connection conn = new DBContext().getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
+                // Xử lý nếu mô tả bị null
+                String desc = rs.getString("description");
+                if (desc == null) desc = ""; 
+
                 list.add(new Product(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("image"),
                     rs.getDouble("price"),
-                    rs.getDouble("old_price"),
-                    rs.getInt("discount")
+                    rs.getInt("discount"),
+                    desc 
                 ));
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
-    
-    // Lấy sản phẩm theo ID
+
+    // 2. Lấy 1 sản phẩm theo ID (Cho trang Chi tiết)
+    // Dùng logic của bạn (HEAD) để lấy description
     public Product getProductById(int id) {
         String query = "SELECT * FROM Products WHERE id = ?";
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            
+        try {
+            Connection conn = new DBContext().getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new Product(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("image"),
-                        rs.getDouble("price"),
-                        rs.getDouble("old_price"),
-                        rs.getInt("discount")
-                    );
-                }
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String desc = rs.getString("description");
+                if (desc == null) desc = "Đang cập nhật thông tin sản phẩm...";
+
+                return new Product(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("image"),
+                    rs.getDouble("price"),
+                    rs.getInt("discount"),
+                    desc 
+                );
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    
-    // Thêm sản phẩm mới
-    public boolean addProduct(String name, String image, double price, double oldPrice, int discount) {
-        String query = "INSERT INTO Products (name, image, price, old_price, discount) VALUES (?, ?, ?, ?, ?)";
+
+
+
+    // 3. Thêm sản phẩm mới (Admin)
+    public boolean addProduct(String name, String image, double price, int discount, String description) {
+        String query = "INSERT INTO Products (name, image, price, discount, description) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
             ps.setString(1, name);
             ps.setString(2, image);
             ps.setDouble(3, price);
-            ps.setDouble(4, oldPrice);
-            ps.setInt(5, discount);
+            ps.setInt(4, discount);
+            ps.setString(5, description); 
+            
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,18 +94,20 @@ public class ProductDAO {
         return false;
     }
     
-    // Cập nhật sản phẩm
-    public boolean updateProduct(int id, String name, String image, double price, double oldPrice, int discount) {
-        String query = "UPDATE Products SET name = ?, image = ?, price = ?, old_price = ?, discount = ? WHERE id = ?";
+    // 4. Cập nhật sản phẩm (Admin)
+
+    public boolean updateProduct(int id, String name, String image, double price, int discount, String description) {
+        String query = "UPDATE Products SET name = ?, image = ?, price = ?, discount = ?, description = ? WHERE id = ?";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
             ps.setString(1, name);
             ps.setString(2, image);
             ps.setDouble(3, price);
-            ps.setDouble(4, oldPrice);
-            ps.setInt(5, discount);
+            ps.setInt(4, discount);
+            ps.setString(5, description);
             ps.setInt(6, id);
+            
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,7 +115,7 @@ public class ProductDAO {
         return false;
     }
     
-    // Xóa sản phẩm
+    // 5. Xóa sản phẩm (Admin)
     public boolean deleteProduct(int id) {
         String query = "DELETE FROM Products WHERE id = ?";
         try (Connection conn = new DBContext().getConnection();
@@ -112,7 +129,7 @@ public class ProductDAO {
         return false;
     }
     
-    // Đếm tổng sản phẩm
+    // 6. Đếm tổng sản phẩm (Thống kê)
     public int getTotalProducts() {
         String query = "SELECT COUNT(*) FROM Products";
         try (Connection conn = new DBContext().getConnection();
@@ -126,7 +143,7 @@ public class ProductDAO {
         return 0;
     }
     
-    // Đếm sản phẩm đang giảm giá
+    // 7. Đếm sản phẩm đang giảm giá (Thống kê)
     public int getDiscountedProducts() {
         String query = "SELECT COUNT(*) FROM Products WHERE discount > 0";
         try (Connection conn = new DBContext().getConnection();
@@ -139,14 +156,38 @@ public class ProductDAO {
         }
         return 0;
     }
-    
-    // Test thử ngay tại đây xem có lấy được dữ liệu không (Hàm Main)
-    public static void main(String[] args) {
-        ProductDAO dao = new ProductDAO();
-        List<Product> list = dao.getAllProducts();
-        
-        for (Product o : list) {
-            System.out.println(o.getName());
+ // 8. Lấy 4 sản phẩm liên quan (trừ sản phẩm đang xem)
+    public List<Product> getRelatedProducts(int excludeId) {
+        List<Product> list = new ArrayList<>();
+
+        String query = "SELECT * FROM Products WHERE id != ? LIMIT 4"; 
+
+        try {
+            Connection conn = new DBContext().getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, excludeId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String desc = rs.getString("description");
+                if (desc == null) desc = ""; 
+
+            
+                list.add(new Product(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("image"),
+                    rs.getDouble("price"),
+                    rs.getInt("discount"),
+                    desc 
+                ));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return list;
     }
+    
+    
 }

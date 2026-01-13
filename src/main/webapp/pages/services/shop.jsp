@@ -13,10 +13,17 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shop.css">
     
+    <style>
+        .navbar { background-color: #fff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .navbar .nav-link, .navbar .navbar-brand { color: #333 !important; }
+        
+        /* Đảm bảo thẻ a không làm hỏng style của card */
+        .product-card a { text-decoration: none; display: block; }
+    </style>
 </head>
 <body>
 
-    <jsp:include page="/components/navbar.jsp" />
+   <jsp:include page="/components/navbar.jsp" />
 
     <section class="shop-header">
         <div class="container">
@@ -28,7 +35,7 @@
     <section class="category-section container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4 text-white">
             <h3>Bộ Sưu Tập Cho Mèo Con</h3>
-            <a href="#" class="text-white text-decoration-none">Xem Tất Cả <i class='bx bx-right-arrow-alt'></i></a>
+            
         </div>
 
         <div class="row text-center g-4">
@@ -87,24 +94,33 @@
                             <div class="badge-discount">-${p.discount}%</div>
                         </c:if>
 
-                        <img src="${pageContext.request.contextPath}/assets/images/shop_pic/${p.image}" class="product-img" alt="${p.name}">
+                        <a href="${pageContext.request.contextPath}/product-detail?id=${p.id}">
+                            <img src="${pageContext.request.contextPath}/shop_pic/${p.image}" class="product-img" alt="${p.name}">
+                        </a>
                         
                         <div class="product-info">
                             <span class="brand">Royal Canin</span>
-                            <h5 class="product-title">${p.name}</h5>
+                            
+                            <h5 class="product-title">
+                                <a href="${pageContext.request.contextPath}/product-detail?id=${p.id}" class="text-dark">
+                                    ${p.name}
+                                </a>
+                            </h5>
                             
                             <div class="price-box">
-                                <c:if test="${p.oldPrice > 0}">
-                                    <span class="old-price">${p.formattedOldPrice}</span>
-                                </c:if>
                                 <span class="new-price">${p.formattedPrice}</span>
                             </div>
                             
-                            <button class="btn-add-cart"><i class='bx bxs-cart-add'></i> Thêm</button>
+                            <form action="${pageContext.request.contextPath}/add-to-cart" method="post">
+                                <input type="hidden" name="id" value="${p.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button class="btn-add-cart"><i class='bx bxs-cart-add'></i> Thêm</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </c:forEach>
+            
             <c:if test="${empty products}">
                 <div class="col-12 text-center text-white">
                     <p>Đang cập nhật sản phẩm...</p>
@@ -116,9 +132,10 @@
 
     <jsp:include page="/components/footer.jsp" />
     <jsp:include page="/components/back-button.jsp" />
+
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
-
