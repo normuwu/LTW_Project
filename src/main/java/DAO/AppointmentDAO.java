@@ -112,7 +112,8 @@ public class AppointmentDAO {
         return list;
     }
     
-    // 2b. Lấy danh sách lịch hẹn theo User ID (cho User)
+    // 2b. Lấy danh sách lịch hẹn theo User ID (cho User) - Pending lên đầu
+    // Tạm thời lấy tất cả appointments (bỏ điều kiện WHERE)
     public List<Appointment> getAppointmentsByUserId(int userId) {
         List<Appointment> list = new ArrayList<>();
         String query = "SELECT a.id, a.user_id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
@@ -121,13 +122,64 @@ public class AppointmentDAO {
                        "FROM appointments a " +
                        "LEFT JOIN services s ON a.service_id = s.id " +
                        "LEFT JOIN doctors d ON a.doctor_id = d.id " +
-                       "WHERE a.user_id = ? " +
-                       "ORDER BY a.booking_date DESC"; 
+                       "ORDER BY CASE WHEN a.status = 'Pending' THEN 0 " +
+                       "WHEN a.status = 'Confirmed' THEN 1 " +
+                       "WHEN a.status = 'Completed' THEN 2 " +
+                       "ELSE 3 END, a.id DESC"; 
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Appointment a = new Appointment();
+                a.setId(rs.getInt("id"));
+                a.setUserId(rs.getInt("user_id"));
+                a.setCustomerName(rs.getString("customer_name"));
+                a.setPhone(rs.getString("phone"));
+                a.setPetName(rs.getString("pet_name"));
+                a.setPetType(rs.getString("pet_type"));
+                a.setServiceId(rs.getInt("service_id"));
+                a.setDoctorId(rs.getInt("doctor_id"));
+                a.setNote(rs.getString("note"));
+                
+                String sName = rs.getString("service_name");
+                String dName = rs.getString("doctor_name");
+                
+                a.setServiceName(sName != null ? sName : "Dịch vụ đã xóa");
+                a.setDoctorName(dName != null ? dName : "Chưa chỉ định");
+                
+                a.setBookingDate(rs.getDate("booking_date"));
+                a.setStatus(rs.getString("status")); 
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    // 2c. Lấy danh sách lịch hẹn theo số điện thoại (backup nếu user_id = 0) - Pending lên đầu
+    public List<Appointment> getAppointmentsByPhone(String phone) {
+        List<Appointment> list = new ArrayList<>();
+        if (phone == null || phone.isEmpty()) return list;
+        
+        String query = "SELECT a.id, a.user_id, a.customer_name, a.phone, a.pet_name, a.pet_type, " +
+                       "a.service_id, a.doctor_id, " +
+                       "s.name as service_name, d.name as doctor_name, a.booking_date, a.status, a.note " +
+                       "FROM appointments a " +
+                       "LEFT JOIN services s ON a.service_id = s.id " +
+                       "LEFT JOIN doctors d ON a.doctor_id = d.id " +
+                       "WHERE a.phone = ? " +
+                       "ORDER BY CASE WHEN a.status = 'Pending' THEN 0 " +
+                       "WHEN a.status = 'Confirmed' THEN 1 " +
+                       "WHEN a.status = 'Completed' THEN 2 " +
+                       "ELSE 3 END, a.id DESC"; 
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             
-            ps.setInt(1, userId);
+            ps.setString(1, phone);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Appointment a = new Appointment();

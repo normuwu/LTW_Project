@@ -12,25 +12,69 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <jsp:include page="/components/navbar.jsp" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Lịch Hẹn Của Tôi - Animal Doctors</title>
-    <jsp:include page="/components/head.jsp" />
-    <jsp:include page="/components/navbar-styles.jsp" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+        
         :root {
-            --primary-color: #0b1a33;
-            --primary-light: #1a3a5c;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --purple-color: #8b5cf6;
-            --gray-color: #6b7280;
+            --primary: #00bfa5;
+            --primary-dark: #00897b;
+            --primary-light: #e0f2f1;
+            --secondary: #ff7043;
+            --dark: #263238;
+            --gray: #607d8b;
+            --light-gray: #eceff1;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #f5f5f5 50%, #fff8e1 100%);
+            min-height: 100vh;
+            padding-top: 80px !important;
+        }
+        
+        /* Navbar font override - giữ nguyên Montserrat cho navbar */
+        nav#navbar-main,
+        nav#navbar-main * {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
+        nav#navbar-main i.bx {
+            font-family: 'boxicons' !important;
+        }
+        
+        /* Fix dropdown z-index - CRITICAL */
+        .dropdown-menu {
+            z-index: 999999 !important;
+            position: absolute !important;
+        }
+        
+        /* Fix navbar dropdown */
+        nav#navbar-main .dropdown-menu {
+            z-index: 999999 !important;
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
         }
         
         /* Page Header */
         .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            padding: 50px 0 80px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 60px 0 100px;
             color: white;
             position: relative;
             overflow: hidden;
@@ -42,61 +86,110 @@
             right: -10%;
             width: 400px;
             height: 400px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
             background: rgba(255,255,255,0.05);
             border-radius: 50%;
         }
-        .page-header h1 { font-weight: 700; font-size: 2.2rem; }
-        .page-header p { opacity: 0.9; }
+        .page-header h1 { 
+            font-weight: 800; 
+            font-size: 2.2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .page-header h1 i {
+            margin-right: 12px;
+        }
+        .page-header p { 
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        .page-header .btn-light {
+            background: white;
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .page-header .btn-light:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
 
         /* Stats Cards */
         .stats-row {
-            margin-top: -50px;
+            margin-top: -60px;
             position: relative;
             z-index: 10;
         }
         .stat-card {
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
-            gap: 15px;
-            transition: transform 0.3s;
+            gap: 18px;
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.03);
         }
-        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card:hover { 
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
         .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: white;
         }
         .stat-icon.pending { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
         .stat-icon.confirmed { background: linear-gradient(135deg, #34d399, #10b981); }
         .stat-icon.completed { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
-        .stat-number { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
-        .stat-label { font-size: 0.85rem; color: var(--gray-color); }
+        .stat-number { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            color: var(--dark);
+            line-height: 1;
+        }
+        .stat-label { 
+            font-size: 0.9rem; 
+            color: var(--gray);
+            margin-top: 4px;
+        }
 
         /* Appointment Cards */
         .appointment-card {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             overflow: hidden;
             transition: all 0.3s ease;
-            border: none;
-            margin-bottom: 20px;
+            border: 1px solid rgba(0,0,0,0.03);
+            margin-bottom: 24px;
         }
         .appointment-card:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+            transform: translateY(-6px);
         }
         .card-status-bar {
-            height: 4px;
+            height: 5px;
             width: 100%;
         }
         .card-status-bar.pending { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
@@ -106,33 +199,34 @@
         .card-status-bar.cancelled { background: linear-gradient(90deg, #9ca3af, #6b7280); }
 
         .card-header-custom {
-            padding: 20px 20px 10px;
+            padding: 24px 24px 12px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
         }
         .appointment-id {
             font-size: 0.8rem;
-            color: var(--gray-color);
-            margin-bottom: 5px;
+            color: var(--gray);
+            margin-bottom: 6px;
+            font-weight: 600;
         }
         .service-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary-color);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--dark);
         }
         
         /* Status Badges */
         .status-badge {
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
-        .status-badge i { font-size: 0.9rem; }
+        .status-badge i { font-size: 1rem; }
         .status-pending { background: #fef3c7; color: #b45309; }
         .status-confirmed { background: #d1fae5; color: #047857; }
         .status-completed { background: #ede9fe; color: #6d28d9; }
@@ -140,288 +234,213 @@
         .status-cancelled { background: #f3f4f6; color: #4b5563; }
 
         /* Card Body */
-        .card-body-custom { padding: 10px 20px 20px; }
+        .card-body-custom { padding: 12px 24px 24px; }
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 16px;
+            margin-bottom: 18px;
         }
         .info-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .info-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: #f3f4f6;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--primary-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
+            color: var(--primary-dark);
+            font-size: 1.1rem;
         }
-        .info-label { font-size: 0.75rem; color: var(--gray-color); }
-        .info-value { font-size: 0.9rem; font-weight: 500; color: #1f2937; }
+        .info-label { 
+            font-size: 0.75rem; 
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-value { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            color: var(--dark);
+        }
 
         /* Note Section */
         .note-section {
-            background: #f9fafb;
-            border-radius: 10px;
-            padding: 12px 15px;
-            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
-        .note-section i { color: var(--warning-color); }
-        .note-section span { font-size: 0.85rem; color: #4b5563; }
+        .note-section i { 
+            color: #ff8f00;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .note-section span { 
+            font-size: 0.9rem; 
+            color: #5d4037;
+            line-height: 1.5;
+        }
 
         /* Action Buttons */
         .card-actions {
             display: flex;
-            gap: 10px;
-            padding-top: 15px;
-            border-top: 1px solid #f3f4f6;
+            gap: 12px;
+            padding-top: 18px;
+            border-top: 1px solid var(--light-gray);
         }
         .btn-action {
             flex: 1;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: all 0.2s;
+            gap: 8px;
+            transition: all 0.25s;
             border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         .btn-edit {
-            background: #e0e7ff;
-            color: #4338ca;
-        }
-        .btn-edit:hover { background: #c7d2fe; color: #3730a3; }
-        .btn-cancel {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-        .btn-cancel:hover { background: #fecaca; color: #b91c1c; }
-        .btn-rebook {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
         }
-        .btn-rebook:hover { background: var(--primary-light); }
+        .btn-edit:hover { 
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+        }
+        .btn-cancel {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+        }
+        .btn-cancel:hover { 
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+        }
+        .btn-rebook {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+        }
+        .btn-rebook:hover { 
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+        }
         .btn-detail {
-            background: #f3f4f6;
-            color: #374151;
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
         }
-        .btn-detail:hover { background: #e5e7eb; }
+        .btn-detail:hover {
+            background: linear-gradient(135deg, #475569, #334155);
+            transform: translateY(-3px);
+        }
         .btn-delete {
-            background: #fef2f2;
-            color: #dc2626;
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+            box-shadow: 0 4px 15px rgba(248, 113, 113, 0.35);
         }
-        .btn-delete:hover { background: #fee2e2; color: #b91c1c; }
+        .btn-delete:hover { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(248, 113, 113, 0.45);
+        }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 80px 20px;
+            padding: 100px 20px;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
         .empty-icon {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, var(--primary-light), #b2dfdb);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 25px;
+            margin: 0 auto 30px;
         }
-        .empty-icon i { font-size: 3.5rem; color: #9ca3af; }
-        .empty-state h4 { color: var(--primary-color); margin-bottom: 10px; }
-        .empty-state p { color: var(--gray-color); margin-bottom: 25px; }
-
-        /* Cancel Modal */
-        .modal-content { border: none; border-radius: 20px; overflow: hidden; }
-        .modal-header-custom {
-            background: linear-gradient(135deg, #fef2f2, #fee2e2);
-            padding: 25px;
-            border: none;
+        .empty-icon i { 
+            font-size: 4rem; 
+            color: var(--primary);
         }
-        .modal-icon {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            box-shadow: 0 4px 15px rgba(239,68,68,0.2);
+        .empty-state h4 { 
+            color: var(--dark); 
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 1.4rem;
         }
-        .modal-icon i { font-size: 1.8rem; color: #ef4444; }
-        .modal-title-custom {
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0;
-        }
-        .modal-body-custom { padding: 25px; }
-        .appointment-preview {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .preview-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #e5e7eb;
-        }
-        .preview-row:last-child { border: none; }
-        .preview-label { color: var(--gray-color); font-size: 0.85rem; }
-        .preview-value { font-weight: 500; color: #1f2937; }
-        .reason-section label {
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 8px;
-            display: block;
-        }
-        .reason-section select, .reason-section textarea {
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            padding: 12px;
-        }
-        .reason-section select:focus, .reason-section textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(11,26,51,0.1);
-        }
-        .modal-footer-custom {
-            padding: 20px 25px 25px;
-            border: none;
-            gap: 12px;
-        }
-        .btn-keep {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            background: #f3f4f6;
-            color: #374151;
-            font-weight: 500;
-            border: none;
-        }
-        .btn-keep:hover { background: #e5e7eb; }
-        .btn-confirm-cancel {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            font-weight: 500;
-            border: none;
-        }
-        .btn-confirm-cancel:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-        .btn-confirm-cancel:disabled { opacity: 0.7; cursor: not-allowed; }
-
-        /* Toast Notifications */
-        .toast-container { z-index: 1100; }
-        .custom-toast {
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            min-width: 350px;
-        }
-        .toast-success { background: linear-gradient(135deg, #10b981, #059669); }
-        .toast-error { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .toast-info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .toast-body-custom {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: white;
-        }
-        .toast-message { display: flex; align-items: center; gap: 10px; }
-        .toast-message i { font-size: 1.3rem; }
-        .btn-undo {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .btn-undo:hover { background: rgba(255,255,255,0.3); color: white; }
-        .undo-progress {
-            height: 3px;
-            background: rgba(255,255,255,0.3);
-        }
-        .undo-progress-bar {
-            height: 100%;
-            background: white;
-            animation: countdown 10s linear forwards;
-        }
-        @keyframes countdown {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-
-        /* Card Inactive State */
-        .appointment-card.inactive {
-            opacity: 0.7;
-            background: #f9fafb;
-        }
-        .appointment-card.inactive .service-name,
-        .appointment-card.inactive .info-value { color: var(--gray-color); }
-
-        /* Loading State */
-        .appointment-card.loading { pointer-events: none; position: relative; }
-        .appointment-card.loading::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
+        .empty-state p { 
+            color: var(--gray); 
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
         /* Filter Tabs */
         .filter-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
         .filter-tab {
-            padding: 8px 18px;
+            padding: 10px 22px;
             border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px solid var(--light-gray);
             background: white;
-            color: var(--gray-color);
+            color: var(--gray);
             cursor: pointer;
             transition: all 0.2s;
         }
-        .filter-tab:hover { border-color: var(--primary-color); color: var(--primary-color); }
-        .filter-tab.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+        .filter-tab:hover { 
+            border-color: var(--primary); 
+            color: var(--primary);
         }
-    </style>
+        .filter-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 191, 165, 0.3);
+        }
+
+        /* Card Inactive State */
+        .appointment-card.inactive {
+            opacity: 0.7;
+            background: #fafafa;
+        }
+        .appointment-card.inactive .service-name,
+        .appointment-card.inactive .info-value { color: var(--gray); }
+</style>
+
 </head>
 <body>
     <jsp:include page="/components/navbar.jsp" />
+    <jsp:include page="/components/toast-notification.jsp" />
 
     <!-- Page Header -->
     <section class="page-header">
@@ -475,22 +494,7 @@
 
     <!-- Main Content -->
     <section class="py-5">
-        <div class="container">
-            <!-- Alert Messages -->
-            <c:if test="${not empty success}">
-                <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
-                    <i class='bx bx-check-circle me-2'></i> ${success}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </c:if>
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
-                    <i class='bx bx-error-circle me-2'></i> ${error}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </c:if>
-
-            <!-- Filter Tabs -->
+        <div class="container">            <!-- Filter Tabs -->
             <div class="filter-tabs">
                 <button class="filter-tab active" data-filter="all">Tất cả</button>
                 <button class="filter-tab" data-filter="Pending">Chờ xác nhận</button>
@@ -706,69 +710,69 @@
     <!-- Edit Appointment Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header-custom" style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe);">
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+            <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+                <div class="modal-header-custom" style="background: linear-gradient(135deg, #6366f1, #4f46e5); padding: 30px; text-align: center;">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
                     <div class="w-100">
-                        <div class="modal-icon" style="box-shadow: 0 4px 15px rgba(67,56,202,0.2);">
-                            <i class='bx bx-edit' style="font-size: 1.8rem; color: #4338ca;"></i>
+                        <div style="width: 70px; height: 70px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                            <i class='bx bx-edit' style="font-size: 2rem; color: #4f46e5;"></i>
                         </div>
-                        <h5 class="modal-title-custom">Chỉnh sửa lịch hẹn</h5>
+                        <h5 style="color: white; font-weight: 700; margin: 0; font-size: 1.3rem;">Chỉnh sửa lịch hẹn</h5>
                     </div>
                 </div>
                 <form id="editForm" method="POST" action="${pageContext.request.contextPath}/schedule">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="id" id="editAppointmentId">
-                    <div class="modal-body-custom">
+                    <div class="modal-body" style="padding: 30px;">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-500">Họ tên khách hàng <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="customerName" id="editCustomerName" required>
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Họ tên khách hàng <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="form-control" name="customerName" id="editCustomerName" required style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-500">Số điện thoại <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" name="phone" id="editPhone" required pattern="[0-9]{10,11}">
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Số điện thoại <span style="color: #ef4444;">*</span></label>
+                                <input type="tel" class="form-control" name="phone" id="editPhone" required pattern="[0-9]{10,11}" style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-500">Tên thú cưng <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="petName" id="editPetName" required>
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Tên thú cưng <span style="color: #ef4444;">*</span></label>
+                                <input type="text" class="form-control" name="petName" id="editPetName" required style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-500">Loại thú cưng <span class="text-danger">*</span></label>
-                                <select class="form-select" name="petType" id="editPetType" required>
-                                    <option value="Chó">Chó</option>
-                                    <option value="Mèo">Mèo</option>
-                                    <option value="Hamster">Hamster</option>
-                                    <option value="Thỏ">Thỏ</option>
-                                    <option value="Chim">Chim</option>
-                                    <option value="Khác">Khác</option>
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Loại thú cưng <span style="color: #ef4444;">*</span></label>
+                                <select class="form-select" name="petType" id="editPetType" required style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;">
+                                    <option value="Chó">🐕 Chó</option>
+                                    <option value="Mèo">🐱 Mèo</option>
+                                    <option value="Hamster">🐹 Hamster</option>
+                                    <option value="Thỏ">🐰 Thỏ</option>
+                                    <option value="Chim">🐦 Chim</option>
+                                    <option value="Khác">🐾 Khác</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-500">Dịch vụ <span class="text-danger">*</span></label>
-                                <select class="form-select" name="serviceId" id="editServiceId" required>
-                                    <option value="1">Khám & Điều trị</option>
-                                    <option value="2">Phẫu thuật</option>
-                                    <option value="3">Tiêm phòng Vaccine</option>
-                                    <option value="4">Spa & Làm đẹp</option>
-                                    <option value="5">Khách Sạn Thú Cưng</option>
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Dịch vụ <span style="color: #ef4444;">*</span></label>
+                                <select class="form-select" name="serviceId" id="editServiceId" required style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;">
+                                    <option value="1">💊 Khám & Điều trị</option>
+                                    <option value="2">🔪 Phẫu thuật</option>
+                                    <option value="3">💉 Tiêm phòng Vaccine</option>
+                                    <option value="4">✨ Spa & Làm đẹp</option>
+                                    <option value="5">🏨 Khách Sạn Thú Cưng</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-500">Ngày hẹn <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="bookingDate" id="editBookingDate" required>
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Ngày hẹn <span style="color: #ef4444;">*</span></label>
+                                <input type="date" class="form-control" name="bookingDate" id="editBookingDate" required style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;">
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-500">Ghi chú</label>
-                                <textarea class="form-control" name="note" id="editNote" rows="3" placeholder="Triệu chứng, yêu cầu đặc biệt..."></textarea>
+                                <label class="form-label" style="font-weight: 600; color: #374151;">Ghi chú</label>
+                                <textarea class="form-control" name="note" id="editNote" rows="3" placeholder="Triệu chứng, yêu cầu đặc biệt..." style="border-radius: 10px; padding: 12px 16px; border: 2px solid #e5e7eb;"></textarea>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer modal-footer-custom">
-                        <button type="button" class="btn-keep" data-bs-dismiss="modal">
+                    <div class="modal-footer" style="padding: 20px 30px; border-top: 1px solid #e5e7eb; gap: 12px;">
+                        <button type="button" class="btn" data-bs-dismiss="modal" style="background: #f3f4f6; color: #374151; padding: 12px 24px; border-radius: 10px; font-weight: 600; border: none;">
                             <i class='bx bx-x me-1'></i> Hủy bỏ
                         </button>
-                        <button type="submit" class="btn-confirm-cancel" style="background: linear-gradient(135deg, #4338ca, #3730a3);">
+                        <button type="submit" class="btn" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; border: none; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);">
                             <span class="normal-text"><i class='bx bx-check me-1'></i> Lưu thay đổi</span>
                             <span class="loading-text d-none">
                                 <span class="spinner-border spinner-border-sm me-2"></span> Đang lưu...
@@ -783,17 +787,15 @@
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header-custom" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); padding: 20px;">
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
-                    <div class="w-100 text-center">
-                        <div class="modal-icon" style="width: 50px; height: 50px; margin-bottom: 10px;">
-                            <i class='bx bx-trash' style="font-size: 1.5rem;"></i>
-                        </div>
-                        <h6 class="modal-title-custom" style="font-size: 1.1rem;">Xóa lịch hẹn?</h6>
+            <div class="modal-content" style="border-radius: 16px; border: none; overflow: hidden;">
+                <div style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 25px; text-align: center;">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+                    <div style="width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                        <i class='bx bx-trash' style="font-size: 1.8rem; color: #ef4444;"></i>
                     </div>
+                    <h6 style="color: white; font-weight: 700; margin: 0; font-size: 1.1rem;">Xóa lịch hẹn?</h6>
                 </div>
-                <div class="modal-body-custom text-center" style="padding: 20px;">
+                <div class="text-center" style="padding: 20px;">
                     <p class="text-muted mb-2" style="font-size: 0.9rem;">
                         <strong id="deleteServiceName">-</strong><br>
                         <small id="deleteDate">-</small>
@@ -803,11 +805,11 @@
                     </p>
                     <input type="hidden" id="deleteAppointmentId">
                 </div>
-                <div class="modal-footer modal-footer-custom" style="padding: 15px 20px 20px;">
-                    <button type="button" class="btn-keep" data-bs-dismiss="modal" style="padding: 10px;">
+                <div style="padding: 15px 20px 20px; display: flex; gap: 10px;">
+                    <button type="button" class="btn flex-fill" data-bs-dismiss="modal" style="background: #f3f4f6; color: #374151; padding: 12px; border-radius: 10px; font-weight: 600; border: none;">
                         Hủy bỏ
                     </button>
-                    <button type="button" class="btn-confirm-cancel" onclick="confirmDelete()" style="padding: 10px;">
+                    <button type="button" class="btn flex-fill" onclick="confirmDelete()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 12px; border-radius: 10px; font-weight: 600; border: none; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);">
                         <span class="normal-text"><i class='bx bx-trash me-1'></i> Xóa</span>
                         <span class="loading-text d-none">
                             <span class="spinner-border spinner-border-sm"></span>
@@ -858,8 +860,6 @@
             </div>
         </div>
     </div>
-
-    <jsp:include page="/components/scripts.jsp" />
 
     <script>
         const contextPath = '${pageContext.request.contextPath}';
@@ -1093,6 +1093,9 @@
             document.querySelector('.countdown-badge').textContent = '(' + undoCountdown + ')';
         }
     </script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

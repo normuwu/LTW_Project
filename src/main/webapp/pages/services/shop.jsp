@@ -34,7 +34,7 @@
     <section class="category-section container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4 text-white">
             <h3>Bộ Sưu Tập Cho Mèo Con</h3>
-            <a href="#" class="text-white text-decoration-none">Xem Tất Cả <i class='bx bx-right-arrow-alt'></i></a>
+            
         </div>
 
         <div class="row text-center g-4">
@@ -133,5 +133,8 @@
     <jsp:include page="/components/back-button.jsp" />
 
     
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

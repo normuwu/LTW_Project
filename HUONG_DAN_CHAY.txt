@@ -86,3 +86,11 @@ LƯU Ý:
 - Nếu password khác, sửa trong: src/main/java/Context/DBContext.java
 
 ========================================
+ Check if Tomcat is already running
+$tomcatRunning = netstat -ano | Select-String ":8080.*LISTENING"
+if ($tomcatRunning) {
+    Write-Host "Tomcat is already running on port 8080"
+} else {
+    Write-Host "Starting Tomcat..."
+}
+.\start_tomcat.bat

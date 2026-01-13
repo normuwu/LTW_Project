@@ -85,7 +85,21 @@
         text-decoration: none !important;
     }
     
-    /* Toggler */
+    /* Nav Link Dropdown Toggle - Đã lấy từ nhánh Main để mũi tên đẹp hơn */
+    nav#navbar-main .nav-link.dropdown-toggle {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+    nav#navbar-main .nav-link.dropdown-toggle i.bx-chevron-down {
+        font-size: 1rem !important;
+        transition: transform 0.2s ease !important;
+    }
+    nav#navbar-main .nav-item.dropdown:hover .nav-link.dropdown-toggle i.bx-chevron-down {
+        transform: rotate(180deg) !important;
+    }
+    
+    /* Toggler for mobile */
     nav#navbar-main .navbar-toggler {
         border: 2px solid #e0e0e0 !important;
         padding: 6px 10px !important;
@@ -175,7 +189,7 @@
     /* --- CART ICON STYLE (MỚI) --- */
     nav#navbar-main .btn-nav-cart {
         color: #444444 !important;
-        font-size: 1.5rem !important; /* Icon to hơn chút */
+        font-size: 1.5rem !important;
         text-decoration: none !important;
         position: relative !important;
         padding: 8px !important;
@@ -187,7 +201,7 @@
         margin-right: 5px !important;
     }
     nav#navbar-main .btn-nav-cart:hover {
-        color: #00bfa5 !important; /* Xanh lá khi hover */
+        color: #00bfa5 !important;
         background-color: #f5f7fa !important;
     }
     nav#navbar-main .cart-badge {
@@ -196,23 +210,40 @@
         right: 0px !important;
         font-size: 0.65rem !important;
         padding: 0.25em 0.5em !important;
-        background-color: #dc3545 !important; /* Màu đỏ */
+        background-color: #dc3545 !important;
         color: white !important;
         border-radius: 50rem !important;
-        border: 2px solid #fff !important; /* Viền trắng tách icon */
+        border: 2px solid #fff !important;
         transform: translate(25%, -25%) !important;
     }
     
     /* Dropdown Menu */
+    nav#navbar-main .dropdown {
+        position: relative !important;
+    }
     nav#navbar-main .dropdown-menu {
-        z-index: 100000 !important;
+        position: absolute !important;
+        z-index: 999999 !important;
         border: 1px solid #e8eaed !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
         border-radius: 12px !important;
         padding: 10px 0 !important;
         margin-top: 10px !important;
         background: #ffffff !important;
-        min-width: 200px !important;
+        min-width: 220px !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+    
+    /* Services Dropdown - căn trái */
+    nav#navbar-main .dropdown-menu-services {
+        left: 0 !important;
+        right: auto !important;
+    }
+    
+    nav#navbar-main .dropdown-menu.show {
+        display: block !important;
     }
     nav#navbar-main .dropdown-item {
         padding: 12px 20px !important;
@@ -303,8 +334,48 @@
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/about">Về Chúng Tôi</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/services">Các dịch vụ</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Các dịch vụ <i class='bx bx-chevron-down'></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-services">
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/services">
+                                <i class='bx bx-grid-alt'></i> Tất cả dịch vụ
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/medical">
+                                <i class='bx bx-pulse'></i> Khám & Điều Trị
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/surgery">
+                                <i class='bx bx-cut'></i> Phẫu Thuật
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/vaccine">
+                                <i class='bx bxs-injection'></i> Tiêm Phòng Vaccine
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/spa">
+                                <i class='bx bxs-spa'></i> Làm Đẹp
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/hotel">
+                                <i class='bx bxs-hotel'></i> Khách Sạn Thú Cưng
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/shop">
+                                <i class='bx bx-shopping-bag'></i> Siêu Thị Thú Cưng
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                  <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/shop">Siêu thị</a>
@@ -336,7 +407,7 @@
             <c:choose>
                 <c:when test="${not empty sessionScope.user}">
                     <div class="dropdown">
-                        <button class="btn-nav-user dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <button class="btn-nav-user dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class='bx bxs-user'></i> ${sessionScope.username}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -346,13 +417,16 @@
                                         <i class='bx bxs-dashboard'></i> Admin Panel
                                     </a>
                                 </li>
+                                <li><hr class="dropdown-divider"></li>
                             </c:if>
-                            <li>
-                                <a class="dropdown-item" href="${pageContext.request.contextPath}/schedule">
-                                    <i class='bx bxs-calendar'></i> Lịch hẹn của tôi
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
+                            <c:if test="${sessionScope.role != 'admin'}">
+                                <li>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/schedule">
+                                        <i class='bx bxs-calendar'></i> Lịch hẹn của tôi
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            </c:if>
                             <li>
                                 <a class="dropdown-item" href="${pageContext.request.contextPath}/logout">
                                     <i class='bx bx-log-out'></i> Đăng xuất
@@ -375,3 +449,39 @@
 
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tìm tất cả dropdown toggle trong navbar
+    var dropdownToggles = document.querySelectorAll('#navbar-main .dropdown-toggle');
+    
+    dropdownToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var dropdownMenu = this.nextElementSibling;
+            var isOpen = dropdownMenu.classList.contains('show');
+            
+            // Đóng tất cả dropdown khác
+            document.querySelectorAll('#navbar-main .dropdown-menu.show').forEach(function(menu) {
+                menu.classList.remove('show');
+            });
+            
+            // Toggle dropdown hiện tại
+            if (!isOpen) {
+                dropdownMenu.classList.add('show');
+            }
+        });
+    });
+    
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#navbar-main .dropdown')) {
+            document.querySelectorAll('#navbar-main .dropdown-menu.show').forEach(function(menu) {
+                menu.classList.remove('show');
+            });
+        }
+    });
+});
+</script>
