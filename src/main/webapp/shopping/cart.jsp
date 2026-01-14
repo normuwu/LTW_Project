@@ -3,7 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <c:set var="totalAmount" value="0" />
-<c:if test="${not empty sessionScope.cart}">
+<%-- Chỉ tính giỏ hàng khi user đã đăng nhập --%>
+<c:if test="${not empty sessionScope.user and not empty sessionScope.cart}">
     <c:forEach items="${sessionScope.cart}" var="entry">
         <c:set var="totalAmount" value="${totalAmount + entry.value.totalPrice}" />
     </c:forEach>
@@ -19,7 +20,6 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
     <style>
-        /* Giữ nguyên CSS cũ của bạn, thêm một chút cho Modal */
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .cart-title { color: #10314d; font-weight: 700; text-transform: uppercase; font-size: 1.8rem; margin-bottom: 30px; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px; }
         .table-cart { background: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; width: 100%; border-collapse: separate; border-spacing: 0; }
@@ -34,81 +34,20 @@
         .summary-row.total { border-top: 2px dashed #eee; padding-top: 15px; margin-top: 15px; font-weight: 800; color: #10314d; font-size: 1.2rem; display: flex; justify-content: space-between; }
         .btn-checkout { background-color: #10314d; color: white; font-weight: 600; padding: 12px; border-radius: 50px; text-transform: uppercase; width: 100%; border: none; transition: 0.3s; }
         .btn-checkout:hover { background-color: #0a2135; transform: translateY(-2px); }
-        
-        /* CSS cho Modal thanh toán */
         .modal-header { background-color: #10314d; color: white; }
         .modal-title { font-weight: 700; }
         .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
-        
-        /* CSS cho Modal xác nhận xóa */
-        .delete-modal .modal-content {
-            border: none;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        .delete-modal .modal-body {
-            padding: 30px;
-            text-align: center;
-        }
-        .delete-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-        .delete-icon i {
-            font-size: 2.5rem;
-            color: #dc3545;
-        }
-        .delete-modal h5 {
-            font-weight: 700;
-            color: #10314d;
-            margin-bottom: 10px;
-        }
-        .delete-modal p {
-            color: #6c757d;
-            margin-bottom: 25px;
-        }
-        .delete-product-name {
-            font-weight: 600;
-            color: #10314d;
-            background: #f8f9fa;
-            padding: 8px 15px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-        .btn-cancel-delete {
-            background: #f1f5f9;
-            color: #64748b;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-cancel-delete:hover {
-            background: #e2e8f0;
-            color: #475569;
-        }
-        .btn-confirm-delete {
-            background: linear-gradient(135deg, #dc3545 0%, #b91c1c 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-confirm-delete:hover {
-            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-        }
+        .delete-modal .modal-content { border: none; border-radius: 16px; overflow: hidden; }
+        .delete-modal .modal-body { padding: 30px; text-align: center; }
+        .delete-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .delete-icon i { font-size: 2.5rem; color: #dc3545; }
+        .delete-modal h5 { font-weight: 700; color: #10314d; margin-bottom: 10px; }
+        .delete-modal p { color: #6c757d; margin-bottom: 25px; }
+        .delete-product-name { font-weight: 600; color: #10314d; background: #f8f9fa; padding: 8px 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px; }
+        .btn-cancel-delete { background: #f1f5f9; color: #64748b; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; transition: 0.3s; }
+        .btn-cancel-delete:hover { background: #e2e8f0; color: #475569; }
+        .btn-confirm-delete { background: linear-gradient(135deg, #dc3545 0%, #b91c1c 100%); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; transition: 0.3s; }
+        .btn-confirm-delete:hover { background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4); }
     </style>
 </head>
 <body>
@@ -119,7 +58,19 @@
     <div class="container mt-5 mb-5" style="min-height: 600px;">
         <h2 class="cart-title"><i class='bx bx-cart-alt'></i> Giỏ Hàng Của Bạn</h2>
 
-        <c:if test="${empty sessionScope.cart}">
+        <%-- Hiển thị thông báo nếu chưa đăng nhập --%>
+        <c:if test="${empty sessionScope.user}">
+            <div class="text-center py-5 bg-white rounded shadow-sm">
+                <img src="https://cdn-icons-png.flaticon.com/512/6195/6195678.png" width="150" style="opacity: 0.6">
+                <h4 class="mt-4 text-muted">Vui lòng đăng nhập để xem giỏ hàng</h4>
+                <a href="${pageContext.request.contextPath}/login" class="btn btn-checkout px-5 mt-3" style="width: auto;">
+                    <i class='bx bx-log-in'></i> Đăng nhập ngay
+                </a>
+            </div>
+        </c:if>
+
+        <%-- Giỏ hàng trống (đã đăng nhập nhưng không có sản phẩm) --%>
+        <c:if test="${not empty sessionScope.user and empty sessionScope.cart}">
             <div class="text-center py-5 bg-white rounded shadow-sm">
                 <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="150" style="opacity: 0.6">
                 <h4 class="mt-4 text-muted">Giỏ hàng trống</h4>
@@ -127,7 +78,8 @@
             </div>
         </c:if>
 
-        <c:if test="${not empty sessionScope.cart}">
+        <%-- Hiển thị giỏ hàng khi đã đăng nhập và có sản phẩm --%>
+        <c:if test="${not empty sessionScope.user and not empty sessionScope.cart}">
             <div class="row">
                 <div class="col-lg-8 mb-4">
                     <div class="table-responsive">
@@ -156,21 +108,17 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        
                                         <td class="text-center fw-bold text-secondary" data-price="${item.product.price}">
                                             <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                                         </td>
-                                        
                                         <td class="text-center">
                                             <input type="number" min="1" value="${item.quantity}" 
                                                    class="form-control qty-input d-inline-block"
                                                    onchange="updateCart(this)">
                                         </td>
-                                        
                                         <td class="text-center fw-bold text-primary row-total">
                                             <fmt:formatNumber value="${item.totalPrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                                         </td>
-                                        
                                         <td class="text-center">
                                             <button type="button" class="btn-remove" 
                                                     onclick="openDeleteModal(${item.product.id}, '${item.product.name}')">
@@ -199,9 +147,7 @@
                                 <fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                             </span>
                         </div>
-                        
                         <p class="small text-muted mt-2 mb-4"><i class='bx bx-check-circle'></i> Đã bao gồm thuế VAT</p>
-                        
                         <button type="button" class="btn btn-checkout" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                             Tiến hành thanh toán <i class='bx bx-right-arrow-alt'></i>
                         </button>
@@ -211,6 +157,8 @@
         </c:if>
     </div>
 
+
+    <!-- Modal Thanh toán -->
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -220,7 +168,6 @@
                 </div>
                 <div class="modal-body">
                     <form action="${pageContext.request.contextPath}/checkout" method="post" id="checkoutForm">
-                        
                         <div class="mb-3">
                             <label class="form-label fw-bold">Họ và tên người nhận</label>
                             <div class="input-group">
@@ -229,7 +176,6 @@
                                        value="${sessionScope.user != null ? sessionScope.user.fullname : ''}" required placeholder="Nhập họ tên">
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label fw-bold">Số điện thoại</label>
                             <div class="input-group">
@@ -237,7 +183,6 @@
                                 <input type="text" class="form-control" name="phone" required placeholder="Nhập số điện thoại">
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label fw-bold">Địa chỉ giao hàng</label>
                             <div class="input-group">
@@ -245,14 +190,11 @@
                                 <textarea class="form-control" name="address" rows="2" required placeholder="Số nhà, đường, phường/xã..."></textarea>
                             </div>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label fw-bold">Ghi chú (Tùy chọn)</label>
                             <textarea class="form-control" name="note" rows="2" placeholder="Ví dụ: Giao giờ hành chính..."></textarea>
                         </div>
-                        
                         <input type="hidden" name="totalAmount" id="hiddenTotalAmount" value="${totalAmount}">
-
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success fw-bold py-2">
                                 <i class='bx bx-check-circle'></i> XÁC NHẬN ĐẶT HÀNG
@@ -292,54 +234,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ========== DELETE MODAL FUNCTIONS ==========
         function openDeleteModal(productId, productName) {
             document.getElementById('deleteProductName').textContent = productName;
             document.getElementById('confirmDeleteBtn').href = '${pageContext.request.contextPath}/cart?action=remove&id=' + productId;
-            
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
         }
         
-        // ========== CART UPDATE FUNCTIONS ==========
         function updateCart(inputElement) {
-            // 1. Tìm hàng (row) chứa ô input vừa đổi
             let row = inputElement.closest('tr');
-            
-            // 2. Lấy giá gốc từ data-attribute và số lượng mới
             let price = parseFloat(row.querySelector('[data-price]').getAttribute('data-price'));
             let quantity = parseInt(inputElement.value);
-            
-            // 3. Tính thành tiền mới cho dòng này
             let newRowTotal = price * quantity;
-            
-            // 4. Cập nhật giao diện cột "Thành tiền" (Format tiền Việt)
             let formattedRowTotal = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(newRowTotal);
-            // Sửa lỗi hiển thị chữ đ của Intl (nếu cần) hoặc dùng mặc định
             row.querySelector('.row-total').innerText = formattedRowTotal.replace('₫', 'đ');
-
-            // 5. Tính lại TỔNG CỘNG cả giỏ hàng
             recalculateGrandTotal();
         }
 
         function recalculateGrandTotal() {
             let grandTotal = 0;
-            
-            // Duyệt qua tất cả các dòng
             document.querySelectorAll('.cart-row').forEach(row => {
                 let price = parseFloat(row.querySelector('[data-price]').getAttribute('data-price'));
                 let quantity = parseInt(row.querySelector('.qty-input').value);
                 grandTotal += (price * quantity);
             });
-
-            // Format tổng tiền
             let formattedGrandTotal = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(grandTotal).replace('₫', 'đ');
-            
-            // Cập nhật lên giao diện
             document.getElementById('cart-subtotal').innerText = formattedGrandTotal;
             document.getElementById('cart-total').innerText = formattedGrandTotal;
-            
-            // Cập nhật vào input ẩn trong form checkout
             document.getElementById('hiddenTotalAmount').value = grandTotal;
         }
     </script>

@@ -397,7 +397,8 @@
 
             <a href="${pageContext.request.contextPath}/shopping/cart.jsp" class="btn-nav-cart">
                 <i class='bx bx-cart'></i>
-                <c:if test="${not empty sessionScope.totalQuantity and sessionScope.totalQuantity > 0}">
+                <%-- Chỉ hiển thị badge khi user đã đăng nhập VÀ có sản phẩm trong giỏ --%>
+                <c:if test="${not empty sessionScope.user and not empty sessionScope.totalQuantity and sessionScope.totalQuantity > 0}">
                     <span class="cart-badge">
                         ${sessionScope.totalQuantity}
                     </span>
