@@ -436,6 +436,226 @@
         }
         .appointment-card.inactive .service-name,
         .appointment-card.inactive .info-value { color: var(--gray); }
+
+        /* ═══════════════════════════════════════════════════════════════════════════════
+           CANCEL APPOINTMENT MODAL STYLES
+        ═══════════════════════════════════════════════════════════════════════════════ */
+        .cancel-modal-content {
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .cancel-modal-header {
+            background: #fff;
+            padding: 24px 24px 16px;
+            position: relative;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .btn-close-modal {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .btn-close-modal:hover {
+            background: #e5e5e5;
+            color: #333;
+        }
+        
+        .cancel-modal-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        .cancel-modal-icon i {
+            font-size: 1.5rem;
+            color: #d97706;
+        }
+        
+        .cancel-modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .cancel-modal-body {
+            padding: 20px 24px;
+            background: #fff;
+        }
+        
+        /* Appointment Info Preview */
+        .cancel-appointment-info {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .cancel-info-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .cancel-info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .cancel-info-icon {
+            width: 28px;
+            height: 28px;
+            background: #e5e7eb;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .cancel-info-icon i {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .cancel-info-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            min-width: 90px;
+        }
+        
+        .cancel-info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        /* Cancel Reason Section */
+        .cancel-reason-section {
+            margin-top: 16px;
+        }
+        
+        .cancel-reason-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+        }
+        
+        .cancel-reason-label i {
+            color: #6b7280;
+        }
+        
+        .cancel-reason-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: #374151;
+            transition: all 0.2s;
+        }
+        
+        .cancel-reason-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.1);
+        }
+        
+        .cancel-custom-reason {
+            margin-top: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            resize: none;
+        }
+        
+        .cancel-custom-reason:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.1);
+        }
+        
+        /* Modal Footer */
+        .cancel-modal-footer {
+            padding: 16px 24px 24px;
+            background: #fff;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn-cancel-keep {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-cancel-keep:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        
+        .btn-cancel-confirm {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            border: 2px solid #1f2937;
+            background: #fff;
+            color: #1f2937;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-cancel-confirm:hover {
+            background: #1f2937;
+            color: #fff;
+        }
+        
+        .btn-cancel-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 </style>
 
 </head>
@@ -652,38 +872,47 @@
     <!-- Cancel Confirmation Modal -->
     <div class="modal fade" id="cancelModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header-custom">
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
-                    <div class="w-100">
-                        <div class="modal-icon">
-                            <i class='bx bx-calendar-x'></i>
-                        </div>
-                        <h5 class="modal-title-custom">Xác nhận hủy lịch hẹn?</h5>
+            <div class="modal-content cancel-modal-content">
+                <div class="cancel-modal-header">
+                    <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Đóng">
+                        <i class='bx bx-x'></i>
+                    </button>
+                    <div class="cancel-modal-icon">
+                        <i class='bx bx-calendar-x'></i>
                     </div>
+                    <h5 class="cancel-modal-title">Xác nhận hủy lịch hẹn?</h5>
                 </div>
-                <div class="modal-body-custom">
-                    <div class="appointment-preview">
-                        <div class="preview-row">
-                            <span class="preview-label">Khách hàng</span>
-                            <span class="preview-value" id="previewCustomer">-</span>
+                <div class="cancel-modal-body">
+                    <!-- Appointment Info Preview -->
+                    <div class="cancel-appointment-info">
+                        <div class="cancel-info-row">
+                            <span class="cancel-info-icon"><i class='bx bx-user'></i></span>
+                            <span class="cancel-info-label">Khách hàng</span>
+                            <span class="cancel-info-value" id="previewCustomer">-</span>
                         </div>
-                        <div class="preview-row">
-                            <span class="preview-label">Dịch vụ</span>
-                            <span class="preview-value" id="previewService">-</span>
+                        <div class="cancel-info-row">
+                            <span class="cancel-info-icon"><i class='bx bx-briefcase-alt-2'></i></span>
+                            <span class="cancel-info-label">Dịch vụ</span>
+                            <span class="cancel-info-value" id="previewService">-</span>
                         </div>
-                        <div class="preview-row">
-                            <span class="preview-label">Ngày hẹn</span>
-                            <span class="preview-value" id="previewDate">-</span>
+                        <div class="cancel-info-row">
+                            <span class="cancel-info-icon"><i class='bx bx-calendar'></i></span>
+                            <span class="cancel-info-label">Ngày hẹn</span>
+                            <span class="cancel-info-value" id="previewDate">-</span>
                         </div>
-                        <div class="preview-row">
-                            <span class="preview-label">Bác sĩ</span>
-                            <span class="preview-value" id="previewDoctor">-</span>
+                        <div class="cancel-info-row">
+                            <span class="cancel-info-icon"><i class='bx bx-user-circle'></i></span>
+                            <span class="cancel-info-label">Bác sĩ</span>
+                            <span class="cancel-info-value" id="previewDoctor">-</span>
                         </div>
                     </div>
-                    <div class="reason-section">
-                        <label><i class='bx bx-message-detail me-1'></i> Lý do hủy (tùy chọn)</label>
-                        <select class="form-select" id="cancelReason">
+                    
+                    <!-- Cancel Reason Section -->
+                    <div class="cancel-reason-section">
+                        <label class="cancel-reason-label">
+                            <i class='bx bx-message-detail'></i> Lý do hủy (tùy chọn)
+                        </label>
+                        <select class="form-select cancel-reason-select" id="cancelReason">
                             <option value="">-- Chọn lý do --</option>
                             <option value="Thay đổi lịch trình">Thay đổi lịch trình</option>
                             <option value="Thú cưng đã khỏe">Thú cưng đã khỏe</option>
@@ -691,17 +920,18 @@
                             <option value="Lý do cá nhân">Lý do cá nhân</option>
                             <option value="other">Lý do khác...</option>
                         </select>
-                        <textarea class="form-control mt-2 d-none" id="customReason" rows="2" placeholder="Nhập lý do của bạn..."></textarea>
+                        <textarea class="form-control cancel-custom-reason d-none" id="customReason" rows="2" placeholder="Nhập lý do của bạn..."></textarea>
                     </div>
+                    
                     <input type="hidden" id="cancelAppointmentId">
                     <input type="hidden" id="cancelPreviousStatus">
                 </div>
-                <div class="modal-footer modal-footer-custom">
-                    <button type="button" class="btn-keep" data-bs-dismiss="modal">
-                        <i class='bx bx-x me-1'></i> Giữ lịch
+                <div class="cancel-modal-footer">
+                    <button type="button" class="btn-cancel-keep" data-bs-dismiss="modal">
+                        <i class='bx bx-x'></i> Giữ lịch
                     </button>
-                    <button type="button" class="btn-confirm-cancel" id="btnConfirmCancel" onclick="confirmCancel()">
-                        <span class="normal-text"><i class='bx bx-check me-1'></i> Xác nhận hủy</span>
+                    <button type="button" class="btn-cancel-confirm" id="btnConfirmCancel" onclick="confirmCancel()">
+                        <span class="normal-text"><i class='bx bx-check'></i> Xác nhận hủy</span>
                         <span class="loading-text d-none">
                             <span class="spinner-border spinner-border-sm me-2"></span> Đang hủy...
                         </span>

@@ -18,14 +18,16 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng toàn di�
 |---------|-----------------|
 | Khách (Guest) | Xem thông tin, đăng ký tài khoản |
 | Người dùng (User) | Đặt lịch hẹn, mua hàng, quản lý thú cưng |
+| Bác sĩ (Doctor) | Xem lịch hẹn, ghi nhận tiêm chủng |
 | Admin | Quản lý toàn bộ hệ thống |
 
 ### 1.3 Các module chính
-1. **Quản lý người dùng**: Đăng ký, đăng nhập, quên mật khẩu
-2. **Đặt lịch hẹn**: Đặt lịch khám, tiêm vaccine, spa, khách sạn
+1. **Quản lý người dùng**: Đăng ký, đăng nhập, quên mật khẩu (OTP qua email)
+2. **Đặt lịch hẹn**: Đặt lịch khám, tiêm vaccine, spa, khách sạn thú cưng
 3. **Siêu thị thú cưng**: Mua sắm sản phẩm, giỏ hàng, thanh toán
 4. **Quản lý thú cưng**: Thêm/sửa/xóa thú cưng, lịch sử tiêm chủng
-5. **Trang Admin**: Dashboard, quản lý lịch hẹn, sản phẩm, người dùng...
+5. **Trang Admin**: Dashboard, quản lý lịch hẹn, sản phẩm, người dùng, bác sĩ, vaccine...
+6. **Blog/Cộng đồng**: Chia sẻ kiến thức chăm sóc thú cưng
 
 ---
 
@@ -65,23 +67,73 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng toàn di�
 
 ```
 src/main/java/
-├── Context/          # Kết nối database
+├── Context/          # Kết nối database (DBContext.java)
 ├── Model/            # Entity classes (POJO)
+│   ├── User.java           # Người dùng
+│   ├── Pet.java            # Thú cưng
+│   ├── Appointment.java    # Lịch hẹn
+│   ├── Product.java        # Sản phẩm
+│   ├── Service.java        # Dịch vụ
+│   ├── Vaccine.java        # Vaccine
+│   ├── VaccinationRecord.java  # Lịch sử tiêm chủng
+│   ├── Doctors.java        # Bác sĩ
+│   ├── BlogPost.java       # Bài viết blog
+│   ├── CartItem.java       # Giỏ hàng
+│   └── Review.java         # Đánh giá sản phẩm
 ├── DAO/              # Data Access Objects
+│   ├── UserDAO.java
+│   ├── PetDAO.java
+│   ├── AppointmentDAO.java
+│   ├── ProductDAO.java
+│   ├── ServiceDAO.java
+│   ├── VaccineDAO.java
+│   ├── VaccinationRecordDAO.java
+│   ├── DoctorDAO.java
+│   ├── BlogDAO.java
+│   ├── CartDAO.java
+│   └── ReportDAO.java
 ├── Filter/           # Servlet Filters
+│   ├── AuthFilter.java              # Kiểm tra đăng nhập & phân quyền
+│   └── CharacterEncodingFilter.java # Xử lý UTF-8
 ├── Util/             # Utility classes
+│   ├── EmailUtil.java       # Gửi email
+│   ├── EmailConfig.java     # Cấu hình email
+│   ├── OTPUtil.java         # Tạo mã OTP
+│   ├── ValidationUtil.java  # Validate dữ liệu
+│   ├── FormHelper.java      # Xử lý form
+│   ├── FileUploadUtil.java  # Upload file
+│   ├── UploadConfig.java    # Cấu hình upload
+│   └── FixVietnameseData.java # Sửa lỗi tiếng Việt
 └── controller/       # Servlets (Controller)
-    ├── auth/         # Xác thực
-    ├── admin/        # Quản trị
-    ├── booking/      # Đặt lịch
-    ├── shop/         # Mua sắm
-    └── ...
+    ├── auth/         # Xác thực (Login, Register, Logout, ForgotPassword)
+    ├── admin/        # Quản trị (Dashboard, Appointments, Products, Users...)
+    ├── booking/      # Đặt lịch (Booking, Schedule)
+    ├── shop/         # Mua sắm (Cart, Checkout, AddToCart)
+    ├── services/     # Các dịch vụ (Vaccine, Spa, Hotel, Medical, Surgery)
+    ├── pages/        # Trang công khai (Home, About, Community)
+    └── user/         # Trang user (MyPets, VaccinationHistory)
 
 src/main/webapp/
 ├── pages/            # JSP pages (View)
-├── components/       # Shared components
-├── assets/           # Static resources
-└── WEB-INF/          # Config files
+│   ├── main/         # home, about, booking, schedule, community, services
+│   ├── auth/         # login, register, forgot-password, reset-password
+│   ├── admin/        # dashboard, appointments, products, users, doctors...
+│   ├── services/     # vaccine, spa, hotel, medical, surgery, shop
+│   └── user/         # my-pets, vaccination-history
+├── shopping/         # cart.jsp
+├── components/       # Shared JSP components
+│   ├── navbar.jsp, navbar-white.jsp, navbar-styles.jsp
+│   ├── header.jsp, footer.jsp
+│   ├── admin-sidebar.jsp, admin-header-dropdown.jsp, admin-styles.jsp
+│   ├── alerts.jsp, toast.jsp, toast-notification.jsp
+│   ├── cancel-appointment-modal.jsp
+│   └── back-button.jsp
+├── assets/
+│   ├── css/          # Stylesheets
+│   ├── js/           # JavaScript files
+│   └── images/       # Hình ảnh (shop_pic, community_pic, webpic...)
+└── WEB-INF/
+    └── web.xml       # Cấu hình web
 ```
 
 ---
@@ -93,19 +145,21 @@ src/main/webapp/
 | Công nghệ | Phiên bản | Mô tả |
 |-----------|-----------|-------|
 | Java | 11+ | Ngôn ngữ lập trình chính |
-| Java Servlet | 4.0 | Xử lý HTTP request/response |
+| Java Servlet | 4.0.1 | Xử lý HTTP request/response |
 | JSP (JavaServer Pages) | 2.3 | Template engine cho View |
 | JSTL | 1.2 | Tag library cho JSP |
 | JDBC | - | Kết nối và thao tác database |
 | JavaMail API | 1.6.2 | Gửi email (OTP, thông báo) |
+| Apache Commons FileUpload | 1.5 | Upload file ảnh |
+| Apache Commons IO | 2.15.1 | Xử lý I/O |
 
 ### 3.2 Frontend
 
 | Công nghệ | Mô tả |
 |-----------|-------|
 | HTML5 | Cấu trúc trang web |
-| CSS3 | Styling, animations |
-| JavaScript (ES6+) | Xử lý logic phía client |
+| CSS3 | Styling, animations, responsive |
+| JavaScript (ES6+) | Xử lý logic phía client, AJAX |
 | Bootstrap 5 | CSS Framework responsive |
 | Boxicons | Icon library |
 
@@ -128,15 +182,190 @@ src/main/webapp/
 
 | Công cụ | Mô tả |
 |---------|-------|
-| Eclipse IDE | Môi trường phát triển |
+| Eclipse IDE / IntelliJ IDEA | Môi trường phát triển |
 | Git | Version control |
 | GitHub | Lưu trữ source code |
 
 ---
 
-## 4. KỸ THUẬT WEB SỬ DỤNG
+## 4. CƠ SỞ DỮ LIỆU
 
-### 4.1 Server-side
+### 4.1 Sơ đồ ERD (Entity Relationship Diagram)
+
+```
+┌─────────────┐       ┌─────────────┐       ┌─────────────┐
+│   USERS     │       │    PETS     │       │  VACCINES   │
+├─────────────┤       ├─────────────┤       ├─────────────┤
+│ id (PK)     │◄──┐   │ id (PK)     │   ┌──►│ id (PK)     │
+│ username    │   │   │ user_id(FK) │───┘   │ name        │
+│ password    │   │   │ name        │       │ description │
+│ fullname    │   │   │ species     │       │ target_species│
+│ email       │   │   │ breed       │       │ manufacturer│
+│ role        │   │   │ gender      │       │ price       │
+│ status      │   │   │ birth_date  │       │ doses_required│
+│ phone       │   │   │ weight      │       │ interval_days│
+│ address     │   │   │ color       │       │ stock_quantity│
+│ reset_token │   │   │ image       │       └─────────────┘
+│ created_at  │   │   │ notes       │              │
+└─────────────┘   │   └─────────────┘              │
+      │           │          │                     │
+      │           │          ▼                     │
+      │           │   ┌─────────────────────┐      │
+      │           │   │ VACCINATION_RECORDS │      │
+      │           │   ├─────────────────────┤      │
+      │           │   │ id (PK)             │      │
+      │           │   │ pet_id (FK)         │◄─────┘
+      │           │   │ vaccine_id (FK)     │
+      │           │   │ doctor_id (FK)      │───────┐
+      │           │   │ vaccination_date    │       │
+      │           │   │ dose_number         │       │
+      │           │   │ batch_number        │       │
+      │           │   │ next_due_date       │       │
+      │           │   │ notes               │       │
+      │           │   └─────────────────────┘       │
+      │           │                                 │
+      ▼           │                                 ▼
+┌─────────────┐   │                         ┌─────────────┐
+│APPOINTMENTS │   │                         │  DOCTORS    │
+├─────────────┤   │                         ├─────────────┤
+│ id (PK)     │   │                         │ id (PK)     │
+│ user_id(FK) │───┘                         │ name        │
+│ customer_name│                            │ image       │
+│ phone       │                             │ specialty   │
+│ pet_name    │                             │ phone       │
+│ pet_type    │                             │ email       │
+│ service_id  │───┐                         │ work_schedule│
+│ doctor_id   │───┼────────────────────────►│ is_active   │
+│ booking_date│   │                         └─────────────┘
+│ note        │   │
+│ status      │   │
+│ created_at  │   │
+└─────────────┘   │
+                  │
+                  ▼
+          ┌─────────────┐
+          │  SERVICES   │
+          ├─────────────┤
+          │ id (PK)     │
+          │ name        │
+          │ price       │
+          │ description │
+          │ category    │
+          │ duration_minutes│
+          │ is_active   │
+          └─────────────┘
+```
+
+### 4.2 Danh sách các bảng
+
+| Bảng | Mô tả | Số bản ghi mẫu |
+|------|-------|----------------|
+| `users` | Người dùng (admin, doctor, user) | 3 |
+| `pets` | Thú cưng của người dùng | 2 |
+| `doctors` | Bác sĩ thú y | 12 |
+| `services` | Dịch vụ (khám, tiêm, spa, hotel) | 5 |
+| `vaccines` | Danh sách vaccine | 5 |
+| `appointments` | Lịch hẹn khám/tiêm | 3 |
+| `vaccination_records` | Lịch sử tiêm chủng | 3 |
+| `hotel_bookings` | Đặt phòng khách sạn thú cưng | 2 |
+| `spa_bookings` | Đặt lịch spa/grooming | 2 |
+| `products` | Sản phẩm siêu thị | 5 |
+| `cart` | Giỏ hàng | 3 |
+| `reviews` | Đánh giá sản phẩm | 2 |
+| `blogposts` | Bài viết blog | 12 |
+| `careitems` | Nội dung chăm sóc | 7 |
+| `features` | Tính năng nổi bật | 3 |
+
+---
+
+## 5. CHỨC NĂNG CHI TIẾT
+
+### 5.1 Phân quyền người dùng
+
+| Chức năng | Guest | User | Doctor | Admin |
+|-----------|:-----:|:----:|:------:|:-----:|
+| Xem trang chủ, giới thiệu | ✅ | ✅ | ✅ | ✅ |
+| Xem dịch vụ, blog | ✅ | ✅ | ✅ | ✅ |
+| Đăng ký tài khoản | ✅ | ❌ | ❌ | ❌ |
+| Đăng nhập | ✅ | ❌ | ❌ | ❌ |
+| Đặt lịch hẹn | ❌ | ✅ | ✅ | ✅ |
+| Xem lịch hẹn của mình | ❌ | ✅ | ✅ | ✅ |
+| Hủy lịch hẹn | ❌ | ✅ | ❌ | ✅ |
+| Quản lý thú cưng | ❌ | ✅ | ❌ | ✅ |
+| Xem lịch sử tiêm chủng | ❌ | ✅ | ✅ | ✅ |
+| Mua sắm, giỏ hàng | ❌ | ✅ | ✅ | ✅ |
+| Đánh giá sản phẩm | ❌ | ✅ | ✅ | ✅ |
+| Truy cập trang Admin | ❌ | ❌ | ❌ | ✅ |
+| Quản lý lịch hẹn (CRUD) | ❌ | ❌ | ❌ | ✅ |
+| Quản lý sản phẩm (CRUD) | ❌ | ❌ | ❌ | ✅ |
+| Quản lý người dùng | ❌ | ❌ | ❌ | ✅ |
+| Quản lý bác sĩ | ❌ | ❌ | ❌ | ✅ |
+| Quản lý vaccine | ❌ | ❌ | ❌ | ✅ |
+| Quản lý dịch vụ | ❌ | ❌ | ❌ | ✅ |
+| Ghi nhận tiêm chủng | ❌ | ❌ | ✅ | ✅ |
+| Xem thống kê, báo cáo | ❌ | ❌ | ❌ | ✅ |
+
+### 5.2 Module Xác thực (Authentication)
+
+| Chức năng | Servlet | JSP | Mô tả |
+|-----------|---------|-----|-------|
+| Đăng nhập | LoginServlet | login.jsp | Username/password |
+| Đăng nhập Email | EmailLoginServlet | email-login.jsp | OTP qua email |
+| Đăng ký | RegisterServlet | register.jsp | Tạo tài khoản mới |
+| Đăng xuất | LogoutServlet | - | Hủy session |
+| Quên mật khẩu | ForgotPasswordServlet | forgot-password.jsp | Gửi OTP qua email |
+| Đặt lại mật khẩu | ResetPasswordServlet | reset-password.jsp | Nhập mật khẩu mới |
+
+### 5.3 Module Đặt lịch (Booking)
+
+| Chức năng | Servlet | JSP | Mô tả |
+|-----------|---------|-----|-------|
+| Đặt lịch khám/tiêm | BookingServlet | booking.jsp | Form đặt lịch |
+| Xem lịch hẹn | ScheduleServlet | schedule.jsp | Danh sách lịch hẹn |
+| Đặt phòng khách sạn | HotelServlet | hotel.jsp | Gửi thú cưng |
+| Đặt lịch spa | SpaServlet | spa.jsp | Tắm, cắt tỉa lông |
+
+### 5.4 Module Mua sắm (Shopping)
+
+| Chức năng | Servlet | JSP | Mô tả |
+|-----------|---------|-----|-------|
+| Xem sản phẩm | ShopServlet | shop.jsp | Danh sách sản phẩm |
+| Thêm vào giỏ | AddToCartServlet | - | AJAX call |
+| Xem giỏ hàng | CartServlet | cart.jsp | Quản lý giỏ hàng |
+| Thanh toán | CheckoutServlet | - | Xử lý đơn hàng |
+| Đánh giá | AddReviewServlet | - | Đánh giá sản phẩm |
+
+### 5.5 Module Quản trị (Admin)
+
+| Chức năng | Servlet | JSP | Mô tả |
+|-----------|---------|-----|-------|
+| Dashboard | DashboardServlet | dashboard.jsp | Tổng quan hệ thống |
+| Quản lý lịch hẹn | AppointmentServlet | appointments.jsp | CRUD lịch hẹn |
+| Quản lý sản phẩm | ProductServlet | products.jsp | CRUD sản phẩm |
+| Quản lý người dùng | UserManageServlet | users.jsp | CRUD users |
+| Quản lý bác sĩ | DoctorManageServlet | doctors.jsp | CRUD bác sĩ |
+| Quản lý dịch vụ | ServiceManageServlet | services.jsp | CRUD dịch vụ |
+| Quản lý vaccine | VaccineManageServlet | vaccines.jsp | CRUD vaccine |
+| Ghi nhận tiêm chủng | VaccinationRecordServlet | vaccination-records.jsp | Lịch sử tiêm |
+| Quản lý blog | BlogServlet | blogs.jsp | CRUD bài viết |
+| Đặt phòng khách sạn | HotelBookingServlet | hotel-bookings.jsp | Quản lý booking |
+| Đặt lịch spa | SpaBookingServlet | spa-bookings.jsp | Quản lý booking |
+| Thống kê | StatisticsServlet | statistics.jsp | Biểu đồ, số liệu |
+| Báo cáo | ReportServlet | reports.jsp | Xuất báo cáo |
+| Thông báo | NotificationServlet | notifications.jsp | Gửi thông báo |
+
+### 5.6 Module Người dùng (User)
+
+| Chức năng | Servlet | JSP | Mô tả |
+|-----------|---------|-----|-------|
+| Quản lý thú cưng | MyPetsServlet | my-pets.jsp | CRUD thú cưng |
+| Lịch sử tiêm chủng | VaccinationHistoryServlet | vaccination-history.jsp | Xem lịch sử |
+
+---
+
+## 6. KỸ THUẬT WEB SỬ DỤNG
+
+### 6.1 Server-side
 
 #### Servlet & JSP
 ```java
@@ -146,37 +375,80 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, 
                           HttpServletResponse response) {
         // Xử lý đăng nhập
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        
+        UserDAO userDAO = new UserDAO();
+        User user = userDAO.login(username, password);
+        
+        if (user != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            response.sendRedirect("home");
+        }
     }
 }
 ```
 
-#### JDBC - Kết nối Database
+#### JDBC - Kết nối Database (DAO Pattern)
 ```java
 // DBContext.java
-Class.forName("com.mysql.cj.jdbc.Driver");
-Connection conn = DriverManager.getConnection(url, user, password);
+public class DBContext {
+    public Connection getConnection() throws Exception {
+        String url = "jdbc:mysql://localhost:3306/petvaccine" +
+                     "?useUnicode=true&characterEncoding=UTF-8";
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(url, "root", "password");
+    }
+}
 
-// DAO Pattern
-PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE id=?");
-ps.setInt(1, userId);
-ResultSet rs = ps.executeQuery();
+// UserDAO.java - PreparedStatement chống SQL Injection
+public User login(String username, String password) {
+    String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+    try (Connection conn = new DBContext().getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, username);
+        ps.setString(2, password);
+        ResultSet rs = ps.executeQuery();
+        // ...
+    }
+}
 ```
 
 #### Servlet Filter
 ```java
-// AuthFilter - Kiểm tra đăng nhập
-@WebFilter("/admin/*")
+// AuthFilter - Kiểm tra đăng nhập & phân quyền
+@WebFilter(urlPatterns = {"/pages/admin/*", "/admin/*"})
 public class AuthFilter implements Filter {
-    public void doFilter(request, response, chain) {
-        if (session.getAttribute("user") == null) {
-            response.sendRedirect("/login");
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpSession session = request.getSession(false);
+        
+        if (session == null || session.getAttribute("user") == null) {
+            ((HttpServletResponse) res).sendRedirect("/login");
+            return;
         }
+        
+        User user = (User) session.getAttribute("user");
+        if (!"admin".equals(user.getRole())) {
+            ((HttpServletResponse) res).sendRedirect("/home");
+            return;
+        }
+        chain.doFilter(req, res);
     }
 }
 
 // CharacterEncodingFilter - Xử lý UTF-8
-request.setCharacterEncoding("UTF-8");
-response.setCharacterEncoding("UTF-8");
+@WebFilter("/*")
+public class CharacterEncodingFilter implements Filter {
+    public void doFilter(ServletRequest request, ServletResponse response, 
+                         FilterChain chain) {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        chain.doFilter(request, response);
+    }
+}
 ```
 
 #### Session Management
@@ -188,79 +460,119 @@ session.setAttribute("cart", cartMap);
 
 // Đọc từ session
 User user = (User) session.getAttribute("user");
+
+// Đăng xuất - hủy session
+session.invalidate();
 ```
 
 #### JSTL & EL (Expression Language)
 ```jsp
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:if test="${not empty user}">
     Xin chào, ${user.fullname}
 </c:if>
 
 <c:forEach items="${products}" var="p">
-    ${p.name} - ${p.price}đ
+    ${p.name} - <fmt:formatNumber value="${p.price}" type="currency"/>
 </c:forEach>
+
+<c:choose>
+    <c:when test="${user.role == 'admin'}">Admin Panel</c:when>
+    <c:otherwise>User Dashboard</c:otherwise>
+</c:choose>
 ```
 
-### 4.2 Client-side
+### 6.2 Client-side
 
-#### Responsive Design
+#### Responsive Design (Bootstrap 5)
+```html
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-6 col-12">
+            <!-- Card sản phẩm -->
+        </div>
+    </div>
+</div>
+```
+
 ```css
 /* Mobile-first approach */
 @media (max-width: 768px) {
     .sidebar { display: none; }
+    .navbar-collapse { background: white; }
 }
 ```
 
-#### AJAX (Asynchronous JavaScript)
+#### AJAX (Fetch API)
 ```javascript
-// Cập nhật giỏ hàng không reload trang
-fetch('/cart?action=update&id=' + productId)
+// Thêm vào giỏ hàng không reload trang
+function addToCart(productId) {
+    fetch('/cart?action=add&productId=' + productId, {
+        method: 'POST'
+    })
     .then(response => response.json())
-    .then(data => updateCartUI(data));
+    .then(data => {
+        if (data.success) {
+            updateCartBadge(data.cartCount);
+            showToast('Đã thêm vào giỏ hàng!', 'success');
+        }
+    });
+}
 ```
 
 #### Form Validation
 ```javascript
 // Client-side validation
 function validateForm() {
-    if (email.value === '') {
-        showError('Email không được để trống');
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        showError('Email không hợp lệ');
         return false;
     }
+    
+    if (!phone.match(/^0[0-9]{9,10}$/)) {
+        showError('Số điện thoại không hợp lệ');
+        return false;
+    }
+    return true;
 }
 ```
 
 #### Modal & Toast Notifications
 ```javascript
 // Bootstrap Modal
-var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
 modal.show();
 
 // Custom Toast
-showToast('Thêm vào giỏ hàng thành công!', 'success');
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
 ```
 
-### 4.3 Security (Bảo mật)
+---
 
-#### 4.3.1 Authentication (Xác thực người dùng)
+## 7. BẢO MẬT (SECURITY)
+
+### 7.1 Authentication (Xác thực người dùng)
 
 **Session-based Authentication**
 ```java
-// Khi đăng nhập thành công - lưu user vào session
+// Khi đăng nhập thành công
 HttpSession session = request.getSession();
 session.setAttribute("user", user);
-session.setAttribute("role", user.getRole()); // "admin", "user", "doctor"
+session.setAttribute("role", user.getRole());
 
-// Khi đăng xuất - hủy session
+// Khi đăng xuất
 session.invalidate();
-
-// Kiểm tra đăng nhập
-User user = (User) session.getAttribute("user");
-if (user == null) {
-    response.sendRedirect("/login");
-}
 ```
 
 **OTP (One-Time Password) qua Email**
@@ -271,829 +583,417 @@ public static String generateOTP() {
     return String.format("%06d", random.nextInt(1000000));
 }
 
-// Gửi OTP qua email khi quên mật khẩu
+// Gửi OTP qua email
 EmailUtil.sendOTPEmail(email, otp);
 session.setAttribute("otp", otp);
 session.setAttribute("otpExpiry", System.currentTimeMillis() + 5*60*1000); // 5 phút
 ```
 
-#### 4.3.2 Authorization (Phân quyền)
+### 7.2 Authorization (Phân quyền)
 
-**Servlet Filter - Kiểm tra quyền truy cập**
-```java
-// AuthFilter.java
-@WebFilter(urlPatterns = {"/pages/admin/*", "/admin/*"})
-public class AuthFilter implements Filter {
-    
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-        HttpSession session = request.getSession(false);
-        
-        // Kiểm tra đã đăng nhập chưa
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        
-        // Kiểm tra quyền admin
-        User user = (User) session.getAttribute("user");
-        if (!"admin".equals(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
-        }
-        
-        chain.doFilter(request, response);
-    }
-}
-```
-
-**Phân quyền theo URL**
+**URL Pattern Authorization**
 | URL Pattern | Quyền truy cập |
 |-------------|----------------|
-| `/home`, `/about`, `/services` | Public (ai cũng xem được) |
-| `/login`, `/register` | Guest only (chưa đăng nhập) |
+| `/home`, `/about`, `/services` | Public |
+| `/login`, `/register` | Guest only |
 | `/booking`, `/cart`, `/schedule` | User đã đăng nhập |
 | `/pages/admin/*`, `/admin/*` | Admin only |
 
-#### 4.3.3 SQL Injection Prevention (Chống SQL Injection)
+### 7.3 SQL Injection Prevention
 
-**❌ Cách SAI - Dễ bị tấn công**
 ```java
-// KHÔNG BAO GIỜ làm thế này!
+// ❌ SAI - Dễ bị tấn công
 String query = "SELECT * FROM users WHERE username='" + username + "'";
-Statement stmt = conn.createStatement();
-ResultSet rs = stmt.executeQuery(query);
-// Hacker có thể nhập: ' OR '1'='1
-```
 
-**✅ Cách ĐÚNG - Dùng PreparedStatement**
-```java
-// Luôn dùng PreparedStatement với tham số ?
+// ✅ ĐÚNG - Dùng PreparedStatement
 String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 PreparedStatement ps = conn.prepareStatement(query);
-ps.setString(1, username);  // Tự động escape ký tự đặc biệt
+ps.setString(1, username);
 ps.setString(2, password);
-ResultSet rs = ps.executeQuery();
 ```
 
-**Ví dụ trong project (UserDAO.java)**
-```java
-public User login(String username, String password) {
-    String query = "SELECT * FROM users WHERE username = ? AND password = ?";
-    try (Connection conn = new DBContext().getConnection();
-         PreparedStatement ps = conn.prepareStatement(query)) {
-        
-        ps.setString(1, username);
-        ps.setString(2, password);
-        ResultSet rs = ps.executeQuery();
-        // ...
-    }
-}
-```
+### 7.4 XSS Prevention
 
-#### 4.3.4 XSS Prevention (Chống Cross-Site Scripting)
-
-**Output Encoding trong JSP**
 ```jsp
 <%-- JSTL tự động escape HTML --%>
 <p>Xin chào, ${user.fullname}</p>
-
-<%-- Nếu user.fullname = "<script>alert('XSS')</script>" --%>
-<%-- Sẽ hiển thị: &lt;script&gt;alert('XSS')&lt;/script&gt; --%>
-
-<%-- Tránh dùng scriptlet với out.print() --%>
-<%-- ❌ SAI: <% out.print(request.getParameter("name")); %> --%>
+<%-- Nếu fullname = "<script>alert('XSS')</script>" --%>
+<%-- Sẽ hiển thị: &lt;script&gt;... --%>
 ```
 
-**Input Validation (ValidationUtil.java)**
 ```java
-public class ValidationUtil {
-    // Kiểm tra email hợp lệ
-    public static boolean isValidEmail(String email) {
-        String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        return email != null && email.matches(regex);
-    }
-    
-    // Kiểm tra số điện thoại
-    public static boolean isValidPhone(String phone) {
-        return phone != null && phone.matches("^0[0-9]{9,10}$");
-    }
-    
-    // Loại bỏ ký tự nguy hiểm
-    public static String sanitize(String input) {
-        if (input == null) return null;
-        return input.replaceAll("[<>\"'&]", "");
-    }
+// Input Validation (ValidationUtil.java)
+public static boolean isValidEmail(String email) {
+    return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+}
+
+public static boolean isValidPhone(String phone) {
+    return phone != null && phone.matches("^0[0-9]{9,10}$");
+}
+
+public static String sanitize(String input) {
+    if (input == null) return null;
+    return input.replaceAll("[<>\"'&]", "");
 }
 ```
 
-#### 4.3.5 Character Encoding (Xử lý UTF-8)
+### 7.5 Session Security
 
-**CharacterEncodingFilter.java**
-```java
-@WebFilter("/*")
-public class CharacterEncodingFilter implements Filter {
-    
-    public void doFilter(ServletRequest request, ServletResponse response, 
-                         FilterChain chain) throws IOException, ServletException {
-        // Set UTF-8 cho request và response
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-        
-        chain.doFilter(request, response);
-    }
-}
-```
-
-**Cấu hình MySQL UTF-8**
-```java
-// DBContext.java
-String url = "jdbc:mysql://localhost:3306/petvaccine" +
-             "?useUnicode=true" +
-             "&characterEncoding=UTF-8" +
-             "&characterSetResults=UTF-8";
-```
-
-#### 4.3.6 Session Security
-
-**Cấu hình Session trong web.xml**
 ```xml
+<!-- web.xml -->
 <session-config>
-    <session-timeout>30</session-timeout> <!-- 30 phút -->
+    <session-timeout>30</session-timeout>
     <cookie-config>
-        <http-only>true</http-only>  <!-- Chống XSS đọc cookie -->
-        <secure>false</secure>        <!-- true nếu dùng HTTPS -->
+        <http-only>true</http-only>
     </cookie-config>
 </session-config>
 ```
 
-**Regenerate Session ID sau khi đăng nhập**
-```java
-// Chống Session Fixation Attack
-HttpSession oldSession = request.getSession(false);
-if (oldSession != null) {
-    oldSession.invalidate();
-}
-HttpSession newSession = request.getSession(true);
-newSession.setAttribute("user", user);
-```
+### 7.6 Tổng kết Security
 
-#### 4.3.7 Password Security
+| Lỗ hổng | Biện pháp | Trạng thái |
+|---------|-----------|------------|
+| SQL Injection | PreparedStatement | ✅ Đã áp dụng |
+| XSS | JSTL auto-escape, Input validation | ✅ Đã áp dụng |
+| Session Hijacking | HttpOnly cookie | ✅ Đã áp dụng |
+| Broken Auth | Session-based, AuthFilter | ✅ Đã áp dụng |
+| UTF-8 Encoding | CharacterEncodingFilter | ✅ Đã áp dụng |
+| CSRF | Token-based | ⚠️ Chưa implement |
 
-**Lưu trữ mật khẩu**
-```java
-// Hiện tại: Lưu plain text (không khuyến khích)
-// Khuyến nghị: Dùng BCrypt hoặc SHA-256 + Salt
+---
 
-// Ví dụ với SHA-256
-import java.security.MessageDigest;
+## 8. FILE UPLOAD
 
-public static String hashPassword(String password) {
-    MessageDigest md = MessageDigest.getInstance("SHA-256");
-    byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
-    StringBuilder hexString = new StringBuilder();
-    for (byte b : hash) {
-        hexString.append(String.format("%02x", b));
-    }
-    return hexString.toString();
-}
-```
-
-#### 4.3.8 Tổng kết Security
-
-| Lỗ hổng | Biện pháp phòng chống | Áp dụng trong project |
-|---------|----------------------|----------------------|
-| SQL Injection | PreparedStatement | ✅ Tất cả DAO |
-| XSS | JSTL auto-escape, Input validation | ✅ JSP pages |
-| CSRF | (Chưa implement) | ⚠️ Cần thêm |
-| Session Hijacking | HttpOnly cookie | ✅ web.xml |
-| Broken Auth | Session-based, Filter | ✅ AuthFilter |
-| Sensitive Data | UTF-8 encoding | ✅ EncodingFilter |
-
-### 4.4 File Upload (Servlet 3.0 API)
-
-#### 4.4.1 Cấu hình @MultipartConfig
-
-Servlet 3.0 cung cấp API native để xử lý file upload mà không cần thư viện bên ngoài như Apache Commons FileUpload.
+### 8.1 Cấu hình @MultipartConfig
 
 ```java
 @WebServlet("/pages/admin/products")
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,      // 1 MB - ngưỡng lưu vào bộ nhớ
-    maxFileSize = 1024 * 1024 * 5,        // 5 MB - kích thước file tối đa
-    maxRequestSize = 1024 * 1024 * 20     // 20 MB - kích thước request tối đa
+    fileSizeThreshold = 1024 * 1024,      // 1 MB
+    maxFileSize = 1024 * 1024 * 5,        // 5 MB
+    maxRequestSize = 1024 * 1024 * 20     // 20 MB
 )
 public class ProductServlet extends HttpServlet {
-    // ...
+    private static final String UPLOAD_DIR = "assets/images/shop_pic";
 }
 ```
 
-#### 4.4.2 Xử lý File Upload trong Servlet
+### 8.2 Xử lý Upload
 
 ```java
-// Lấy file từ request
 Part filePart = request.getPart("imageFile");
 
 if (filePart != null && filePart.getSize() > 0) {
-    // Lấy tên file gốc
     String fileName = getSubmittedFileName(filePart);
+    String contentType = filePart.getContentType();
     
     // Validate loại file
-    String contentType = filePart.getContentType();
     if (!isValidImageType(contentType)) {
-        // Báo lỗi: chỉ chấp nhận ảnh
+        // Báo lỗi
         return;
     }
     
     // Tạo tên file unique
-    String extension = getFileExtension(fileName);
     String newFileName = "product_" + UUID.randomUUID().toString().substring(0, 8) 
-                       + "_" + System.currentTimeMillis() + extension;
+                       + "_" + System.currentTimeMillis() + getFileExtension(fileName);
     
-    // Lưu file vào thư mục
+    // Lưu file
     String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
-    File uploadDir = new File(uploadPath);
-    if (!uploadDir.exists()) {
-        uploadDir.mkdirs();
-    }
-    
-    String filePath = uploadPath + File.separator + newFileName;
-    filePart.write(filePath);
+    filePart.write(uploadPath + File.separator + newFileName);
 }
 ```
 
-#### 4.4.3 Helper Methods
-
-```java
-// Lấy tên file từ Part header
-private String getSubmittedFileName(Part part) {
-    String contentDisp = part.getHeader("content-disposition");
-    if (contentDisp != null) {
-        for (String token : contentDisp.split(";")) {
-            if (token.trim().startsWith("filename")) {
-                return token.substring(token.indexOf('=') + 1)
-                           .trim().replace("\"", "");
-            }
-        }
-    }
-    return null;
-}
-
-// Kiểm tra loại file ảnh hợp lệ
-private boolean isValidImageType(String contentType) {
-    return contentType != null && (
-        contentType.equals("image/jpeg") ||
-        contentType.equals("image/png") ||
-        contentType.equals("image/gif") ||
-        contentType.equals("image/webp")
-    );
-}
-
-// Lấy extension của file
-private String getFileExtension(String fileName) {
-    int lastDot = fileName.lastIndexOf('.');
-    if (lastDot > 0) {
-        return fileName.substring(lastDot).toLowerCase();
-    }
-    return ".jpg";
-}
-```
-
-#### 4.4.4 Form HTML với enctype multipart
+### 8.3 Form HTML
 
 ```html
 <form method="post" enctype="multipart/form-data">
-    <input type="hidden" name="action" value="add">
-    <input type="hidden" name="existingImage" id="formExistingImage">
-    
-    <input type="text" name="name" required>
     <input type="file" name="imageFile" accept="image/*">
-    <input type="number" name="price" required>
-    
-    <button type="submit">Lưu sản phẩm</button>
+    <button type="submit">Upload</button>
 </form>
 ```
 
-#### 4.4.5 Áp dụng trong Project
+---
 
-| Servlet | Thư mục Upload | Max Size |
-|---------|---------------|----------|
-| ProductServlet | `assets/images/shop_pic/` | 5 MB |
-| BlogServlet | `assets/images/community_pic/` | 10 MB |
+## 9. DESIGN PATTERNS
 
-### 4.5 Design Patterns
-
-| Pattern | Áp dụng |
-|---------|---------|
-| MVC | Tách biệt Model-View-Controller |
-| DAO (Data Access Object) | Tách logic truy cập database |
-| Singleton | DBContext connection |
-| Front Controller | Servlet điều hướng request |
+| Pattern | Áp dụng | Mô tả |
+|---------|---------|-------|
+| MVC | Toàn bộ project | Tách biệt Model-View-Controller |
+| DAO | Tất cả DAO classes | Tách logic truy cập database |
+| Singleton | DBContext | Quản lý connection |
+| Front Controller | Servlet | Điều hướng request |
+| Factory | - | Tạo đối tượng |
 
 ---
 
-## 5. LUỒNG XỬ LÝ END-TO-END
+## 10. LUỒNG XỬ LÝ END-TO-END
 
-### 5.1 Luồng Đặt Lịch Tiêm Vaccine (User)
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    LUỒNG ĐẶT LỊCH TIÊM VACCINE                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-[1] USER TRUY CẬP TRANG ĐẶT LỊCH
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → GET /booking                                                       │
-│                                                                              │
-│ BookingServlet.doGet():                                                      │
-│   1. Kiểm tra user đã đăng nhập (session.getAttribute("user"))              │
-│   2. Nếu chưa → redirect /login                                             │
-│   3. Lấy danh sách thú cưng: PetDAO.getPetsByUserId(userId)                 │
-│   4. Lấy danh sách dịch vụ: ServiceDAO.getAllServices()                     │
-│   5. Lấy danh sách bác sĩ: DoctorDAO.getAllDoctors()                        │
-│   6. Forward → /pages/main/booking.jsp                                       │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[2] USER ĐIỀN FORM ĐẶT LỊCH
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ booking.jsp hiển thị:                                                        │
-│   - Dropdown chọn thú cưng (từ pets của user)                               │
-│   - Dropdown chọn dịch vụ (Tiêm vaccine, Khám bệnh, Spa...)                 │
-│   - Dropdown chọn bác sĩ                                                     │
-│   - Date picker chọn ngày hẹn                                               │
-│   - Textarea ghi chú                                                         │
-│                                                                              │
-│ JavaScript validation:                                                       │
-│   - Kiểm tra đã chọn thú cưng                                               │
-│   - Kiểm tra đã chọn dịch vụ                                                │
-│   - Kiểm tra ngày hẹn >= ngày hiện tại                                      │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[3] USER SUBMIT FORM
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → POST /booking                                                      │
-│                                                                              │
-│ BookingServlet.doPost():                                                     │
-│   1. request.setCharacterEncoding("UTF-8")                                  │
-│   2. Lấy parameters: petId, serviceId, doctorId, bookingDate, notes         │
-│   3. Server-side validation:                                                 │
-│      - Kiểm tra petId thuộc về user hiện tại                                │
-│      - Kiểm tra serviceId tồn tại                                           │
-│      - Kiểm tra bookingDate hợp lệ                                          │
-│   4. Tạo Appointment object                                                  │
-│   5. AppointmentDAO.insertAppointment(appointment)                          │
-│      → INSERT INTO appointments (user_id, pet_id, service_id, ...)          │
-│   6. Gửi email xác nhận: EmailUtil.sendBookingConfirmation(...)             │
-│   7. session.setAttribute("message", "Đặt lịch thành công!")                │
-│   8. redirect → /schedule                                                    │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[4] HIỂN THỊ LỊCH HẸN
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → GET /schedule                                                      │
-│                                                                              │
-│ ScheduleServlet.doGet():                                                     │
-│   1. Lấy userId từ session                                                   │
-│   2. AppointmentDAO.getAppointmentsByUserId(userId)                         │
-│      → SELECT a.*, p.name as pet_name, s.name as service_name, ...          │
-│   3. Forward → /pages/main/schedule.jsp                                      │
-│                                                                              │
-│ schedule.jsp hiển thị:                                                       │
-│   - Danh sách lịch hẹn dạng card/table                                      │
-│   - Trạng thái: Chờ duyệt / Đã duyệt / Đã hủy / Hoàn thành                  │
-│   - Nút "Hủy lịch" cho các lịch chưa hoàn thành                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[5] ADMIN DUYỆT LỊCH HẸN
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → GET /pages/admin/appointments                                      │
-│                                                                              │
-│ AppointmentServlet.doGet():                                                  │
-│   1. Kiểm tra role = "admin" (AuthFilter)                                   │
-│   2. AppointmentDAO.getAllAppointments()                                    │
-│   3. Forward → /pages/admin/appointments.jsp                                 │
-│                                                                              │
-│ Admin click "Duyệt" → POST /pages/admin/appointments                        │
-│   action=approve, appointmentId=123                                          │
-│                                                                              │
-│ AppointmentServlet.doPost():                                                 │
-│   1. AppointmentDAO.updateStatus(appointmentId, "approved")                 │
-│   2. Gửi email thông báo cho user                                           │
-│   3. redirect với message "Đã duyệt lịch hẹn"                               │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[6] HOÀN THÀNH - GHI NHẬN TIÊM CHỦNG
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Sau khi tiêm vaccine xong, Admin ghi nhận:                                   │
-│                                                                              │
-│ Browser → POST /pages/admin/vaccination-records                              │
-│   action=add, petId, vaccineId, vaccinationDate, nextDueDate, notes         │
-│                                                                              │
-│ VaccinationRecordServlet.doPost():                                           │
-│   1. Tạo VaccinationRecord object                                           │
-│   2. VaccinationRecordDAO.insert(record)                                    │
-│      → INSERT INTO vaccination_records (pet_id, vaccine_id, ...)            │
-│   3. Cập nhật trạng thái appointment = "completed"                          │
-│   4. Gửi email thông báo hoàn thành cho user                                │
-│                                                                              │
-│ User có thể xem lịch sử tiêm chủng tại /vaccination-history                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-### 5.2 Luồng Mua Sản Phẩm (User)
+### 10.1 Luồng Đặt Lịch Tiêm Vaccine
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    LUỒNG MUA SẢN PHẨM                                        │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-[1] USER XEM DANH SÁCH SẢN PHẨM
+[1] User truy cập /booking
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → GET /shop                                                          │
-│                                                                              │
-│ ShopServlet.doGet():                                                         │
-│   1. ProductDAO.getAllProducts()                                            │
-│      → SELECT * FROM products WHERE status = 'active'                       │
-│   2. Forward → /pages/services/shop.jsp                                      │
-│                                                                              │
-│ shop.jsp hiển thị:                                                           │
-│   - Grid sản phẩm với ảnh, tên, giá, giảm giá                               │
-│   - Nút "Thêm vào giỏ" cho mỗi sản phẩm                                     │
-│   - Bộ lọc theo danh mục, giá                                               │
-└─────────────────────────────────────────────────────────────────────────────┘
+[2] BookingServlet.doGet()
+    ├── Kiểm tra đăng nhập (session)
+    ├── Lấy danh sách pets: PetDAO.getPetsByUserId()
+    ├── Lấy danh sách services: ServiceDAO.getAllServices()
+    ├── Lấy danh sách doctors: DoctorDAO.getAllDoctors()
+    └── Forward → booking.jsp
     │
     ▼
-[2] USER THÊM SẢN PHẨM VÀO GIỎ HÀNG
+[3] User điền form và submit
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ JavaScript AJAX call:                                                        │
-│   fetch('/cart?action=add&productId=123&quantity=1')                        │
-│                                                                              │
-│ CartServlet.doGet() hoặc doPost():                                          │
-│   1. Lấy productId, quantity từ request                                     │
-│   2. Kiểm tra user đã đăng nhập:                                            │
-│      - Nếu CHƯA: Lưu vào session cart (Map<Integer, CartItem>)              │
-│      - Nếu RỒI: Lưu vào database + session                                  │
-│                                                                              │
-│   // Lưu vào session                                                         │
-│   Map<Integer, CartItem> cart = (Map) session.getAttribute("cart");         │
-│   if (cart == null) cart = new HashMap<>();                                 │
-│                                                                              │
-│   if (cart.containsKey(productId)) {                                        │
-│       cart.get(productId).setQuantity(cart.get(productId).getQuantity()+1); │
-│   } else {                                                                   │
-│       Product p = ProductDAO.getProductById(productId);                     │
-│       cart.put(productId, new CartItem(p, 1));                              │
-│   }                                                                          │
-│   session.setAttribute("cart", cart);                                        │
-│                                                                              │
-│   // Nếu đã đăng nhập, sync vào database                                    │
-│   if (user != null) {                                                        │
-│       CartDAO.addToCart(userId, productId, quantity);                       │
-│   }                                                                          │
-│                                                                              │
-│   3. Trả về JSON: {"success": true, "cartCount": 5}                         │
-│   4. JavaScript cập nhật badge số lượng trên icon giỏ hàng                  │
-└─────────────────────────────────────────────────────────────────────────────┘
+[4] BookingServlet.doPost()
+    ├── Validate dữ liệu
+    ├── Tạo Appointment object
+    ├── AppointmentDAO.insertAppointment()
+    ├── Gửi email xác nhận (EmailUtil)
+    └── Redirect → /schedule
     │
     ▼
-[3] USER XEM GIỎ HÀNG
+[5] ScheduleServlet.doGet()
+    ├── AppointmentDAO.getAppointmentsByUserId()
+    └── Forward → schedule.jsp (hiển thị lịch hẹn)
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → GET /cart                                                          │
-│                                                                              │
-│ CartServlet.doGet():                                                         │
-│   1. Lấy cart từ session                                                     │
-│   2. Nếu user đã đăng nhập: CartDAO.getCartByUserId(userId)                 │
-│   3. Tính tổng tiền, áp dụng giảm giá                                       │
-│   4. Forward → /shopping/cart.jsp                                            │
-│                                                                              │
-│ cart.jsp hiển thị:                                                           │
-│   - Danh sách sản phẩm trong giỏ                                            │
-│   - Input số lượng (có thể +/- hoặc nhập trực tiếp)                         │
-│   - Nút xóa từng sản phẩm                                                   │
-│   - Tổng tiền, phí ship, giảm giá                                           │
-│   - Nút "Thanh toán"                                                         │
-└─────────────────────────────────────────────────────────────────────────────┘
+[6] Admin duyệt lịch hẹn
+    ├── AppointmentServlet.doPost() action=approve
+    ├── AppointmentDAO.updateStatus("Confirmed")
+    └── Gửi email thông báo cho user
     │
     ▼
-[4] USER CẬP NHẬT SỐ LƯỢNG / XÓA SẢN PHẨM
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ AJAX: /cart?action=update&productId=123&quantity=3                          │
-│ AJAX: /cart?action=remove&productId=123                                     │
-│                                                                              │
-│ CartServlet:                                                                 │
-│   action=update:                                                             │
-│     - Cập nhật quantity trong session cart                                  │
-│     - Nếu đã đăng nhập: CartDAO.updateQuantity(userId, productId, qty)      │
-│                                                                              │
-│   action=remove:                                                             │
-│     - Xóa khỏi session cart                                                 │
-│     - Nếu đã đăng nhập: CartDAO.removeFromCart(userId, productId)           │
-│                                                                              │
-│   Trả về JSON với tổng tiền mới để JavaScript cập nhật UI                   │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[5] USER THANH TOÁN
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → POST /checkout                                                     │
-│                                                                              │
-│ CheckoutServlet.doPost():                                                    │
-│   1. Kiểm tra user đã đăng nhập                                             │
-│   2. Lấy thông tin giao hàng: fullname, phone, address                      │
-│   3. Validation thông tin                                                    │
-│   4. Tạo Order:                                                              │
-│      - OrderDAO.createOrder(userId, totalAmount, shippingInfo)              │
-│      - INSERT INTO orders (user_id, total, status, ...)                     │
-│   5. Tạo OrderItems cho từng sản phẩm:                                      │
-│      - INSERT INTO order_items (order_id, product_id, quantity, price)      │
-│   6. Xóa giỏ hàng:                                                          │
-│      - session.removeAttribute("cart")                                       │
-│      - CartDAO.clearCart(userId)                                            │
-│   7. Gửi email xác nhận đơn hàng                                            │
-│   8. Redirect → /order-success?orderId=xxx                                  │
-│                                                                              │
-│ (Hiện tại: Thanh toán COD - Thanh toán khi nhận hàng)                       │
-│ (Tương lai: Tích hợp VNPay, Momo, ZaloPay)                                  │
-└─────────────────────────────────────────────────────────────────────────────┘
+[7] Hoàn thành - Ghi nhận tiêm chủng
+    ├── VaccinationRecordServlet.doPost() action=add
+    ├── VaccinationRecordDAO.insert()
+    └── Cập nhật appointment status = "Completed"
 ```
 
-### 5.3 Luồng Thêm Sản Phẩm (Admin)
+### 10.2 Luồng Mua Sản Phẩm
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    LUỒNG THÊM SẢN PHẨM (ADMIN)                               │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-[1] ADMIN TRUY CẬP TRANG QUẢN LÝ SẢN PHẨM
+[1] User xem /shop
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → GET /pages/admin/products                                          │
-│                                                                              │
-│ AuthFilter kiểm tra:                                                         │
-│   - session.getAttribute("user") != null                                    │
-│   - user.getRole().equals("admin")                                          │
-│   - Nếu không → redirect /login                                             │
-│                                                                              │
-│ ProductServlet.doGet():                                                      │
-│   1. ProductDAO.getAllProducts()                                            │
-│   2. ProductDAO.getTotalProducts()                                          │
-│   3. ProductDAO.getDiscountedProducts()                                     │
-│   4. request.setAttribute("products", products)                             │
-│   5. Forward → /pages/admin/products.jsp                                     │
-│                                                                              │
-│ products.jsp hiển thị:                                                       │
-│   - Thống kê: Tổng SP, Đang giảm giá, Giá gốc                               │
-│   - Bảng danh sách sản phẩm                                                 │
-│   - Nút "Thêm sản phẩm" → mở Modal                                          │
-└─────────────────────────────────────────────────────────────────────────────┘
+[2] ShopServlet.doGet()
+    ├── ProductDAO.getAllProducts()
+    └── Forward → shop.jsp
     │
     ▼
-[2] ADMIN MỞ MODAL THÊM SẢN PHẨM
+[3] User click "Thêm vào giỏ"
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ JavaScript: openAddModal()                                                   │
-│   - Reset form fields                                                        │
-│   - Set formAction = "add"                                                   │
-│   - Hiển thị modal                                                           │
-│                                                                              │
-│ Modal form bao gồm:                                                          │
-│   - Tên sản phẩm (required)                                                 │
-│   - Ảnh sản phẩm (file upload với drag & drop)                              │
-│   - Giá bán (required, format VND)                                          │
-│   - Giảm giá (0-100%)                                                       │
-│   - Mô tả sản phẩm                                                          │
-└─────────────────────────────────────────────────────────────────────────────┘
+[4] AJAX → AddToCartServlet
+    ├── Lấy cart từ session
+    ├── Thêm/cập nhật CartItem
+    ├── Nếu đã đăng nhập: CartDAO.addToCart()
+    └── Response JSON: {success: true, cartCount: 5}
     │
     ▼
-[3] ADMIN UPLOAD ẢNH SẢN PHẨM
+[5] User xem /cart
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Cách 1: Click "Chọn ảnh" → chọn file từ máy                                 │
-│ Cách 2: Kéo thả file vào vùng preview                                       │
-│                                                                              │
-│ JavaScript handleFileSelect(event):                                          │
-│   1. Lấy file từ event.target.files[0]                                      │
-│   2. Kiểm tra file.type.startsWith('image/')                                │
-│   3. Kiểm tra file.size <= 5MB                                              │
-│   4. FileReader đọc file → hiển thị preview                                 │
-│   5. File sẽ được gửi kèm form khi submit                                   │
-│                                                                              │
-│ <form enctype="multipart/form-data">                                        │
-│   <input type="file" name="imageFile" accept="image/*">                     │
-│ </form>                                                                      │
-└─────────────────────────────────────────────────────────────────────────────┘
+[6] CartServlet.doGet()
+    ├── Lấy cart từ session
+    ├── Tính tổng tiền
+    └── Forward → cart.jsp
     │
     ▼
-[4] ADMIN SUBMIT FORM
+[7] User thanh toán
     │
     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser → POST /pages/admin/products                                         │
-│ Content-Type: multipart/form-data                                            │
-│                                                                              │
-│ ProductServlet.doPost():                                                     │
-│                                                                              │
-│   // 1. Đọc parameters                                                       │
-│   String action = request.getParameter("action");        // "add"           │
-│   String name = request.getParameter("name");                               │
-│   String priceStr = request.getParameter("price");                          │
-│   String discountStr = request.getParameter("discount");                    │
-│   String description = request.getParameter("description");                 │
-│                                                                              │
-│   // 2. Validation                                                           │
-│   if (name == null || name.trim().isEmpty()) {                              │
-│       errors.append("Tên sản phẩm không được để trống");                    │
-│   }                                                                          │
-│   if (price <= 0) {                                                          │
-│       errors.append("Giá bán phải lớn hơn 0");                              │
-│   }                                                                          │
-│                                                                              │
-│   // 3. Xử lý File Upload (Servlet 3.0 API)                                 │
-│   Part filePart = request.getPart("imageFile");                             │
-│   String imageName = null;                                                   │
-│                                                                              │
-│   if (filePart != null && filePart.getSize() > 0) {                         │
-│       // Validate file type                                                  │
-│       String contentType = filePart.getContentType();                       │
-│       if (!isValidImageType(contentType)) {                                 │
-│           return error("Chỉ chấp nhận file ảnh!");                          │
-│       }                                                                      │
-│                                                                              │
-│       // Generate unique filename                                            │
-│       String extension = getFileExtension(fileName);                        │
-│       imageName = "product_" + UUID.randomUUID().toString().substring(0,8)  │
-│                 + "_" + System.currentTimeMillis() + extension;             │
-│                                                                              │
-│       // Save file to disk                                                   │
-│       String uploadPath = getServletContext().getRealPath("")               │
-│                         + File.separator + "assets/images/shop_pic";        │
-│       filePart.write(uploadPath + File.separator + imageName);              │
-│   }                                                                          │
-│                                                                              │
-│   // 4. Lưu vào Database                                                     │
-│   ProductDAO.addProduct(name, imageName, price, discount, description);     │
-│   → INSERT INTO products (name, image, price, discount, description)        │
-│                                                                              │
-│   // 5. Redirect với thông báo                                               │
-│   session.setAttribute("message", "Thêm sản phẩm thành công!");             │
-│   response.sendRedirect("/pages/admin/products");                           │
-└─────────────────────────────────────────────────────────────────────────────┘
-    │
-    ▼
-[5] HIỂN THỊ KẾT QUẢ
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Browser redirect → GET /pages/admin/products                                 │
-│                                                                              │
-│ products.jsp:                                                                │
-│   - Hiển thị Toast thông báo "Thêm sản phẩm thành công!"                    │
-│   - Danh sách sản phẩm đã được cập nhật với sản phẩm mới                    │
-│   - Ảnh sản phẩm hiển thị từ: /assets/images/shop_pic/{imageName}           │
-└─────────────────────────────────────────────────────────────────────────────┘
+[8] CheckoutServlet.doPost()
+    ├── Tạo đơn hàng
+    ├── Xóa cart
+    └── Redirect với message "Đặt hàng thành công"
 ```
 
-### 5.4 Sơ đồ tổng quan các luồng
+### 10.3 Luồng Đăng nhập
 
 ```
-                                    ┌─────────────┐
-                                    │   BROWSER   │
-                                    └──────┬──────┘
-                                           │
-                    ┌──────────────────────┼──────────────────────┐
-                    │                      │                      │
-                    ▼                      ▼                      ▼
-            ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
-            │  AuthFilter   │      │ EncodingFilter│      │    Servlet    │
-            │ (Phân quyền)  │      │   (UTF-8)     │      │  (Controller) │
-            └───────┬───────┘      └───────┬───────┘      └───────┬───────┘
-                    │                      │                      │
-                    └──────────────────────┼──────────────────────┘
-                                           │
-                                           ▼
-                                    ┌─────────────┐
-                                    │     DAO     │
-                                    │ (Data Layer)│
-                                    └──────┬──────┘
-                                           │
-                                           ▼
-                                    ┌─────────────┐
-                                    │   MySQL     │
-                                    │  Database   │
-                                    └─────────────┘
+[1] User truy cập /login
+    │
+    ▼
+[2] LoginServlet.doGet()
+    └── Forward → login.jsp
+    │
+    ▼
+[3] User nhập username/password và submit
+    │
+    ▼
+[4] LoginServlet.doPost()
+    ├── UserDAO.login(username, password)
+    ├── Nếu thành công:
+    │   ├── session.setAttribute("user", user)
+    │   └── Redirect → /home
+    └── Nếu thất bại:
+        └── Forward → login.jsp với error message
 ```
 
 ---
 
-## 6. CƠ SỞ DỮ LIỆU
+## 11. HƯỚNG DẪN CÀI ĐẶT
 
-### 6.1 Các bảng chính
+### 11.1 Yêu cầu hệ thống
 
-| Bảng | Mô tả |
-|------|-------|
-| users | Thông tin người dùng |
-| pets | Thú cưng của người dùng |
-| appointments | Lịch hẹn khám/tiêm |
-| services | Các dịch vụ (khám, tiêm, spa...) |
-| doctors | Thông tin bác sĩ |
-| products | Sản phẩm siêu thị |
-| cart | Giỏ hàng |
-| vaccines | Danh sách vaccine |
-| vaccination_records | Lịch sử tiêm chủng |
-| hotel_bookings | Đặt phòng khách sạn |
-| spa_bookings | Đặt lịch spa |
-| blogs | Bài viết cộng đồng |
+| Phần mềm | Phiên bản | Download |
+|----------|-----------|----------|
+| Java JDK | 11, 17, 21 | [Adoptium](https://adoptium.net/) |
+| Apache Maven | 3.6+ | [Download](https://maven.apache.org/download.cgi) |
+| Apache Tomcat | **9.x** | [Download](https://tomcat.apache.org/download-90.cgi) |
+| MySQL | 8.0 | [Download](https://dev.mysql.com/downloads/mysql/) |
 
-### 6.2 Quan hệ giữa các bảng
+> ⚠️ **Lưu ý:** Project sử dụng `javax.servlet.*` (Java EE), chỉ tương thích với Tomcat 9.x
 
+### 11.2 Cài đặt nhanh
+
+```bash
+# 1. Clone project
+git clone -b new-update --single-branch https://github.com/normuwu/LTW_Project.git
+cd LTW_Project
+
+# 2. Chạy script setup
+scripts\setup.bat
+
+# 3. Cấu hình database
+# Mở file: src/main/java/Context/DBContext.java
+# Sửa: private final String password = "your_mysql_password";
+
+# 4. Import database
+scripts\import-db.bat
+
+# 5. Cấu hình Tomcat
+scripts\config-tomcat.bat
+
+# 6. Deploy và chạy
+scripts\deploy.bat
+start.bat
+
+# 7. Mở trình duyệt: http://localhost:8080/PetVaccine/home
 ```
-users (1) ──────< (n) pets
-users (1) ──────< (n) appointments
-users (1) ──────< (n) cart
-pets (1) ──────< (n) vaccination_records
-appointments (n) >────── (1) services
-appointments (n) >────── (1) doctors
-vaccination_records (n) >────── (1) vaccines
-```
+
+### 11.3 Tài khoản mặc định
+
+| Vai trò | Username | Password |
+|---------|----------|----------|
+| Admin | admin | Admin@123 |
+| User | user1 | Thanh@123 |
+| Doctor | doctor1 | 123456 |
 
 ---
 
-## 7. TÍNH NĂNG CHI TIẾT
+## 12. CÁC TRANG CHÍNH
 
-### 7.1 Người dùng (User)
-- ✅ Đăng ký / Đăng nhập / Đăng xuất
-- ✅ Quên mật khẩu (gửi OTP qua email)
-- ✅ Đặt lịch hẹn (khám, tiêm vaccine, spa, khách sạn)
-- ✅ Xem và hủy lịch hẹn
-- ✅ Quản lý thú cưng
-- ✅ Xem lịch sử tiêm chủng
-- ✅ Mua sắm sản phẩm
-- ✅ Giỏ hàng và thanh toán
+### 12.1 Trang công khai
 
-### 7.2 Admin
-- ✅ Dashboard thống kê
-- ✅ Quản lý lịch hẹn (duyệt/từ chối)
-- ✅ Quản lý người dùng
-- ✅ Quản lý bác sĩ
-- ✅ Quản lý dịch vụ
-- ✅ Quản lý sản phẩm
-- ✅ Quản lý vaccine
-- ✅ Quản lý đặt phòng khách sạn
-- ✅ Quản lý đặt lịch spa
-- ✅ Quản lý blog/bài viết
--  Gửi email thông báo(đang hoàn thiện)
+| Trang | URL |
+|-------|-----|
+| Trang chủ | /PetVaccine/home |
+| Giới thiệu | /PetVaccine/about |
+| Dịch vụ | /PetVaccine/services |
+| Cộng đồng | /PetVaccine/community |
+| Đăng nhập | /PetVaccine/login |
+| Đăng ký | /PetVaccine/register |
+
+### 12.2 Dịch vụ
+
+| Trang | URL |
+|-------|-----|
+| Tiêm vaccine | /PetVaccine/vaccine |
+| Khám bệnh | /PetVaccine/medical |
+| Phẫu thuật | /PetVaccine/surgery |
+| Spa & Grooming | /PetVaccine/spa |
+| Khách sạn thú cưng | /PetVaccine/hotel |
+| Siêu thị | /PetVaccine/shop |
+
+### 12.3 Đặt lịch & Giỏ hàng
+
+| Trang | URL |
+|-------|-----|
+| Đặt lịch hẹn | /PetVaccine/booking |
+| Lịch hẹn của tôi | /PetVaccine/schedule |
+| Giỏ hàng | /PetVaccine/cart |
+
+### 12.4 Trang Admin
+
+| Trang | URL |
+|-------|-----|
+| Dashboard | /PetVaccine/pages/admin/dashboard |
+| Quản lý lịch hẹn | /PetVaccine/pages/admin/appointments |
+| Quản lý sản phẩm | /PetVaccine/pages/admin/products |
+| Quản lý người dùng | /PetVaccine/admin/users |
+| Quản lý bác sĩ | /PetVaccine/admin/doctors |
+| Quản lý dịch vụ | /PetVaccine/admin/services |
+| Quản lý vaccine | /PetVaccine/pages/admin/vaccines |
+| Đặt phòng khách sạn | /PetVaccine/admin/hotel-bookings |
+| Đặt lịch spa | /PetVaccine/admin/spa-bookings |
+| Quản lý blog | /PetVaccine/pages/admin/blogs |
+| Thống kê | /PetVaccine/pages/admin/statistics |
+| Lịch sử tiêm chủng | /PetVaccine/pages/admin/vaccination-records |
+
+### 12.5 Trang User
+
+| Trang | URL |
+|-------|-----|
+| Thú cưng của tôi | /PetVaccine/my-pets |
+| Lịch sử tiêm chủng | /PetVaccine/vaccination-history |
 
 ---
 
-## 8. HƯỚNG PHÁT TRIỂN
+## 13. SCREENSHOTS (Giao diện)
 
-- [ ] Tích hợp thanh toán online (VNPay, Momo)
-- [ ] Thêm tính năng chat realtime
-- [ ] Ứng dụng mobile (React Native / Flutter)
-- [ ] Migrate sang Jakarta EE (Tomcat 10+)
-- [ ] Thêm REST API cho mobile app
-- [ ] Tích hợp AI chatbot hỗ trợ khách hàng
+### 13.1 Trang chủ
+- Hero section với slider
+- Giới thiệu dịch vụ
+- Đội ngũ bác sĩ
+- Đánh giá khách hàng
+
+### 13.2 Trang đặt lịch
+- Form đặt lịch với dropdown chọn dịch vụ, bác sĩ
+- Date picker chọn ngày hẹn
+- Validation form
+
+### 13.3 Trang Admin
+- Dashboard với thống kê tổng quan
+- Bảng quản lý với pagination
+- Modal thêm/sửa/xóa
+- Toast notification
 
 ---
 
-## 9. THÔNG TIN LIÊN HỆ
+## 14. HƯỚNG PHÁT TRIỂN
 
-- **GitHub**: https://github.com/normuwu/LTW_Project
-- **Môn học**: Lập trình Web
-- **Năm**:2025-2026
+### 14.1 Tính năng có thể mở rộng
+- [ ] Thanh toán online (VNPay, Momo)
+- [ ] Notification realtime (WebSocket)
+- [ ] Chat với bác sĩ
+- [ ] Mobile app (React Native)
+- [ ] API RESTful cho mobile
+- [ ] Đa ngôn ngữ (i18n)
+- [ ] Dark mode
+
+### 14.2 Cải thiện bảo mật
+- [ ] CSRF Token
+- [ ] Password hashing (BCrypt)
+- [ ] Rate limiting
+- [ ] HTTPS
+
+### 14.3 Cải thiện hiệu năng
+- [ ] Connection pooling (HikariCP)
+- [ ] Caching (Redis)
+- [ ] CDN cho static files
+- [ ] Lazy loading images
 
 ---
 
-© 2026 PetVaccine - Animal Doctors
+## 15. THÔNG TIN LIÊN HỆ
+
+- **Tên đồ án**: PetVaccine - Animal Doctors
+- **Môn học**: Lập trình Web (LTW)
+- **Năm học**: 2025-2026
+- **Repository**: https://github.com/normuwu/LTW_Project
+
+---
+
+© 2026 PetVaccine - Animal Doctors. All rights reserved.
