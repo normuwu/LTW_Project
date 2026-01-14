@@ -6,7 +6,8 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
 ```bash
 # 1. Clone project
-git clone https://github.com/normuwu/LTW_Project.git
+git clone git clone -b new-update --single-branch https://github.com/normuwu/LTW_Project.git
+
 cd LTW_Project
 
 # 2. Chạy script setup (kiểm tra môi trường + build)

@@ -3,82 +3,92 @@ chcp 65001 >nul
 title PetVaccine - Setup Script
 color 0A
 
-echo ╔══════════════════════════════════════════════════════════════╗
-echo ║           PETVACCINE - SETUP SCRIPT                          ║
-echo ║           Cài đặt tự động cho project                        ║
-echo ╚══════════════════════════════════════════════════════════════╝
+echo ========================================================
+echo           PETVACCINE - SETUP SCRIPT
+echo           Kiem tra moi truong va build project
+echo ========================================================
 echo.
 
 :: Kiểm tra Java
-echo [1/5] Kiểm tra Java...
-java -version >nul 2>&1
+echo [1/5] Kiem tra Java...
+where java >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [X] Java chưa được cài đặt!
-    echo     Vui lòng cài Java JDK 11+ từ: https://adoptium.net/
-    pause
-    exit /b 1
+    echo [X] Java chua duoc cai dat!
+    echo     Vui long cai Java JDK 11+ tu: https://adoptium.net/
+    echo.
+    goto :end
 )
-echo [OK] Java đã cài đặt
+java -version 2>&1 | findstr /i "version"
+echo [OK] Java da cai dat
 echo.
 
 :: Kiểm tra Maven
-echo [2/5] Kiểm tra Maven...
-mvn -version >nul 2>&1
+echo [2/5] Kiem tra Maven...
+where mvn >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [X] Maven chưa được cài đặt!
-    echo     Vui lòng cài Maven từ: https://maven.apache.org/download.cgi
-    pause
-    exit /b 1
+    echo [X] Maven chua duoc cai dat!
+    echo     Vui long cai Maven tu: https://maven.apache.org/download.cgi
+    echo.
+    goto :end
 )
-echo [OK] Maven đã cài đặt
+mvn -version 2>&1 | findstr /i "Apache Maven"
+echo [OK] Maven da cai dat
 echo.
 
 :: Kiểm tra MySQL
-echo [3/5] Kiểm tra MySQL...
-mysql --version >nul 2>&1
+echo [3/5] Kiem tra MySQL...
+where mysql >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [!] MySQL command không tìm thấy trong PATH
-    echo     Nếu bạn dùng XAMPP, hãy đảm bảo MySQL đang chạy
-    echo.
+    echo [!] MySQL command khong tim thay trong PATH
+    echo     Neu ban dung XAMPP, hay dam bao MySQL dang chay
+) else (
+    echo [OK] MySQL da cai dat
 )
-echo [OK] Tiếp tục...
 echo.
 
 :: Build project
-echo [4/5] Build project với Maven...
+echo [4/5] Build project voi Maven...
+echo     Dang build, vui long doi...
 cd /d "%~dp0.."
-call mvn clean package -DskipTests -q
+call mvn clean package -DskipTests
 if %errorlevel% neq 0 (
-    echo [X] Build thất bại!
-    pause
-    exit /b 1
+    echo.
+    echo [X] Build that bai! Xem log phia tren de biet chi tiet.
+    echo.
+    goto :end
 )
-echo [OK] Build thành công - File WAR: target\PetVaccine.war
+echo.
+echo [OK] Build thanh cong - File WAR: target\PetVaccine.war
 echo.
 
 :: Hướng dẫn tiếp theo
-echo [5/5] Hoàn tất!
+echo [5/5] Hoan tat!
 echo.
-echo ╔══════════════════════════════════════════════════════════════╗
-echo ║  CÁC BƯỚC TIẾP THEO:                                         ║
-echo ╠══════════════════════════════════════════════════════════════╣
-echo ║  1. Cấu hình database:                                       ║
-echo ║     - Mở src/main/java/Context/DBContext.java                ║
-echo ║     - Sửa password MySQL của bạn                             ║
-echo ║                                                              ║
-echo ║  2. Import database:                                         ║
-echo ║     - Chạy file db.sql trong MySQL Workbench/phpMyAdmin      ║
-echo ║     - Hoặc: mysql -u root -p < db.sql                        ║
-echo ║                                                              ║
-echo ║  3. Cấu hình Tomcat:                                         ║
-echo ║     - Mở start.bat và sửa đường dẫn CATALINA_HOME            ║
-echo ║     - Mở scripts/deploy.bat và sửa đường dẫn Tomcat          ║
-echo ║                                                              ║
-echo ║  4. Deploy và chạy:                                          ║
-echo ║     - Chạy scripts/deploy.bat để copy WAR vào Tomcat         ║
-echo ║     - Chạy start.bat để khởi động server                     ║
-echo ║                                                              ║
-echo ║  5. Truy cập: http://localhost:8080/PetVaccine/home          ║
-echo ╚══════════════════════════════════════════════════════════════╝
+echo ========================================================
+echo   CAC BUOC TIEP THEO:
+echo ========================================================
 echo.
-pause
+echo   1. Cau hinh database:
+echo      - Mo src/main/java/Context/DBContext.java
+echo      - Sua password MySQL cua ban
+echo.
+echo   2. Import database:
+echo      - Chay file scripts/import-db.bat
+echo      - Hoac: mysql -u root -p petvaccine ^< db.sql
+echo.
+echo   3. Cau hinh Tomcat:
+echo      - Mo start.bat va sua duong dan CATALINA_HOME
+echo      - Mo scripts/deploy.bat va sua duong dan Tomcat
+echo.
+echo   4. Deploy va chay:
+echo      - Chay scripts/deploy.bat de copy WAR vao Tomcat
+echo      - Chay start.bat de khoi dong server
+echo.
+echo   5. Truy cap: http://localhost:8080/PetVaccine/home
+echo.
+echo ========================================================
+
+:end
+echo.
+echo Nhan phim bat ky de dong cua so nay...
+pause >nul
