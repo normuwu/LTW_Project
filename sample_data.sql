@@ -105,6 +105,7 @@ INSERT INTO `appointments` (`user_id`, `customer_name`, `phone`, `pet_name`, `pe
 -- 5. VACCINATION_RECORDS (Lịch sử tiêm chủng) - 15 records
 -- pet_id: 1-15, vaccine_id: 1-15, doctor_id: 1-12
 -- =============================================
+SET FOREIGN_KEY_CHECKS = 0;
 INSERT INTO `vaccination_records` (`pet_id`, `vaccine_id`, `appointment_id`, `doctor_id`, `vaccination_date`, `dose_number`, `batch_number`, `next_due_date`, `notes`) VALUES
 (1, 1, NULL, 1, '2023-05-15', 1, 'NB2023051501', '2023-06-05', 'Mũi 1 vaccine 5 bệnh'),
 (1, 1, NULL, 1, '2023-06-05', 2, 'NB2023060502', '2023-06-26', 'Mũi 2 vaccine 5 bệnh'),
@@ -121,6 +122,7 @@ INSERT INTO `vaccination_records` (`pet_id`, `vaccine_id`, `appointment_id`, `do
 (10, 4, NULL, 1, '2024-06-20', 1, 'FC2024062001', '2024-07-18', 'Mũi 1 vaccine 4 bệnh mèo'),
 (12, 6, NULL, 3, '2023-09-18', 1, 'KC2023091801', '2024-09-18', 'Vaccine Kennel Cough'),
 (14, 14, NULL, 2, '2024-05-10', 1, 'MR2024051001', '2025-05-10', 'Vaccine tổng hợp thỏ');
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- =============================================
 -- 6. HOTEL_BOOKINGS (Đặt phòng khách sạn) - 10 bookings
