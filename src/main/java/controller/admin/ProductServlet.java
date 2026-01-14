@@ -1,24 +1,29 @@
 package controller.admin;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import DAO.ProductDAO;
 import Model.Product;
-import Util.FormHelper;
 import Util.ValidationUtil;
 
 @WebServlet("/pages/admin/products")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,      // 1 MB - ngưỡng lưu vào bộ nhớ
+    maxFileSize = 1024 * 1024 * 5,        // 5 MB - kích thước file tối đa
+    maxRequestSize = 1024 * 1024 * 20     // 20 MB - kích thước request tối đa
+)
 public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
@@ -49,39 +54,52 @@ public class ProductServlet extends HttpServlet {
         String messageType = "success";
         
         if ("add".equals(action) || "edit".equals(action)) {
-            FormHelper form = new FormHelper(request);
-            
-            String name = form.get("name");
-            String image = form.get("image");
-            String imageData = form.get("imageData"); // Base64 image data
-            String priceStr = form.get("price");
-            String discountStr = form.get("discount");
-            
-            // SỬA 2: Lấy description thay vì oldPrice
-            String description = form.get("description"); 
+            String name = request.getParameter("name");
+            String existingImage = request.getParameter("existingImage");
+            String priceStr = request.getParameter("price");
+            String discountStr = request.getParameter("discount");
+            String description = request.getParameter("description");
             
             // === VALIDATION ===
             boolean valid = true;
+            StringBuilder errors = new StringBuilder();
             
-            if (!form.validateRequired("name", "Tên sản phẩm")) {
+            if (name == null || name.trim().isEmpty()) {
                 valid = false;
-            } else if (!form.validateLength("name", "Tên sản phẩm", 2, 200)) {
+                errors.append("Tên sản phẩm không được để trống. ");
+            } else if (name.length() < 2 || name.length() > 200) {
                 valid = false;
+                errors.append("Tên sản phẩm phải từ 2-200 ký tự. ");
             }
             
-            if (!form.validatePositiveNumber("price", "Giá bán")) {
+            double price = 0;
+            try {
+                price = Double.parseDouble(priceStr);
+                if (price <= 0) {
+                    valid = false;
+                    errors.append("Giá bán phải lớn hơn 0. ");
+                }
+            } catch (Exception e) {
                 valid = false;
+                errors.append("Giá bán không hợp lệ. ");
             }
             
-            // (Đã XÓA validation oldPrice)
-            
-            if (ValidationUtil.isNotEmpty(discountStr) && !form.validateDiscount("discount")) {
-                valid = false;
+            int discount = 0;
+            if (discountStr != null && !discountStr.trim().isEmpty()) {
+                try {
+                    discount = Integer.parseInt(discountStr);
+                    if (discount < 0 || discount > 100) {
+                        valid = false;
+                        errors.append("Giảm giá phải từ 0-100%. ");
+                    }
+                } catch (Exception e) {
+                    valid = false;
+                    errors.append("Giảm giá không hợp lệ. ");
+                }
             }
             
             if (!valid) {
-                // Lấy lỗi đầu tiên làm message
-                message = form.getErrorsMap().values().iterator().next();
+                message = errors.toString().trim();
                 messageType = "error";
                 session.setAttribute("message", message);
                 session.setAttribute("messageType", messageType);
@@ -89,35 +107,43 @@ public class ProductServlet extends HttpServlet {
                 return;
             }
             
-            // === HANDLE IMAGE UPLOAD ===
-            if (imageData != null && !imageData.isEmpty() && imageData.startsWith("data:image")) {
-                try {
-                    String base64Data = imageData.substring(imageData.indexOf(",") + 1);
-                    byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+            // === HANDLE FILE UPLOAD (Servlet 3.0) ===
+            String imageName = existingImage; // Giữ ảnh cũ nếu không upload mới
+            
+            Part filePart = request.getPart("imageFile");
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = getSubmittedFileName(filePart);
+                if (fileName != null && !fileName.isEmpty()) {
+                    // Validate file type
+                    String contentType = filePart.getContentType();
+                    if (!isValidImageType(contentType)) {
+                        message = "Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WebP)!";
+                        messageType = "error";
+                        session.setAttribute("message", message);
+                        session.setAttribute("messageType", messageType);
+                        response.sendRedirect(request.getContextPath() + "/pages/admin/products");
+                        return;
+                    }
                     
+                    // Generate unique filename
+                    String extension = getFileExtension(fileName);
+                    imageName = "product_" + UUID.randomUUID().toString().substring(0, 8) + "_" + System.currentTimeMillis() + extension;
+                    
+                    // Save file
                     String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
                     File uploadDir = new File(uploadPath);
                     if (!uploadDir.exists()) {
                         uploadDir.mkdirs();
                     }
                     
-                    String filePath = uploadPath + File.separator + image;
-                    try (FileOutputStream fos = new FileOutputStream(filePath)) {
-                        fos.write(imageBytes);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    String filePath = uploadPath + File.separator + imageName;
+                    filePart.write(filePath);
                 }
             }
             
-            // Parse values
-            double price = ValidationUtil.parseDoubleOrDefault(priceStr, 0);
-            int discount = ValidationUtil.parseIntOrDefault(discountStr, 0);
-            
             // === BUSINESS LOGIC ===
             if ("add".equals(action)) {
-                // SỬA 3: Gọi hàm addProduct MỚI (có description, bỏ oldPrice)
-                if (dao.addProduct(name, image, price, discount, description)) {
+                if (dao.addProduct(name, imageName, price, discount, description)) {
                     message = "Thêm sản phẩm thành công!";
                 } else {
                     message = "Có lỗi xảy ra khi thêm sản phẩm!";
@@ -130,8 +156,7 @@ public class ProductServlet extends HttpServlet {
                 if (id == null) {
                     message = "ID sản phẩm không hợp lệ!";
                     messageType = "error";
-                // SỬA 4: Gọi hàm updateProduct MỚI
-                } else if (dao.updateProduct(id, name, image, price, discount, description)) {
+                } else if (dao.updateProduct(id, name, imageName, price, discount, description)) {
                     message = "Cập nhật sản phẩm thành công!";
                 } else {
                     message = "Có lỗi xảy ra khi cập nhật!";
@@ -159,5 +184,43 @@ public class ProductServlet extends HttpServlet {
         session.setAttribute("message", message);
         session.setAttribute("messageType", messageType);
         response.sendRedirect(request.getContextPath() + "/pages/admin/products");
+    }
+    
+    // Lấy tên file từ Part (Servlet 3.0)
+    private String getSubmittedFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        if (contentDisp != null) {
+            for (String token : contentDisp.split(";")) {
+                if (token.trim().startsWith("filename")) {
+                    String fileName = token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
+                    // Handle IE which sends full path
+                    int index = fileName.lastIndexOf(File.separator);
+                    if (index >= 0) {
+                        fileName = fileName.substring(index + 1);
+                    }
+                    return fileName;
+                }
+            }
+        }
+        return null;
+    }
+    
+    // Kiểm tra loại file ảnh hợp lệ
+    private boolean isValidImageType(String contentType) {
+        return contentType != null && (
+            contentType.equals("image/jpeg") ||
+            contentType.equals("image/png") ||
+            contentType.equals("image/gif") ||
+            contentType.equals("image/webp")
+        );
+    }
+    
+    // Lấy extension của file
+    private String getFileExtension(String fileName) {
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot > 0) {
+            return fileName.substring(lastDot).toLowerCase();
+        }
+        return ".jpg";
     }
 }

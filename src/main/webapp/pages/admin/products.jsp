@@ -334,9 +334,10 @@
                 <button class="modal-close" onclick="closeModal()"><i class='bx bx-x'></i></button>
             </div>
             
-            <form id="productForm" method="post">
+            <form id="productForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="action" id="formAction" value="add">
                 <input type="hidden" name="id" id="formId">
+                <input type="hidden" name="existingImage" id="formExistingImage">
                 
                 <div class="modal-body">
                     <div class="form-group">
@@ -366,10 +367,8 @@
                                     <i class='bx bx-trash'></i> Xóa ảnh
                                 </button>
                             </div>
-                            <span class="input-hint">Chấp nhận: JPG, PNG, GIF, WebP. Tối đa 5MB. Hoặc nhấn Ctrl+V để dán ảnh</span>
+                            <span class="input-hint">Chấp nhận: JPG, PNG, GIF, WebP. Tối đa 5MB</span>
                         </div>
-                        <input type="hidden" name="image" id="formImage">
-                        <input type="hidden" name="imageData" id="formImageData">
                     </div>
                     
                     <div class="form-row">
@@ -527,7 +526,7 @@
             document.getElementById('formAction').value = 'add';
             document.getElementById('formId').value = '';
             document.getElementById('formName').value = '';
-            document.getElementById('formImage').value = '';
+            document.getElementById('formExistingImage').value = '';
             document.getElementById('formPriceDisplay').value = '';
             document.getElementById('formPrice').value = '';
             document.getElementById('formDiscount').value = '0';
@@ -542,7 +541,7 @@
             document.getElementById('formAction').value = 'edit';
             document.getElementById('formId').value = row.dataset.id;
             document.getElementById('formName').value = row.dataset.name || '';
-            document.getElementById('formImage').value = row.dataset.image || '';
+            document.getElementById('formExistingImage').value = row.dataset.image || '';
             document.getElementById('formDescription').value = row.dataset.description || '';
             
             // Format price for display
@@ -559,7 +558,6 @@
             if (existingImage) {
                 var imgUrl = '${pageContext.request.contextPath}/assets/images/shop_pic/' + existingImage;
                 showImagePreview(imgUrl);
-                document.getElementById('formImageData').value = '';
             } else {
                 resetImagePreview();
             }
@@ -593,13 +591,11 @@
             }
         });
 
-        // ========== IMAGE UPLOAD FUNCTIONS ==========
+        // ========== IMAGE UPLOAD FUNCTIONS (Servlet 3.0 File Upload) ==========
         var previewArea = document.getElementById('imagePreviewArea');
         var previewPlaceholder = document.getElementById('previewPlaceholder');
         var previewImg = document.getElementById('previewImg');
         var btnRemoveImage = document.getElementById('btnRemoveImage');
-        var formImage = document.getElementById('formImage');
-        var formImageData = document.getElementById('formImageData');
 
         // Click to upload
         previewArea.addEventListener('click', function() {
@@ -627,7 +623,11 @@
             previewArea.style.background = '#f8fafc';
             var files = e.dataTransfer.files;
             if (files.length > 0 && files[0].type.startsWith('image/')) {
-                processImage(files[0]);
+                // Set file to input
+                var dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                document.getElementById('imageFile').files = dataTransfer.files;
+                previewFile(files[0]);
             }
         });
 
@@ -635,40 +635,23 @@
         function handleFileSelect(event) {
             var file = event.target.files[0];
             if (file && file.type.startsWith('image/')) {
-                processImage(file);
+                previewFile(file);
             }
         }
 
-        // Paste Image (Ctrl+V)
-        document.addEventListener('paste', function(e) {
-            if (!document.getElementById('productModal').classList.contains('show')) return;
-            
-            var items = e.clipboardData.items;
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].type.startsWith('image/')) {
-                    var file = items[i].getAsFile();
-                    processImage(file);
-                    e.preventDefault();
-                    break;
-                }
-            }
-        });
-
-        // Process Image
-        function processImage(file) {
+        // Preview file (chỉ hiển thị, không convert Base64)
+        function previewFile(file) {
             if (file.size > 5 * 1024 * 1024) {
                 alert('File quá lớn! Vui lòng chọn ảnh dưới 5MB.');
+                document.getElementById('imageFile').value = '';
                 return;
             }
 
             var reader = new FileReader();
             reader.onload = function(e) {
                 showImagePreview(e.target.result);
-                formImageData.value = e.target.result;
-                
-                var ext = file.name.split('.').pop() || 'jpg';
-                var filename = 'product_' + Date.now() + '.' + ext;
-                formImage.value = filename;
+                // Clear existing image khi chọn file mới
+                document.getElementById('formExistingImage').value = '';
             };
             reader.readAsDataURL(file);
         }
@@ -695,8 +678,7 @@
         // Remove Image
         function removeImage() {
             resetImagePreview();
-            formImage.value = '';
-            formImageData.value = '';
+            document.getElementById('formExistingImage').value = '';
         }
     </script>
 </body>
