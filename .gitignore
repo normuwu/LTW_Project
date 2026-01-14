@@ -42,3 +42,6 @@ logs/
 # ===== PERSONAL/LOCAL =====
 .shared/
 .kiro/
+
+# ===== DOCS (internal) =====
+docs/

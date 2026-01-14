@@ -6,7 +6,7 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
 ```bash
 # 1. Clone project
-git clone git clone -b new-update --single-branch https://github.com/normuwu/LTW_Project.git
+git clone -b new-update --single-branch https://github.com/normuwu/LTW_Project.git
 
 cd LTW_Project
 
@@ -57,25 +57,73 @@ start.bat
 ### Bước 0: Clone và Import Project
 
 ```bash
-git clone https://github.com/normuwu/LTW_Project.git
+git clone -b new-update --single-branch https://github.com/normuwu/LTW_Project.git
 ```
 
-**Import vào Eclipse:**
-1. File → Import → Maven → Existing Maven Projects
-2. Chọn thư mục project vừa clone
-3. Eclipse sẽ tự tạo `.classpath`, `.project`, `.settings/` theo cấu hình máy của bạn
+---
 
-**Import vào IntelliJ IDEA:**
-1. File → Open → Chọn thư mục project
+### 🔷 Cách 1: Chạy bằng Eclipse
+
+**Bước 1: Import Project**
+1. File → Import → Maven → **Existing Maven Projects**
+2. Browse → Chọn thư mục project vừa clone → Finish
+3. Đợi Eclipse download dependencies (góc phải dưới có progress bar)
+
+**Bước 2: Cấu hình Tomcat Server**
+1. Window → Preferences → Server → **Runtime Environments**
+2. Click **Add** → Apache Tomcat v9.0 → Next
+3. Browse → Chọn thư mục Tomcat 9 đã cài → Finish
+
+**Bước 3: Thêm Project vào Server**
+1. Mở tab **Servers** (Window → Show View → Servers)
+2. Click phải vào Tomcat → **Add and Remove...**
+3. Chọn PetVaccine → Add → Finish
+
+**Bước 4: Chạy Project**
+1. Click phải vào Tomcat Server → **Start**
+2. Mở trình duyệt: http://localhost:8080/PetVaccine/home
+
+---
+
+### 🔶 Cách 2: Chạy bằng IntelliJ IDEA
+
+**Bước 1: Import Project**
+1. File → **Open** → Chọn thư mục project
 2. IntelliJ sẽ tự nhận diện Maven project
-3. Đợi IntelliJ download dependencies
-4. Cấu hình Tomcat:
-   - Run → Edit Configurations → Add New → Tomcat Server → Local
-   - Configure → Chọn thư mục Tomcat 9
-   - Deployment → Add → Artifact → PetVaccine:war exploded
-   - Application context: `/PetVaccine`
+3. Đợi IntelliJ download dependencies (góc phải dưới có progress bar)
 
-> 💡 Các file Eclipse config không được commit lên Git vì mỗi máy có JDK/Tomcat khác nhau
+**Bước 2: Cấu hình Tomcat Server**
+1. Run → **Edit Configurations**
+2. Click **+** → Tomcat Server → **Local**
+3. Tab **Server**: Click **Configure** → Chọn thư mục Tomcat 9
+4. Tab **Deployment**: 
+   - Click **+** → **Artifact**
+   - Chọn **PetVaccine:war exploded**
+   - Application context: `/PetVaccine`
+5. Click **OK**
+
+**Bước 3: Chạy Project**
+1. Click nút **Run** (hoặc Shift+F10)
+2. Mở trình duyệt: http://localhost:8080/PetVaccine/home
+
+---
+
+### 🔹 Cách 3: Chạy bằng Command Line (không cần IDE)
+
+Dùng các script có sẵn trong thư mục `scripts/`:
+```bash
+scripts\setup.bat        # Kiểm tra môi trường + build
+scripts\import-db.bat    # Import database
+scripts\config-tomcat.bat # Cấu hình đường dẫn Tomcat
+scripts\deploy.bat       # Build + deploy WAR
+start.bat                # Khởi động Tomcat
+```
+
+---
+
+> 💡 **Lưu ý:** Dù chạy bằng cách nào, bạn vẫn cần:
+> - Import database (chạy `scripts\import-db.bat` hoặc import `db.sql` thủ công)
+> - Cấu hình `DBContext.java` với password MySQL của bạn
 
 ### Bước 1: Cài đặt phần mềm cần thiết
 
@@ -89,13 +137,20 @@ java -version
 
 #### 1.2 Cài Maven
 ```bash
-# Kiểm tra Maven
+# Kiểm tra Maven đã cài chưa
 mvn -version
-
-# Nếu chưa có:
-# Windows: Tải từ https://maven.apache.org/download.cgi
-# Giải nén và thêm bin folder vào PATH
 ```
+
+**Nếu chưa có Maven:**
+1. Tải từ: https://maven.apache.org/download.cgi (chọn file `apache-maven-x.x.x-bin.zip`)
+2. Giải nén vào thư mục (VD: `C:\apache-maven-3.9.6`)
+3. **Thêm vào PATH:**
+   - Nhấn `Windows + R`, gõ `sysdm.cpl`, Enter
+   - Chọn tab **Advanced** → Click **Environment Variables**
+   - Trong **System variables**, tìm `Path`, click **Edit**
+   - Click **New**, thêm: `C:\apache-maven-3.9.6\bin` (đường dẫn thư mục bin của Maven)
+   - Click **OK** để lưu
+4. **Mở CMD mới** và gõ `mvn -version` để kiểm tra
 
 #### 1.3 Cài MySQL
 - **Cách 1 (Khuyến nghị)**: Dùng XAMPP - https://www.apachefriends.org/download.html
@@ -125,7 +180,7 @@ private final String serverName = "localhost";
 private final String dbName = "petvaccine";
 private final String portNumber = "3306";
 private final String userID = "root";       
-private final String password = "MySQL Root Password"  // ← Sửa password của bạn
+private final String password = "MySQL"  // ← Sửa password của bạn
 ```
 
 ### Bước 4: Cấu hình đường dẫn Tomcat
