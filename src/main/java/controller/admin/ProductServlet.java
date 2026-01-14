@@ -16,6 +16,7 @@ import javax.servlet.http.Part;
 
 import DAO.ProductDAO;
 import Model.Product;
+import Util.UploadConfig;
 import Util.ValidationUtil;
 
 @WebServlet("/pages/admin/products")
@@ -129,12 +130,8 @@ public class ProductServlet extends HttpServlet {
                     String extension = getFileExtension(fileName);
                     imageName = "product_" + UUID.randomUUID().toString().substring(0, 8) + "_" + System.currentTimeMillis() + extension;
                     
-                    // Save file
-                    String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
-                    }
+                    // Save file vào thư mục external (không bị mất khi redeploy)
+                    String uploadPath = UploadConfig.getProductsUploadDir();
                     
                     String filePath = uploadPath + File.separator + imageName;
                     filePart.write(filePath);

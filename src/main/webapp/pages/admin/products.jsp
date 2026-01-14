@@ -281,7 +281,7 @@
                             data-price="${p.price}" data-discount="${p.discount}" data-description="${p.description}">
                             <td><strong>${loop.index + 1}</strong></td>
                             <td>
-                                <img src="${pageContext.request.contextPath}/assets/images/shop_pic/${p.image}" 
+                                <img src="${pageContext.request.contextPath}/uploads/shop_pic/${p.image}" 
                                      alt="" class="product-thumb"
                                      onerror="this.src='${pageContext.request.contextPath}/assets/images/shop_pic/default.jpg'" loading="lazy">
                             </td>
@@ -556,7 +556,7 @@
             // Show existing image
             var existingImage = row.dataset.image;
             if (existingImage) {
-                var imgUrl = '${pageContext.request.contextPath}/assets/images/shop_pic/' + existingImage;
+                var imgUrl = '${pageContext.request.contextPath}/uploads/shop_pic/' + existingImage;
                 showImagePreview(imgUrl);
             } else {
                 resetImagePreview();

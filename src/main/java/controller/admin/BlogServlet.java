@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import DAO.BlogDAO;
 import Model.BlogPost;
+import Util.UploadConfig;
 import Util.ValidationUtil;
 
 @WebServlet("/pages/admin/blogs")
@@ -124,12 +125,8 @@ public class BlogServlet extends HttpServlet {
                     String extension = getFileExtension(fileName);
                     imageName = UUID.randomUUID().toString().substring(0, 8) + "_" + System.currentTimeMillis() + extension;
                     
-                    // Save file
-                    String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
-                    }
+                    // Save file vào thư mục external (không bị mất khi redeploy)
+                    String uploadPath = UploadConfig.getBlogsUploadDir();
                     
                     String filePath = uploadPath + File.separator + imageName;
                     filePart.write(filePath);

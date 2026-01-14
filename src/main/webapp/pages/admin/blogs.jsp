@@ -140,7 +140,7 @@
                          data-category="${blog.category}" data-author="${blog.author}"
                          data-image="${blog.image}" data-summary="${blog.summary}" data-date="${blog.date}">
                         <div class="blog-image-wrapper">
-                            <img src="${pageContext.request.contextPath}/assets/images/community_pic/${blog.image}" 
+                            <img src="${pageContext.request.contextPath}/uploads/community_pic/${blog.image}" 
                                  alt="${blog.title}" class="blog-image" loading="lazy"
                                  onerror="this.src='${pageContext.request.contextPath}/assets/images/community_pic/default.jpg'">
                             <span class="blog-category">${blog.category}</span>
@@ -188,7 +188,7 @@
                                 data-category="${blog.category}" data-author="${blog.author}">
                                 <td><strong>${loop.index + 1}</strong></td>
                                 <td>
-                                    <img src="${pageContext.request.contextPath}/assets/images/community_pic/${blog.image}" 
+                                    <img src="${pageContext.request.contextPath}/uploads/community_pic/${blog.image}" 
                                          alt="" class="table-thumb" loading="lazy"
                                          onerror="this.src='${pageContext.request.contextPath}/assets/images/community_pic/default.jpg'">
                                 </td>

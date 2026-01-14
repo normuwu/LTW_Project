@@ -275,7 +275,9 @@
 
                         <a href="${pageContext.request.contextPath}/product-detail?id=${p.id}">
                             <div class="product-img-wrapper">
-                                <img src="${pageContext.request.contextPath}/assets/images/shop_pic/${p.image}" alt="${p.name}">
+                                <img src="${pageContext.request.contextPath}/uploads/shop_pic/${p.image}" 
+                                     alt="${p.name}"
+                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/shop_pic/default.jpg'">
                             </div>
                         </a>
                         
