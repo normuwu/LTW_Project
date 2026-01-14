@@ -1,161 +1,353 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Về Chúng Tôi - Animal Doctors</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Về Chúng Tôi - Animal Doctors</title>
 
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
-	rel='stylesheet'>
-<link href="${pageContext.request.contextPath}/assets/css/about.css"
-	rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon/favicon.ico">
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Custom CSS -->
+    <link href="${pageContext.request.contextPath}/assets/css/about.css" rel="stylesheet">
+    
+    <style>
+    /* Color Variables */
+    :root {
+        --primary: #00bfa5;
+        --primary-dark: #008f7a;
+        --accent-orange: #ff7043;
+        --accent-purple: #7c4dff;
+        --accent-pink: #f50057;
+        --dark-blue: #1a2e5a;
+        --bg-cream: #FFFAF4;
+    }
+    
+    /* Base */
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg-cream); }
+    img { max-width: 100%; height: auto; }
+    
+    /* Hero Section - Shop Green Colors */
+    .about-hero {
+        background: linear-gradient(135deg, #00bfa5 0%, #005f52 100%);
+        padding: 160px 0 100px;
+        text-align: center;
+        position: relative;
+    }
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="20" r="2" fill="rgba(255,255,255,0.08)"/><circle cx="50" cy="80" r="4" fill="rgba(255,255,255,0.06)"/></svg>');
+        background-size: 80px 80px;
+    }
+    .about-hero h1 { color: #fff; font-size: 3.5rem; font-weight: 700; text-shadow: 2px 2px 20px rgba(0,0,0,0.2); position: relative; }
+    .about-hero p { color: rgba(255,255,255,0.9); font-size: 1.2rem; position: relative; }
+    
+    /* About Section */
+    .about-section { background: var(--bg-cream); padding: 100px 0; }
+    .about-img-wrapper { position: relative; padding: 20px; }
+    .about-img-main { 
+        width: 100%; max-width: 500px; height: 400px; object-fit: cover; 
+        border-radius: 20px; box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        border: 5px solid #fff;
+    }
+    .about-img-small { 
+        position: absolute; bottom: -30px; right: 0; width: 200px; height: 150px; 
+        object-fit: cover; border-radius: 15px; border: 5px solid var(--bg-cream);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .sub-title { 
+        color: var(--primary); font-weight: 600; font-size: 1rem; 
+        text-transform: uppercase; letter-spacing: 3px; 
+    }
+    .main-title { color: var(--dark-blue); font-size: 2.5rem; font-weight: 700; margin: 15px 0 20px; }
+    .about-desc { color: #666; font-size: 1rem; line-height: 1.8; }
+    
+    /* Feature Boxes - Project Colors */
+    .about-features { display: flex; flex-direction: column; gap: 20px; margin-top: 30px; }
+    .feature-box { 
+        display: flex; align-items: flex-start; gap: 15px; padding: 20px;
+        background: #fff; border-radius: 15px; 
+        box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--primary);
+    }
+    .feature-box:hover { transform: translateX(10px); box-shadow: 0 10px 40px rgba(0,191,165,0.15); }
+    
+    .icon-box { 
+        width: 55px; height: 55px; min-width: 55px; border-radius: 15px;
+        display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+    .icon-box i { font-size: 26px; color: #fff; }
+    .feature-box h5 { color: var(--dark-blue); font-weight: 600; font-size: 1.05rem; margin-bottom: 5px; }
+    .feature-box p { color: #888; font-size: 0.9rem; margin: 0; }
+    
+    /* Team Section - Dark with accent */
+    .team-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 100px 0;
+        position: relative;
+    }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header h2 { color: #fff; font-size: 2.5rem; font-weight: 700; }
+    .section-header p { color: rgba(255,255,255,0.7); max-width: 600px; margin: 15px auto 25px; }
+    .section-header h3 { 
+        color: transparent; font-size: 1.3rem; font-weight: 600;
+        background: linear-gradient(90deg, #00bfa5, #00e5ff);
+        -webkit-background-clip: text;
+    }
+    
+    .doctor-card {
+        background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.3s ease;
+    }
+    .doctor-card:hover { 
+        transform: translateY(-10px); 
+        background: rgba(255,255,255,0.1);
+        box-shadow: 0 20px 50px rgba(0, 191, 165, 0.2);
+    }
+    .doctor-img-box { width: 100%; height: 300px; overflow: hidden; }
+    .doctor-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .doctor-card:hover .doctor-img-box img { transform: scale(1.1); }
+    .doctor-info { padding: 25px; text-align: center; }
+    .doctor-info h4 { color: #fff; font-size: 1.2rem; font-weight: 600; margin: 0; }
+    
+    /* Care Section */
+    .care-section { background: linear-gradient(180deg, var(--bg-cream) 0%, #fff 100%); padding: 100px 0; }
+    .care-section > .container > h2 { 
+        color: var(--dark-blue); font-size: 2.5rem; font-weight: 700; 
+        text-align: center; margin-bottom: 60px;
+    }
+    
+    .care-list { list-style: none; padding: 0; margin: 0; }
+    .care-item {
+        padding: 18px 25px; color: #888; font-size: 1.05rem; cursor: pointer;
+        transition: all 0.3s; border-left: 4px solid transparent;
+        margin-bottom: 8px; border-radius: 0 12px 12px 0;
+    }
+    .care-item:hover { color: var(--dark-blue); background: rgba(0,191,165,0.05); }
+    .care-item.active {
+        color: #fff; font-weight: 600;
+        background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        border-left-color: var(--accent-purple);
+        box-shadow: 0 5px 20px rgba(0,191,165,0.3);
+    }
+    
+    .care-content-box {
+        background: #fff; border-radius: 20px; padding: 40px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+        border-top: 4px solid var(--primary);
+        min-height: 200px;
+    }
+    .tab-content { display: none; }
+    .tab-content.active-content { display: block; animation: fadeIn 0.4s ease; }
+    .tab-content p { color: #555; font-size: 1.05rem; line-height: 1.9; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Responsive */
+    @media (max-width: 991px) {
+        .about-hero h1 { font-size: 2.5rem; }
+        .main-title, .section-header h2, .care-section > .container > h2 { font-size: 2rem; }
+        .about-img-main { height: 350px; }
+    }
+    @media (max-width: 767px) {
+        .about-hero { padding: 140px 0 80px; }
+        .about-hero h1 { font-size: 2rem; }
+        .about-img-small { display: none !important; }
+        .about-section, .team-section, .care-section { padding: 60px 0; }
+    }
+    </style>
 </head>
 <body>
 
-	<jsp:include page="/components/navbar.jsp" />
+    <jsp:include page="/components/navbar.jsp" />
 
-	<section class="about-section">
-		<div class="container">
-			<div class="row align-items-center">
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1>Về Chúng Tôi</h1>
+            <p>Tiêu chuẩn thú y quốc tế ngay tại Việt Nam - Nơi thú cưng luôn được đặt lên hàng đầu</p>
+        </div>
+    </section>
 
-				<div class="col-lg-6 mb-5 mb-lg-0">
-					<div class="about-img-wrapper">
-						<img
-							src="${pageContext.request.contextPath}/assets/images/homepage_pic/webpic2.jpg"
-							class="img-fluid about-img-main" alt="About Main"> <img
-							src="${pageContext.request.contextPath}/assets/images/homepage_pic/webpic6.jpg"
-							class="img-fluid about-img-small d-none d-md-block"
-							alt="About Small">
-					</div>
-				</div>
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="about-img-wrapper">
+                        <img src="${pageContext.request.contextPath}/assets/images/homepage_pic/webpic2.jpg" 
+                             class="about-img-main" alt="Animal Doctors Team">
+                        <img src="${pageContext.request.contextPath}/assets/images/homepage_pic/webpic6.jpg" 
+                             class="about-img-small" alt="Pet Care">
+                    </div>
+                </div>
 
-				<div class="col-lg-6">
-					<h4 class="sub-title">VỀ CHÚNG TÔI</h4>
-					<h2 class="main-title">
-						Tiêu chuẩn thú y quốc tế <br> ngay tại Việt Nam
-					</h2>
-					<p class="about-desc">Tại Animal Doctors, chúng tôi hiểu rằng
-						thú cưng không chỉ là động vật, mà là những thành viên yêu quý
-						trong gia đình. Sứ mệnh của chúng tôi là mang đến dịch vụ chăm sóc
-						sức khỏe tốt nhất với sự tận tâm và chuyên môn hàng đầu.</p>
+                <div class="col-lg-6">
+                    <span class="sub-title">Animal Doctors</span>
+                    <h2 class="main-title">Đồng hành cùng thú cưng của bạn</h2>
+                    <p class="about-desc">
+                        Tại Animal Doctors, chúng tôi hiểu rằng thú cưng không chỉ là động vật, 
+                        mà là những thành viên yêu quý trong gia đình. Sứ mệnh của chúng tôi là 
+                        mang đến dịch vụ chăm sóc sức khỏe tốt nhất với sự tận tâm và chuyên môn hàng đầu.
+                    </p>
 
-					<div class="about-features">
-						<c:forEach items="${features}" var="f">
-							<div class="d-flex align-items-start mb-3">
-								<div class="icon-box-small">
-									<i class='${f.icon}'></i>
-								</div>
-								<div class="ms-3">
-									<h5>${f.title}</h5>
-									<p>${f.description}</p>
-								</div>
-							</div>
-						</c:forEach>
-					</div>
-				</div>
+                    <div class="about-features">
+                        <div class="feature-box">
+                            <div class="icon-box"><i class='bx bxs-graduation'></i></div>
+                            <div>
+                                <h5>Bác sĩ có bằng cấp quốc tế</h5>
+                                <p>Đội ngũ được đào tạo bài bản tại các trường đại học hàng đầu</p>
+                            </div>
+                        </div>
+                        <div class="feature-box">
+                            <div class="icon-box"><i class='bx bxs-devices'></i></div>
+                            <div>
+                                <h5>Công nghệ hiện đại</h5>
+                                <p>Trang thiết bị y tế tiên tiến nhất hiện nay</p>
+                            </div>
+                        </div>
+                        <div class="feature-box">
+                            <div class="icon-box"><i class='bx bxs-heart'></i></div>
+                            <div>
+                                <h5>Chăm sóc tận tâm</h5>
+                                <p>Luôn đặt sức khỏe thú cưng lên hàng đầu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-			</div>
-		</div>
-	</section>
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Đội Ngũ Y Khoa</h2>
+                <p>Đội ngũ của chúng tôi bao gồm những chuyên gia từ nhiều quốc gia, 
+                   gắn kết bằng đam mê và tình yêu dành cho động vật.</p>
+                <h3>Bác Sĩ Thú Y</h3>
+            </div>
 
-	<section class="team-section">
-		<div class="container">
-			<div class="text-center mb-5">
-				<h2 class="team-title">Đội Ngũ Y Khoa</h2>
-				<p class="team-desc">Đội ngũ của chúng tôi bao gồm những chuyên
-					gia từ nhiều quốc gia, nhiều chuyên môn khác nhau gắn kết bằng tất
-					cả đam mê, nhiệt huyết và tình yêu dành cho động vật.</p>
-				<h3 class="team-subtitle">Bác Sĩ Thú Y</h3>
-			</div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="doctor-card">
+                        <div class="doctor-img-box">
+                            <img src="${pageContext.request.contextPath}/assets/images/aboutUs_pic/webpic14.jpg" 
+                                 alt="Bác sĩ 1">
+                        </div>
+                        <div class="doctor-info">
+                            <h4>BS. Nguyễn Văn An</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="doctor-card">
+                        <div class="doctor-img-box">
+                            <img src="${pageContext.request.contextPath}/assets/images/aboutUs_pic/webpic15.jpg" 
+                                 alt="Bác sĩ 2">
+                        </div>
+                        <div class="doctor-info">
+                            <h4>BS. Trần Thị Bình</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="doctor-card">
+                        <div class="doctor-img-box">
+                            <img src="${pageContext.request.contextPath}/assets/images/aboutUs_pic/webpic16.jpg" 
+                                 alt="Bác sĩ 3">
+                        </div>
+                        <div class="doctor-info">
+                            <h4>BS. Lê Minh Châu</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-			<div class="row justify-content-center">
-				<c:forEach items="${doctors}" var="d">
-					<div class="col-lg-4 col-md-6 mb-4">
-						<div class="doctor-card">
-							<div class="doctor-img-box">
-								<img
-									src="${pageContext.request.contextPath}/assets/images/aboutUs_pic/${d.image}"
-									alt="${d.name}">
-							</div>
-							<div class="doctor-info">
-								<h4>${d.name}</h4>
-							</div>
-						</div>
-					</div>
-				</c:forEach>
-			</div>
-		</div>
-	</section>
+    <!-- Care Section -->
+    <section class="care-section">
+        <div class="container">
+            <h2>Chăm sóc sức khỏe toàn diện</h2>
 
-	<section class="care-section">
-		<div class="container">
-			<h2 class="care-title">Chăm sóc sức khỏe toàn diện</h2>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <ul class="care-list">
+                        <li class="care-item active" onclick="openTab(event, 'tab1')">Đồng hành cùng bạn</li>
+                        <li class="care-item" onclick="openTab(event, 'tab2')">Chẩn đoán chính xác</li>
+                        <li class="care-item" onclick="openTab(event, 'tab3')">Điều trị hiệu quả</li>
+                        <li class="care-item" onclick="openTab(event, 'tab4')">Theo dõi sau điều trị</li>
+                    </ul>
+                </div>
 
-			<div class="row">
-				<div class="col-lg-4 mb-4">
-					<ul class="care-list">
-						<c:forEach items="${careItems}" var="item" varStatus="status">
-							<li class="care-item ${status.first ? 'active' : ''}"
-								onclick="openTab(event, 'tab${status.count}')">
-								${item.title}</li>
-						</c:forEach>
-					</ul>
-				</div>
+                <div class="col-lg-8">
+                    <div class="care-content-box">
+                        <div id="tab1" class="tab-content active-content">
+                            <p>Thú cưng của bạn không thể cho chúng ta biết bất cứ điều gì về cuộc sống 
+                               hoặc các triệu chứng của các bé. Đó là lý do tại sao dịch vụ chăm sóc 
+                               thú cưng của chúng tôi bắt đầu bằng việc xây dựng mối quan hệ chặt chẽ 
+                               giữa bác sĩ thú y và những người chủ. Chúng tôi lắng nghe và thấu hiểu 
+                               để mang đến sự chăm sóc tốt nhất.</p>
+                        </div>
+                        <div id="tab2" class="tab-content">
+                            <p>Với trang thiết bị hiện đại bao gồm máy siêu âm, X-quang kỹ thuật số, 
+                               và phòng xét nghiệm đầy đủ, chúng tôi đảm bảo chẩn đoán chính xác 
+                               và nhanh chóng cho thú cưng của bạn. Kết quả xét nghiệm có thể có 
+                               trong vòng 30 phút đến 24 giờ tùy loại.</p>
+                        </div>
+                        <div id="tab3" class="tab-content">
+                            <p>Phác đồ điều trị được cá nhân hóa cho từng bệnh nhân, kết hợp giữa 
+                               y học hiện đại và phương pháp chăm sóc toàn diện. Đội ngũ bác sĩ 
+                               luôn cập nhật kiến thức mới nhất để đảm bảo hiệu quả điều trị 
+                               tối ưu và thời gian hồi phục nhanh nhất.</p>
+                        </div>
+                        <div id="tab4" class="tab-content">
+                            <p>Sau khi điều trị, chúng tôi tiếp tục theo dõi tình trạng sức khỏe 
+                               của thú cưng thông qua các cuộc hẹn tái khám định kỳ. Đội ngũ 
+                               chăm sóc khách hàng luôn sẵn sàng hỗ trợ và giải đáp mọi thắc mắc 
+                               của bạn 24/7.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-				<div class="col-lg-8">
-					<div class="care-content-box">
-						<c:forEach items="${careItems}" var="item" varStatus="status">
-							<div id="tab${status.count}"
-								class="tab-content ${status.first ? 'active-content' : ''}"
-								style="${status.first ? 'display: block;' : ''}">
+    <script>
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(function(tab) {
+                tab.classList.remove('active-content');
+            });
+            
+            document.querySelectorAll('.care-item').forEach(function(item) {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active-content');
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
 
-								<c:out value="${item.content}" escapeXml="false" />
-							</div>
-						</c:forEach>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<script>
-		function openTab(evt, tabName) {
-			var i, tabContent, tabLinks;
-			// 1. Ẩn tất cả nội dung tab
-			tabContent = document.getElementsByClassName("tab-content");
-			for (i = 0; i < tabContent.length; i++) {
-				tabContent[i].style.display = "none";
-				tabContent[i].classList.remove("active-content");
-			}
-
-			// 2. Xóa active ở menu
-			tabLinks = document.getElementsByClassName("care-item");
-			for (i = 0; i < tabLinks.length; i++) {
-				tabLinks[i].className = tabLinks[i].className.replace(
-						" active", "");
-			}
-
-			// 3. Hiện tab được chọn
-			document.getElementById(tabName).style.display = "block";
-			document.getElementById(tabName).classList.add("active-content");
-			evt.currentTarget.className += " active";
-		}
-	</script>
-	
-	
-	<jsp:include page="/components/footer.jsp" />
-	<jsp:include page="/components/back-button.jsp" />
-	
-	<!-- Bootstrap JS -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <jsp:include page="/components/footer.jsp" />
+    <jsp:include page="/components/back-button.jsp" />
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
