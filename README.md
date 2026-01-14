@@ -111,11 +111,7 @@ copy target\PetVaccine.war [TOMCAT_HOME]\webapps\
 
 ```bash
 # Windows - chạy file
-start_tomat.bat
-
-# Hoặc vào thư mục Tomcat/bin và chạy
-startup.bat
-```
+start.bat
 
 ### Bước 7: Truy cập Website
 
@@ -124,36 +120,109 @@ Mở trình duyệt: **http://localhost:8080/PetVaccine/home**
 
 ## 🌐 Các Trang Chính
 
+### Trang công khai
 | Trang | URL |
 |-------|-----|
 | Trang chủ | /PetVaccine/home |
+| Giới thiệu | /PetVaccine/about |
+| Dịch vụ | /PetVaccine/services |
+| Cộng đồng | /PetVaccine/community |
 | Đăng nhập | /PetVaccine/login |
 | Đăng ký | /PetVaccine/register |
-| Đặt lịch | /PetVaccine/booking |
+
+### Dịch vụ
+| Trang | URL |
+|-------|-----|
+| Tiêm vaccine | /PetVaccine/vaccine |
+| Khám bệnh | /PetVaccine/medical |
+| Phẫu thuật | /PetVaccine/surgery |
+| Spa & Grooming | /PetVaccine/spa |
+| Khách sạn thú cưng | /PetVaccine/hotel |
 | Siêu thị | /PetVaccine/shop |
-| Admin Dashboard | /PetVaccine/admin/dashboard |
+
+### Đặt lịch & Giỏ hàng
+| Trang | URL |
+|-------|-----|
+| Đặt lịch hẹn | /PetVaccine/booking |
+| Lịch hẹn của tôi | /PetVaccine/schedule |
+| Giỏ hàng | /PetVaccine/cart |
+
+### Trang Admin
+| Trang | URL |
+|-------|-----|
+| Dashboard | /PetVaccine/pages/admin/dashboard |
+| Quản lý lịch hẹn | /PetVaccine/pages/admin/appointments |
+| Quản lý sản phẩm | /PetVaccine/pages/admin/products |
+| Quản lý người dùng | /PetVaccine/admin/users |
+| Quản lý bác sĩ | /PetVaccine/admin/doctors |
+| Quản lý dịch vụ | /PetVaccine/admin/services |
+| Quản lý vaccine | /PetVaccine/pages/admin/vaccines |
+| Đặt phòng khách sạn | /PetVaccine/admin/hotel-bookings |
+| Đặt lịch spa | /PetVaccine/admin/spa-bookings |
+| Quản lý blog | /PetVaccine/pages/admin/blogs |
 
 ## 📁 Cấu Trúc Project
 
 ```
 PetVaccine/
 ├── pom.xml                         # Maven config
-├── db.sql                          # Database script
-├── start_tomat.bat                 # Script chạy Tomcat
+├── db.sql                          # Database schema + data
+├── sample_data.sql                 # Dữ liệu mẫu
+├── start_tomat.bat                 # Script chạy Tomcat + mở browser
 ├── scripts/
-│   └── deploy.bat                  # Script build & deploy
+│   ├── deploy.bat                  # Build & deploy WAR
+│   └── stop.bat                    # Dừng Tomcat
+│
 ├── src/main/java/
-│   ├── Context/DBContext.java      # Kết nối database
-│   ├── Model/                      # Các entity class
+│   ├── Context/
+│   │   └── DBContext.java          # Kết nối MySQL
+│   ├── Model/                      # Entity classes
+│   │   ├── User.java
+│   │   ├── Pet.java
+│   │   ├── Appointment.java
+│   │   ├── Product.java
+│   │   ├── Service.java
+│   │   ├── Vaccine.java
+│   │   └── ...
 │   ├── DAO/                        # Data Access Objects
-│   ├── Filter/                     # Auth filters
+│   │   ├── UserDAO.java
+│   │   ├── AppointmentDAO.java
+│   │   ├── ProductDAO.java
+│   │   └── ...
+│   ├── Filter/                     # Servlet Filters
+│   │   ├── AuthFilter.java
+│   │   └── CharacterEncodingFilter.java
 │   ├── Util/                       # Utility classes
+│   │   ├── EmailUtil.java
+│   │   ├── ValidationUtil.java
+│   │   └── ...
 │   └── controller/                 # Servlets
+│       ├── auth/                   # Login, Register, Logout
+│       ├── admin/                  # Admin pages
+│       ├── booking/                # Đặt lịch
+│       ├── shop/                   # Giỏ hàng, thanh toán
+│       ├── services/               # Các dịch vụ
+│       └── pages/                  # Trang công khai
+│
 └── src/main/webapp/
-    ├── pages/                      # JSP pages
-    ├── components/                 # Shared components
-    ├── assets/                     # CSS, JS, Images
-    └── WEB-INF/web.xml            # Web config
+    ├── pages/
+    │   ├── main/                   # home, about, services...
+    │   ├── auth/                   # login, register
+    │   ├── admin/                  # Admin dashboard, management
+    │   ├── services/               # vaccine, spa, hotel...
+    │   └── user/                   # my-pets, vaccination-history
+    ├── shopping/                   # cart, product detail
+    ├── components/                 # Shared JSP components
+    │   ├── navbar.jsp
+    │   ├── footer.jsp
+    │   ├── admin-sidebar.jsp
+    │   └── ...
+    ├── assets/
+    │   ├── css/
+    │   ├── js/
+    │   └── images/
+    └── WEB-INF/
+        └── web.xml
 ```
 
 ## ❗ Xử Lý Lỗi Thường Gặp
@@ -175,4 +244,4 @@ PetVaccine/
 - **Server**: Apache Tomcat 9.0
 
 ---
-© 2024 PetVaccine - Animal Doctors
+© 2026 PetVaccine - Animal Doctors
