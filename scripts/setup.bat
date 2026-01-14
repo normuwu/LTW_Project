@@ -70,21 +70,23 @@ echo ========================================================
 echo.
 echo   1. Cau hinh database:
 echo      - Mo src/main/java/Context/DBContext.java
-echo      - Sua password MySQL cua ban
+echo      - Sua dong: private final String password = "your_password";
 echo.
 echo   2. Import database:
-echo      - Chay file scripts/import-db.bat
-echo      - Hoac: mysql -u root -p petvaccine ^< db.sql
+echo      - Chay: scripts\import-db.bat
+echo      - Nhap username (mac dinh: root) va password MySQL
 echo.
-echo   3. Cau hinh Tomcat:
-echo      - Mo start.bat va sua duong dan CATALINA_HOME
-echo      - Mo scripts/deploy.bat va sua duong dan Tomcat
+echo   3. Cau hinh Tomcat (TU DONG):
+echo      - Chay: scripts\config-tomcat.bat
+echo      - Nhap duong dan thu muc Tomcat (VD: C:\tomcat9)
 echo.
 echo   4. Deploy va chay:
-echo      - Chay scripts/deploy.bat de copy WAR vao Tomcat
-echo      - Chay start.bat de khoi dong server
+echo      - Chay: scripts\deploy.bat (build + copy WAR)
+echo      - Chay: start.bat (khoi dong Tomcat + mo browser)
 echo.
 echo   5. Truy cap: http://localhost:8080/PetVaccine/home
+echo      - Admin: admin / Admin@123
+echo      - User:  user1 / User@123
 echo.
 echo ========================================================
 

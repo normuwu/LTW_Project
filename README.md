@@ -6,25 +6,28 @@ Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
 ```bash
 # 1. Clone project
-git clone git clone -b new-update --single-branch https://github.com/normuwu/LTW_Project.git
-
+git clone https://github.com/normuwu/LTW_Project.git
 cd LTW_Project
 
 # 2. Chạy script setup (kiểm tra môi trường + build)
 scripts\setup.bat
 
-# 3. Import database
+# 3. Cấu hình database (sửa password MySQL)
+#    Mở file: src/main/java/Context/DBContext.java
+#    Sửa dòng: private final String password = "your_mysql_password";
+
+# 4. Import database
 scripts\import-db.bat
 
-# 4. Cấu hình (sửa 2 file):
-#    - src/main/java/Context/DBContext.java → sửa password MySQL
-#    - start.bat → sửa đường dẫn CATALINA_HOME
+# 5. Cấu hình Tomcat (tự động)
+scripts\config-tomcat.bat
+#    Nhập đường dẫn Tomcat của bạn (VD: C:\apache-tomcat-9.0.98)
 
-# 5. Deploy và chạy
+# 6. Deploy và chạy
 scripts\deploy.bat
 start.bat
 
-# 6. Mở trình duyệt: http://localhost:8080/PetVaccine/home
+# 7. Mở trình duyệt: http://localhost:8080/PetVaccine/home
 ```
 
 **Tài khoản mặc định:**
