@@ -182,16 +182,19 @@ CREATE TABLE `users` (
   `fullname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `role` varchar(20) DEFAULT 'user',
+  `status` varchar(20) DEFAULT 'active',
+  `phone` varchar(20) DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Thêm tài khoản demo
-INSERT INTO `users` (`username`, `password`, `fullname`, `email`, `role`) VALUES
-('admin', '123456', 'Quản trị viên', 'admin@petvaccine.com', 'admin'),
-('user1', '123456', 'Nguyễn Văn A', 'user1@gmail.com', 'user'),
-('doctor1', '123456', 'Bác sĩ Ngọc Thành', 'doctor1@petvaccine.com', 'doctor');
+INSERT INTO `users` (`username`, `password`, `fullname`, `email`, `role`, `status`, `phone`, `address`) VALUES
+('admin', '123456', 'Quản trị viên', 'admin@petvaccine.com', 'admin', 'active', '0901234567', 'Số 1 Đường ABC, Quận 1, TP.HCM'),
+('doctor1', '123456', 'Bác sĩ Ngọc Thành', 'doctor1@petvaccine.com', 'doctor', 'active', '0902345678', 'Số 2 Đường XYZ, Quận 2, TP.HCM'),
+('user1', '123456', 'Nguyễn Văn A', 'user1@gmail.com', 'user', 'active', '0904567890', 'Số 10 Nguyễn Huệ, Quận 1, TP.HCM');
 
 
 -- =============================================
@@ -246,3 +249,203 @@ INSERT INTO `appointments` (`user_id`, `customer_name`, `phone`, `pet_name`, `pe
 (2, 'Nguyễn Văn A', '0112233445', 'kiki', 'Chó', 1, 1, '2025-12-24', 'Khám sức khỏe tổng quát', 'Pending'),
 (2, 'Nguyễn Văn A', '0112233445', 'kiki', 'Mèo', 1, 1, '2025-12-24', 'Khám lại sau điều trị', 'Confirmed'),
 (NULL, 'Phạm Văn B', '0112233442', 'mx', 'Mèo', 3, 12, '2026-01-09', 'Tiêm vaccine định kỳ', 'Pending');
+
+-- =============================================
+-- BẢNG VACCINES (Vaccine)
+-- =============================================
+
+DROP TABLE IF EXISTS `vaccines`;
+CREATE TABLE `vaccines` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `target_species` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `manufacturer` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `price` decimal(18,0) DEFAULT NULL,
+  `doses_required` int DEFAULT 1,
+  `interval_days` int DEFAULT NULL,
+  `min_age_weeks` int DEFAULT NULL,
+  `stock_quantity` int DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu vaccines
+INSERT INTO `vaccines` (`name`, `description`, `target_species`, `manufacturer`, `price`, `doses_required`, `interval_days`, `min_age_weeks`, `stock_quantity`, `is_active`) VALUES
+('Vaccine 5 bệnh chó (5in1)', 'Phòng Care, Parvo, Viêm gan, Ho cũi, Phó cúm', 'Chó', 'Nobivac', 250000, 3, 21, 6, 100, 1),
+('Vaccine 7 bệnh chó (7in1)', 'Phòng 5 bệnh + Lepto + Corona', 'Chó', 'Vanguard Plus', 350000, 3, 21, 8, 80, 1),
+('Vaccine dại (Rabisin)', 'Phòng bệnh dại cho chó mèo', 'Tất cả', 'Merial', 150000, 1, 365, 12, 150, 1),
+('Vaccine 4 bệnh mèo (FVRCP)', 'Phòng Viêm mũi, Calici, Panleukopenia', 'Mèo', 'Felocell', 280000, 2, 28, 8, 60, 1),
+('Vaccine FeLV (Bạch cầu mèo)', 'Phòng virus gây bạch cầu ở mèo', 'Mèo', 'Purevax', 320000, 2, 21, 8, 40, 1);
+
+-- =============================================
+-- BẢNG PETS (Thú cưng)
+-- =============================================
+
+DROP TABLE IF EXISTS `pets`;
+CREATE TABLE `pets` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `species` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `breed` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `gender` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `birth_date` date DEFAULT NULL,
+  `weight` decimal(5,2) DEFAULT NULL,
+  `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu pets
+INSERT INTO `pets` (`user_id`, `name`, `species`, `breed`, `gender`, `birth_date`, `weight`, `color`, `image`, `notes`) VALUES
+(3, 'Lucky', 'Chó', 'Golden Retriever', 'Đực', '2023-03-15', 25.50, 'Vàng', 'pet_golden.jpg', 'Rất thân thiện, thích chơi bóng'),
+(3, 'Miu Miu', 'Mèo', 'Mèo Anh lông ngắn', 'Cái', '2024-01-20', 4.20, 'Xám xanh', 'pet_british.jpg', 'Nhát người, cần chăm sóc nhẹ nhàng');
+
+-- =============================================
+-- BẢNG VACCINATION_RECORDS (Lịch sử tiêm chủng)
+-- =============================================
+
+DROP TABLE IF EXISTS `vaccination_records`;
+CREATE TABLE `vaccination_records` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pet_id` int DEFAULT NULL,
+  `vaccine_id` int DEFAULT NULL,
+  `appointment_id` int DEFAULT NULL,
+  `doctor_id` int DEFAULT NULL,
+  `vaccination_date` date NOT NULL,
+  `dose_number` int DEFAULT 1,
+  `batch_number` varchar(50) DEFAULT NULL,
+  `next_due_date` date DEFAULT NULL,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `pet_id` (`pet_id`),
+  KEY `vaccine_id` (`vaccine_id`),
+  KEY `appointment_id` (`appointment_id`),
+  KEY `doctor_id` (`doctor_id`),
+  FOREIGN KEY (`pet_id`) REFERENCES `pets`(`id`),
+  FOREIGN KEY (`vaccine_id`) REFERENCES `vaccines`(`id`),
+  FOREIGN KEY (`appointment_id`) REFERENCES `appointments`(`id`),
+  FOREIGN KEY (`doctor_id`) REFERENCES `doctors`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu vaccination_records
+INSERT INTO `vaccination_records` (`pet_id`, `vaccine_id`, `appointment_id`, `doctor_id`, `vaccination_date`, `dose_number`, `batch_number`, `next_due_date`, `notes`) VALUES
+(1, 1, NULL, 1, '2023-05-15', 1, 'NB2023051501', '2023-06-05', 'Mũi 1 vaccine 5 bệnh'),
+(1, 3, NULL, 2, '2023-07-15', 1, 'RB2023071501', '2024-07-15', 'Vaccine dại'),
+(2, 4, NULL, 2, '2024-03-20', 1, 'FC2024032001', '2024-04-17', 'Mũi 1 vaccine 4 bệnh mèo');
+
+-- =============================================
+-- BẢNG HOTEL_BOOKINGS (Đặt phòng khách sạn)
+-- =============================================
+
+DROP TABLE IF EXISTS `hotel_bookings`;
+CREATE TABLE `hotel_bookings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `pet_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `pet_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `pet_weight` varchar(50) DEFAULT NULL,
+  `room_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `check_in_date` date NOT NULL,
+  `check_out_date` date NOT NULL,
+  `extra_services` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `total_nights` int DEFAULT NULL,
+  `total_price` decimal(18,0) DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Pending',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu hotel_bookings
+INSERT INTO `hotel_bookings` (`user_id`, `customer_name`, `phone`, `pet_name`, `pet_type`, `pet_weight`, `room_type`, `check_in_date`, `check_out_date`, `extra_services`, `note`, `total_nights`, `total_price`, `status`) VALUES
+(3, 'Nguyễn Văn A', '0904567890', 'Miu Miu', 'Mèo', 'Dưới 5kg', 'Phòng Tiêu chuẩn (< 5kg) - 150.000đ/ngày', '2026-01-20', '2026-01-23', 'Chế độ ăn cao cấp (+50.000đ/ngày)', 'Bé nhát người', 3, 600000, 'Confirmed'),
+(NULL, 'Nguyễn Thị Hương', '0916789012', 'Mèo Mập', 'Mèo', 'Trên 5kg', 'Phòng VIP (> 5kg) - 250.000đ/ngày', '2026-01-18', '2026-01-20', NULL, NULL, 2, 500000, 'Pending');
+
+-- =============================================
+-- BẢNG SPA_BOOKINGS (Đặt lịch Spa)
+-- =============================================
+
+DROP TABLE IF EXISTS `spa_bookings`;
+CREATE TABLE `spa_bookings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `pet_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `pet_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `spa_package` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `booking_date` date NOT NULL,
+  `preferred_time` varchar(50) DEFAULT NULL,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `price` decimal(18,0) DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Pending',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu spa_bookings
+INSERT INTO `spa_bookings` (`user_id`, `customer_name`, `phone`, `pet_name`, `pet_type`, `spa_package`, `booking_date`, `preferred_time`, `note`, `price`, `status`) VALUES
+(3, 'Nguyễn Văn A', '0904567890', 'Lucky', 'Chó', 'Cắt tỉa toàn thân (> 5kg) - 500.000đ', '2026-01-18', 'Sáng (9h-12h)', 'Cắt kiểu Teddy bear', 500000, 'Confirmed'),
+(NULL, 'Trần Văn Phúc', '0925678901', 'Milo', 'Chó', 'Tắm vệ sinh (< 5kg) - 150.000đ', '2026-01-25', 'Chiều (14h-17h)', 'Chó con 4 tháng', 150000, 'Pending');
+
+-- =============================================
+-- BẢNG CART (Giỏ hàng)
+-- =============================================
+
+DROP TABLE IF EXISTS `cart`;
+CREATE TABLE `cart` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  `quantity` int DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `product_id` (`product_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu cart
+INSERT INTO `cart` (`user_id`, `product_id`, `quantity`) VALUES
+(3, 1, 2),
+(3, 2, 1),
+(3, 4, 3);
+
+-- =============================================
+-- BẢNG REVIEWS (Đánh giá sản phẩm)
+-- =============================================
+
+DROP TABLE IF EXISTS `reviews`;
+CREATE TABLE `reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `rating` int DEFAULT NULL,
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Thêm dữ liệu mẫu reviews
+INSERT INTO `reviews` (`product_id`, `user_id`, `rating`, `comment`) VALUES
+(1, 3, 5, 'Sản phẩm rất tốt, mèo nhà mình rất thích ăn. Lông mượt hẳn sau 2 tuần sử dụng.'),
+(2, 3, 5, 'Mèo con nhà mình lớn nhanh và khỏe mạnh nhờ loại hạt này.');
