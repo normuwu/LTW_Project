@@ -2,6 +2,36 @@
 
 Website quản lý dịch vụ tiêm vaccine và chăm sóc thú cưng.
 
+## ⚡ Hướng Dẫn Nhanh (Quick Start)
+
+```bash
+# 1. Clone project
+git clone https://github.com/normuwu/LTW_Project.git
+cd LTW_Project
+
+# 2. Chạy script setup (kiểm tra môi trường + build)
+scripts\setup.bat
+
+# 3. Import database
+scripts\import-db.bat
+
+# 4. Cấu hình (sửa 2 file):
+#    - src/main/java/Context/DBContext.java → sửa password MySQL
+#    - start.bat → sửa đường dẫn CATALINA_HOME
+
+# 5. Deploy và chạy
+scripts\deploy.bat
+start.bat
+
+# 6. Mở trình duyệt: http://localhost:8080/PetVaccine/home
+```
+
+**Tài khoản mặc định:**
+- Admin: `admin` / `Admin@123`
+- User: `user1` / `User@123`
+
+---
+
 ## 📋 Yêu Cầu Hệ Thống
 
 | Phần mềm | Phiên bản | Download |
@@ -29,6 +59,16 @@ git clone https://github.com/normuwu/LTW_Project.git
 1. File → Import → Maven → Existing Maven Projects
 2. Chọn thư mục project vừa clone
 3. Eclipse sẽ tự tạo `.classpath`, `.project`, `.settings/` theo cấu hình máy của bạn
+
+**Import vào IntelliJ IDEA:**
+1. File → Open → Chọn thư mục project
+2. IntelliJ sẽ tự nhận diện Maven project
+3. Đợi IntelliJ download dependencies
+4. Cấu hình Tomcat:
+   - Run → Edit Configurations → Add New → Tomcat Server → Local
+   - Configure → Chọn thư mục Tomcat 9
+   - Deployment → Add → Artifact → PetVaccine:war exploded
+   - Application context: `/PetVaccine`
 
 > 💡 Các file Eclipse config không được commit lên Git vì mỗi máy có JDK/Tomcat khác nhau
 
