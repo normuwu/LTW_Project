@@ -472,7 +472,118 @@ public static String hashPassword(String password) {
 | Broken Auth | Session-based, Filter | ✅ AuthFilter |
 | Sensitive Data | UTF-8 encoding | ✅ EncodingFilter |
 
-### 4.4 Design Patterns
+### 4.4 File Upload (Servlet 3.0 API)
+
+#### 4.4.1 Cấu hình @MultipartConfig
+
+Servlet 3.0 cung cấp API native để xử lý file upload mà không cần thư viện bên ngoài như Apache Commons FileUpload.
+
+```java
+@WebServlet("/pages/admin/products")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,      // 1 MB - ngưỡng lưu vào bộ nhớ
+    maxFileSize = 1024 * 1024 * 5,        // 5 MB - kích thước file tối đa
+    maxRequestSize = 1024 * 1024 * 20     // 20 MB - kích thước request tối đa
+)
+public class ProductServlet extends HttpServlet {
+    // ...
+}
+```
+
+#### 4.4.2 Xử lý File Upload trong Servlet
+
+```java
+// Lấy file từ request
+Part filePart = request.getPart("imageFile");
+
+if (filePart != null && filePart.getSize() > 0) {
+    // Lấy tên file gốc
+    String fileName = getSubmittedFileName(filePart);
+    
+    // Validate loại file
+    String contentType = filePart.getContentType();
+    if (!isValidImageType(contentType)) {
+        // Báo lỗi: chỉ chấp nhận ảnh
+        return;
+    }
+    
+    // Tạo tên file unique
+    String extension = getFileExtension(fileName);
+    String newFileName = "product_" + UUID.randomUUID().toString().substring(0, 8) 
+                       + "_" + System.currentTimeMillis() + extension;
+    
+    // Lưu file vào thư mục
+    String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+    File uploadDir = new File(uploadPath);
+    if (!uploadDir.exists()) {
+        uploadDir.mkdirs();
+    }
+    
+    String filePath = uploadPath + File.separator + newFileName;
+    filePart.write(filePath);
+}
+```
+
+#### 4.4.3 Helper Methods
+
+```java
+// Lấy tên file từ Part header
+private String getSubmittedFileName(Part part) {
+    String contentDisp = part.getHeader("content-disposition");
+    if (contentDisp != null) {
+        for (String token : contentDisp.split(";")) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf('=') + 1)
+                           .trim().replace("\"", "");
+            }
+        }
+    }
+    return null;
+}
+
+// Kiểm tra loại file ảnh hợp lệ
+private boolean isValidImageType(String contentType) {
+    return contentType != null && (
+        contentType.equals("image/jpeg") ||
+        contentType.equals("image/png") ||
+        contentType.equals("image/gif") ||
+        contentType.equals("image/webp")
+    );
+}
+
+// Lấy extension của file
+private String getFileExtension(String fileName) {
+    int lastDot = fileName.lastIndexOf('.');
+    if (lastDot > 0) {
+        return fileName.substring(lastDot).toLowerCase();
+    }
+    return ".jpg";
+}
+```
+
+#### 4.4.4 Form HTML với enctype multipart
+
+```html
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="action" value="add">
+    <input type="hidden" name="existingImage" id="formExistingImage">
+    
+    <input type="text" name="name" required>
+    <input type="file" name="imageFile" accept="image/*">
+    <input type="number" name="price" required>
+    
+    <button type="submit">Lưu sản phẩm</button>
+</form>
+```
+
+#### 4.4.5 Áp dụng trong Project
+
+| Servlet | Thư mục Upload | Max Size |
+|---------|---------------|----------|
+| ProductServlet | `assets/images/shop_pic/` | 5 MB |
+| BlogServlet | `assets/images/community_pic/` | 10 MB |
+
+### 4.5 Design Patterns
 
 | Pattern | Áp dụng |
 |---------|---------|
@@ -483,9 +594,432 @@ public static String hashPassword(String password) {
 
 ---
 
-## 5. CƠ SỞ DỮ LIỆU
+## 5. LUỒNG XỬ LÝ END-TO-END
 
-### 5.1 Các bảng chính
+### 5.1 Luồng Đặt Lịch Tiêm Vaccine (User)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    LUỒNG ĐẶT LỊCH TIÊM VACCINE                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+[1] USER TRUY CẬP TRANG ĐẶT LỊCH
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → GET /booking                                                       │
+│                                                                              │
+│ BookingServlet.doGet():                                                      │
+│   1. Kiểm tra user đã đăng nhập (session.getAttribute("user"))              │
+│   2. Nếu chưa → redirect /login                                             │
+│   3. Lấy danh sách thú cưng: PetDAO.getPetsByUserId(userId)                 │
+│   4. Lấy danh sách dịch vụ: ServiceDAO.getAllServices()                     │
+│   5. Lấy danh sách bác sĩ: DoctorDAO.getAllDoctors()                        │
+│   6. Forward → /pages/main/booking.jsp                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[2] USER ĐIỀN FORM ĐẶT LỊCH
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ booking.jsp hiển thị:                                                        │
+│   - Dropdown chọn thú cưng (từ pets của user)                               │
+│   - Dropdown chọn dịch vụ (Tiêm vaccine, Khám bệnh, Spa...)                 │
+│   - Dropdown chọn bác sĩ                                                     │
+│   - Date picker chọn ngày hẹn                                               │
+│   - Textarea ghi chú                                                         │
+│                                                                              │
+│ JavaScript validation:                                                       │
+│   - Kiểm tra đã chọn thú cưng                                               │
+│   - Kiểm tra đã chọn dịch vụ                                                │
+│   - Kiểm tra ngày hẹn >= ngày hiện tại                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[3] USER SUBMIT FORM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → POST /booking                                                      │
+│                                                                              │
+│ BookingServlet.doPost():                                                     │
+│   1. request.setCharacterEncoding("UTF-8")                                  │
+│   2. Lấy parameters: petId, serviceId, doctorId, bookingDate, notes         │
+│   3. Server-side validation:                                                 │
+│      - Kiểm tra petId thuộc về user hiện tại                                │
+│      - Kiểm tra serviceId tồn tại                                           │
+│      - Kiểm tra bookingDate hợp lệ                                          │
+│   4. Tạo Appointment object                                                  │
+│   5. AppointmentDAO.insertAppointment(appointment)                          │
+│      → INSERT INTO appointments (user_id, pet_id, service_id, ...)          │
+│   6. Gửi email xác nhận: EmailUtil.sendBookingConfirmation(...)             │
+│   7. session.setAttribute("message", "Đặt lịch thành công!")                │
+│   8. redirect → /schedule                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[4] HIỂN THỊ LỊCH HẸN
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → GET /schedule                                                      │
+│                                                                              │
+│ ScheduleServlet.doGet():                                                     │
+│   1. Lấy userId từ session                                                   │
+│   2. AppointmentDAO.getAppointmentsByUserId(userId)                         │
+│      → SELECT a.*, p.name as pet_name, s.name as service_name, ...          │
+│   3. Forward → /pages/main/schedule.jsp                                      │
+│                                                                              │
+│ schedule.jsp hiển thị:                                                       │
+│   - Danh sách lịch hẹn dạng card/table                                      │
+│   - Trạng thái: Chờ duyệt / Đã duyệt / Đã hủy / Hoàn thành                  │
+│   - Nút "Hủy lịch" cho các lịch chưa hoàn thành                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[5] ADMIN DUYỆT LỊCH HẸN
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → GET /pages/admin/appointments                                      │
+│                                                                              │
+│ AppointmentServlet.doGet():                                                  │
+│   1. Kiểm tra role = "admin" (AuthFilter)                                   │
+│   2. AppointmentDAO.getAllAppointments()                                    │
+│   3. Forward → /pages/admin/appointments.jsp                                 │
+│                                                                              │
+│ Admin click "Duyệt" → POST /pages/admin/appointments                        │
+│   action=approve, appointmentId=123                                          │
+│                                                                              │
+│ AppointmentServlet.doPost():                                                 │
+│   1. AppointmentDAO.updateStatus(appointmentId, "approved")                 │
+│   2. Gửi email thông báo cho user                                           │
+│   3. redirect với message "Đã duyệt lịch hẹn"                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[6] HOÀN THÀNH - GHI NHẬN TIÊM CHỦNG
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Sau khi tiêm vaccine xong, Admin ghi nhận:                                   │
+│                                                                              │
+│ Browser → POST /pages/admin/vaccination-records                              │
+│   action=add, petId, vaccineId, vaccinationDate, nextDueDate, notes         │
+│                                                                              │
+│ VaccinationRecordServlet.doPost():                                           │
+│   1. Tạo VaccinationRecord object                                           │
+│   2. VaccinationRecordDAO.insert(record)                                    │
+│      → INSERT INTO vaccination_records (pet_id, vaccine_id, ...)            │
+│   3. Cập nhật trạng thái appointment = "completed"                          │
+│   4. Gửi email thông báo hoàn thành cho user                                │
+│                                                                              │
+│ User có thể xem lịch sử tiêm chủng tại /vaccination-history                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 5.2 Luồng Mua Sản Phẩm (User)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    LUỒNG MUA SẢN PHẨM                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+[1] USER XEM DANH SÁCH SẢN PHẨM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → GET /shop                                                          │
+│                                                                              │
+│ ShopServlet.doGet():                                                         │
+│   1. ProductDAO.getAllProducts()                                            │
+│      → SELECT * FROM products WHERE status = 'active'                       │
+│   2. Forward → /pages/services/shop.jsp                                      │
+│                                                                              │
+│ shop.jsp hiển thị:                                                           │
+│   - Grid sản phẩm với ảnh, tên, giá, giảm giá                               │
+│   - Nút "Thêm vào giỏ" cho mỗi sản phẩm                                     │
+│   - Bộ lọc theo danh mục, giá                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[2] USER THÊM SẢN PHẨM VÀO GIỎ HÀNG
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ JavaScript AJAX call:                                                        │
+│   fetch('/cart?action=add&productId=123&quantity=1')                        │
+│                                                                              │
+│ CartServlet.doGet() hoặc doPost():                                          │
+│   1. Lấy productId, quantity từ request                                     │
+│   2. Kiểm tra user đã đăng nhập:                                            │
+│      - Nếu CHƯA: Lưu vào session cart (Map<Integer, CartItem>)              │
+│      - Nếu RỒI: Lưu vào database + session                                  │
+│                                                                              │
+│   // Lưu vào session                                                         │
+│   Map<Integer, CartItem> cart = (Map) session.getAttribute("cart");         │
+│   if (cart == null) cart = new HashMap<>();                                 │
+│                                                                              │
+│   if (cart.containsKey(productId)) {                                        │
+│       cart.get(productId).setQuantity(cart.get(productId).getQuantity()+1); │
+│   } else {                                                                   │
+│       Product p = ProductDAO.getProductById(productId);                     │
+│       cart.put(productId, new CartItem(p, 1));                              │
+│   }                                                                          │
+│   session.setAttribute("cart", cart);                                        │
+│                                                                              │
+│   // Nếu đã đăng nhập, sync vào database                                    │
+│   if (user != null) {                                                        │
+│       CartDAO.addToCart(userId, productId, quantity);                       │
+│   }                                                                          │
+│                                                                              │
+│   3. Trả về JSON: {"success": true, "cartCount": 5}                         │
+│   4. JavaScript cập nhật badge số lượng trên icon giỏ hàng                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[3] USER XEM GIỎ HÀNG
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → GET /cart                                                          │
+│                                                                              │
+│ CartServlet.doGet():                                                         │
+│   1. Lấy cart từ session                                                     │
+│   2. Nếu user đã đăng nhập: CartDAO.getCartByUserId(userId)                 │
+│   3. Tính tổng tiền, áp dụng giảm giá                                       │
+│   4. Forward → /shopping/cart.jsp                                            │
+│                                                                              │
+│ cart.jsp hiển thị:                                                           │
+│   - Danh sách sản phẩm trong giỏ                                            │
+│   - Input số lượng (có thể +/- hoặc nhập trực tiếp)                         │
+│   - Nút xóa từng sản phẩm                                                   │
+│   - Tổng tiền, phí ship, giảm giá                                           │
+│   - Nút "Thanh toán"                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[4] USER CẬP NHẬT SỐ LƯỢNG / XÓA SẢN PHẨM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ AJAX: /cart?action=update&productId=123&quantity=3                          │
+│ AJAX: /cart?action=remove&productId=123                                     │
+│                                                                              │
+│ CartServlet:                                                                 │
+│   action=update:                                                             │
+│     - Cập nhật quantity trong session cart                                  │
+│     - Nếu đã đăng nhập: CartDAO.updateQuantity(userId, productId, qty)      │
+│                                                                              │
+│   action=remove:                                                             │
+│     - Xóa khỏi session cart                                                 │
+│     - Nếu đã đăng nhập: CartDAO.removeFromCart(userId, productId)           │
+│                                                                              │
+│   Trả về JSON với tổng tiền mới để JavaScript cập nhật UI                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[5] USER THANH TOÁN
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → POST /checkout                                                     │
+│                                                                              │
+│ CheckoutServlet.doPost():                                                    │
+│   1. Kiểm tra user đã đăng nhập                                             │
+│   2. Lấy thông tin giao hàng: fullname, phone, address                      │
+│   3. Validation thông tin                                                    │
+│   4. Tạo Order:                                                              │
+│      - OrderDAO.createOrder(userId, totalAmount, shippingInfo)              │
+│      - INSERT INTO orders (user_id, total, status, ...)                     │
+│   5. Tạo OrderItems cho từng sản phẩm:                                      │
+│      - INSERT INTO order_items (order_id, product_id, quantity, price)      │
+│   6. Xóa giỏ hàng:                                                          │
+│      - session.removeAttribute("cart")                                       │
+│      - CartDAO.clearCart(userId)                                            │
+│   7. Gửi email xác nhận đơn hàng                                            │
+│   8. Redirect → /order-success?orderId=xxx                                  │
+│                                                                              │
+│ (Hiện tại: Thanh toán COD - Thanh toán khi nhận hàng)                       │
+│ (Tương lai: Tích hợp VNPay, Momo, ZaloPay)                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 5.3 Luồng Thêm Sản Phẩm (Admin)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    LUỒNG THÊM SẢN PHẨM (ADMIN)                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+[1] ADMIN TRUY CẬP TRANG QUẢN LÝ SẢN PHẨM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → GET /pages/admin/products                                          │
+│                                                                              │
+│ AuthFilter kiểm tra:                                                         │
+│   - session.getAttribute("user") != null                                    │
+│   - user.getRole().equals("admin")                                          │
+│   - Nếu không → redirect /login                                             │
+│                                                                              │
+│ ProductServlet.doGet():                                                      │
+│   1. ProductDAO.getAllProducts()                                            │
+│   2. ProductDAO.getTotalProducts()                                          │
+│   3. ProductDAO.getDiscountedProducts()                                     │
+│   4. request.setAttribute("products", products)                             │
+│   5. Forward → /pages/admin/products.jsp                                     │
+│                                                                              │
+│ products.jsp hiển thị:                                                       │
+│   - Thống kê: Tổng SP, Đang giảm giá, Giá gốc                               │
+│   - Bảng danh sách sản phẩm                                                 │
+│   - Nút "Thêm sản phẩm" → mở Modal                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[2] ADMIN MỞ MODAL THÊM SẢN PHẨM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ JavaScript: openAddModal()                                                   │
+│   - Reset form fields                                                        │
+│   - Set formAction = "add"                                                   │
+│   - Hiển thị modal                                                           │
+│                                                                              │
+│ Modal form bao gồm:                                                          │
+│   - Tên sản phẩm (required)                                                 │
+│   - Ảnh sản phẩm (file upload với drag & drop)                              │
+│   - Giá bán (required, format VND)                                          │
+│   - Giảm giá (0-100%)                                                       │
+│   - Mô tả sản phẩm                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[3] ADMIN UPLOAD ẢNH SẢN PHẨM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Cách 1: Click "Chọn ảnh" → chọn file từ máy                                 │
+│ Cách 2: Kéo thả file vào vùng preview                                       │
+│                                                                              │
+│ JavaScript handleFileSelect(event):                                          │
+│   1. Lấy file từ event.target.files[0]                                      │
+│   2. Kiểm tra file.type.startsWith('image/')                                │
+│   3. Kiểm tra file.size <= 5MB                                              │
+│   4. FileReader đọc file → hiển thị preview                                 │
+│   5. File sẽ được gửi kèm form khi submit                                   │
+│                                                                              │
+│ <form enctype="multipart/form-data">                                        │
+│   <input type="file" name="imageFile" accept="image/*">                     │
+│ </form>                                                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[4] ADMIN SUBMIT FORM
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser → POST /pages/admin/products                                         │
+│ Content-Type: multipart/form-data                                            │
+│                                                                              │
+│ ProductServlet.doPost():                                                     │
+│                                                                              │
+│   // 1. Đọc parameters                                                       │
+│   String action = request.getParameter("action");        // "add"           │
+│   String name = request.getParameter("name");                               │
+│   String priceStr = request.getParameter("price");                          │
+│   String discountStr = request.getParameter("discount");                    │
+│   String description = request.getParameter("description");                 │
+│                                                                              │
+│   // 2. Validation                                                           │
+│   if (name == null || name.trim().isEmpty()) {                              │
+│       errors.append("Tên sản phẩm không được để trống");                    │
+│   }                                                                          │
+│   if (price <= 0) {                                                          │
+│       errors.append("Giá bán phải lớn hơn 0");                              │
+│   }                                                                          │
+│                                                                              │
+│   // 3. Xử lý File Upload (Servlet 3.0 API)                                 │
+│   Part filePart = request.getPart("imageFile");                             │
+│   String imageName = null;                                                   │
+│                                                                              │
+│   if (filePart != null && filePart.getSize() > 0) {                         │
+│       // Validate file type                                                  │
+│       String contentType = filePart.getContentType();                       │
+│       if (!isValidImageType(contentType)) {                                 │
+│           return error("Chỉ chấp nhận file ảnh!");                          │
+│       }                                                                      │
+│                                                                              │
+│       // Generate unique filename                                            │
+│       String extension = getFileExtension(fileName);                        │
+│       imageName = "product_" + UUID.randomUUID().toString().substring(0,8)  │
+│                 + "_" + System.currentTimeMillis() + extension;             │
+│                                                                              │
+│       // Save file to disk                                                   │
+│       String uploadPath = getServletContext().getRealPath("")               │
+│                         + File.separator + "assets/images/shop_pic";        │
+│       filePart.write(uploadPath + File.separator + imageName);              │
+│   }                                                                          │
+│                                                                              │
+│   // 4. Lưu vào Database                                                     │
+│   ProductDAO.addProduct(name, imageName, price, discount, description);     │
+│   → INSERT INTO products (name, image, price, discount, description)        │
+│                                                                              │
+│   // 5. Redirect với thông báo                                               │
+│   session.setAttribute("message", "Thêm sản phẩm thành công!");             │
+│   response.sendRedirect("/pages/admin/products");                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+[5] HIỂN THỊ KẾT QUẢ
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Browser redirect → GET /pages/admin/products                                 │
+│                                                                              │
+│ products.jsp:                                                                │
+│   - Hiển thị Toast thông báo "Thêm sản phẩm thành công!"                    │
+│   - Danh sách sản phẩm đã được cập nhật với sản phẩm mới                    │
+│   - Ảnh sản phẩm hiển thị từ: /assets/images/shop_pic/{imageName}           │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 5.4 Sơ đồ tổng quan các luồng
+
+```
+                                    ┌─────────────┐
+                                    │   BROWSER   │
+                                    └──────┬──────┘
+                                           │
+                    ┌──────────────────────┼──────────────────────┐
+                    │                      │                      │
+                    ▼                      ▼                      ▼
+            ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+            │  AuthFilter   │      │ EncodingFilter│      │    Servlet    │
+            │ (Phân quyền)  │      │   (UTF-8)     │      │  (Controller) │
+            └───────┬───────┘      └───────┬───────┘      └───────┬───────┘
+                    │                      │                      │
+                    └──────────────────────┼──────────────────────┘
+                                           │
+                                           ▼
+                                    ┌─────────────┐
+                                    │     DAO     │
+                                    │ (Data Layer)│
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                                    ┌─────────────┐
+                                    │   MySQL     │
+                                    │  Database   │
+                                    └─────────────┘
+```
+
+---
+
+## 6. CƠ SỞ DỮ LIỆU
+
+### 6.1 Các bảng chính
 
 | Bảng | Mô tả |
 |------|-------|
@@ -502,7 +1036,7 @@ public static String hashPassword(String password) {
 | spa_bookings | Đặt lịch spa |
 | blogs | Bài viết cộng đồng |
 
-### 5.2 Quan hệ giữa các bảng
+### 6.2 Quan hệ giữa các bảng
 
 ```
 users (1) ──────< (n) pets
@@ -516,9 +1050,9 @@ vaccination_records (n) >────── (1) vaccines
 
 ---
 
-## 6. TÍNH NĂNG CHI TIẾT
+## 7. TÍNH NĂNG CHI TIẾT
 
-### 6.1 Người dùng (User)
+### 7.1 Người dùng (User)
 - ✅ Đăng ký / Đăng nhập / Đăng xuất
 - ✅ Quên mật khẩu (gửi OTP qua email)
 - ✅ Đặt lịch hẹn (khám, tiêm vaccine, spa, khách sạn)
@@ -528,7 +1062,7 @@ vaccination_records (n) >────── (1) vaccines
 - ✅ Mua sắm sản phẩm
 - ✅ Giỏ hàng và thanh toán
 
-### 6.2 Admin
+### 7.2 Admin
 - ✅ Dashboard thống kê
 - ✅ Quản lý lịch hẹn (duyệt/từ chối)
 - ✅ Quản lý người dùng
@@ -543,7 +1077,7 @@ vaccination_records (n) >────── (1) vaccines
 
 ---
 
-## 7. HƯỚNG PHÁT TRIỂN
+## 8. HƯỚNG PHÁT TRIỂN
 
 - [ ] Tích hợp thanh toán online (VNPay, Momo)
 - [ ] Thêm tính năng chat realtime
@@ -554,7 +1088,7 @@ vaccination_records (n) >────── (1) vaccines
 
 ---
 
-## 8. THÔNG TIN LIÊN HỆ
+## 9. THÔNG TIN LIÊN HỆ
 
 - **GitHub**: https://github.com/normuwu/LTW_Project
 - **Môn học**: Lập trình Web

@@ -31,6 +31,8 @@ public class AuthFilter implements Filter {
         // Các trang/resource không cần đăng nhập
         boolean isPublicResource = uri.endsWith("/login") || 
                                uri.endsWith("/register") || 
+                               uri.endsWith("/forgot-password") ||
+                               uri.endsWith("/reset-password") ||
                                uri.endsWith("/home") ||
                                uri.endsWith("/about") ||
                                uri.endsWith("/services") ||

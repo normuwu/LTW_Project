@@ -59,6 +59,34 @@ public class OTPUtil {
     }
     
     /**
+     * Xác thực OTP nhưng không xóa (dùng cho multi-step flow)
+     */
+    public static boolean verifyOTPKeep(String email, String otp) {
+        if (email == null || otp == null) return false;
+        
+        OTPData data = otpStorage.get(email.toLowerCase());
+        if (data == null) return false;
+        
+        // Kiểm tra hết hạn
+        if (System.currentTimeMillis() - data.timestamp > OTP_EXPIRY_MS) {
+            otpStorage.remove(email.toLowerCase());
+            return false;
+        }
+        
+        // Kiểm tra OTP (không xóa)
+        return data.otp.equals(otp.trim());
+    }
+    
+    /**
+     * Xóa OTP thủ công
+     */
+    public static void removeOTP(String email) {
+        if (email != null) {
+            otpStorage.remove(email.toLowerCase());
+        }
+    }
+    
+    /**
      * Gửi OTP qua email
      */
     public static boolean sendOTP(String email, String otp) {
