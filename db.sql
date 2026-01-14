@@ -82,6 +82,12 @@ CREATE TABLE `doctors` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `image` varchar(255) DEFAULT NULL,
+  `specialty` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `work_schedule` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -92,7 +98,7 @@ CREATE TABLE `doctors` (
 
 LOCK TABLES `doctors` WRITE;
 /*!40000 ALTER TABLE `doctors` DISABLE KEYS */;
-INSERT INTO `doctors` VALUES (1,'Bác sĩ Ngọc Thành','webpic14.jpg'),(2,'Bác sĩ Huyền Trang','webpic15.jpg'),(3,'Bác sĩ Sterenn Genewe','webpic16.jpg'),(4,'Bác sĩ Mai Phạm','webpic17.jpg'),(5,'Bác sĩ Sterenn Genewe','webpic18.jpg'),(6,'Bác sĩ Quốc Trí','webpic19.jpg'),(7,'Bác sĩ Emily Davis','webpic20.jpg'),(8,'Bác sĩ Michael Brown','webpic21.jpg'),(9,'Bác sĩ Jessica Wilson','webpic22.jpg'),(10,'Bác sĩ Ngọc Linh','webpic23.jpg'),(11,'Bác sĩ Hoàng Long','webpic24.jpg'),(12,'Bác sĩ Thanh Thảo','webpic25.jpg');
+INSERT INTO `doctors` VALUES (1,'Bác sĩ Ngọc Thành','webpic14.jpg','Nội khoa','0901111111','ngocthanh@petvaccine.com','Thứ 2-6: 8h-17h',1,NOW()),(2,'Bác sĩ Huyền Trang','webpic15.jpg','Ngoại khoa','0901111112','huyentrang@petvaccine.com','Thứ 2-6: 8h-17h',1,NOW()),(3,'Bác sĩ Sterenn Genewe','webpic16.jpg','Da liễu','0901111113','sterenn@petvaccine.com','Thứ 3,5,7: 9h-18h',1,NOW()),(4,'Bác sĩ Mai Phạm','webpic17.jpg','Dinh dưỡng','0901111114','maipham@petvaccine.com','Thứ 2-6: 8h-17h',1,NOW()),(5,'Bác sĩ Sterenn Genewe','webpic18.jpg','Phẫu thuật','0901111115','sterenn2@petvaccine.com','Thứ 2,4,6: 8h-17h',1,NOW()),(6,'Bác sĩ Quốc Trí','webpic19.jpg','Nội khoa','0901111116','quoctri@petvaccine.com','Thứ 2-7: 8h-12h',1,NOW()),(7,'Bác sĩ Emily Davis','webpic20.jpg','Tiêm chủng','0901111117','emily@petvaccine.com','Thứ 2-6: 8h-17h',1,NOW()),(8,'Bác sĩ Michael Brown','webpic21.jpg','Ngoại khoa','0901111118','michael@petvaccine.com','Thứ 2-6: 13h-20h',1,NOW()),(9,'Bác sĩ Jessica Wilson','webpic22.jpg','Nha khoa','0901111119','jessica@petvaccine.com','Thứ 3,5,7: 8h-17h',1,NOW()),(10,'Bác sĩ Ngọc Linh','webpic23.jpg','Siêu âm','0901111120','ngoclinh@petvaccine.com','Thứ 2-6: 8h-17h',1,NOW()),(11,'Bác sĩ Hoàng Long','webpic24.jpg','Xét nghiệm','0901111121','hoanglong@petvaccine.com','Thứ 2-7: 7h-15h',1,NOW()),(12,'Bác sĩ Thanh Thảo','webpic25.jpg','Cấp cứu','0901111122','thanhthao@petvaccine.com','24/7',1,NOW());
 /*!40000 ALTER TABLE `doctors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,6 +142,7 @@ CREATE TABLE `products` (
   `price` decimal(18,0) DEFAULT NULL,
   `old_price` decimal(18,0) DEFAULT '0',
   `discount` int DEFAULT '0',
+  `description` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -146,7 +153,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà Royal Canin Indoor 27','prod_royal1.jpg',132000,0,0),(2,'Thức Ăn Hạt Cho Mèo Con Royal Canin Kitten 36','prod_royal2.jpg',135000,0,0),(3,'Thức Ăn Hạt Cho Mèo Sỏi Thận Royal Canin Urinary S/O','prod_royal3.jpg',185000,0,0),(4,'Pate Cho Mèo Trưởng Thành Royal Canin Instinctive 85g','prod_royal4.jpg',27000,34000,20),(5,'Pate Cho Mèo Con Royal Canin Kitten Instinctive 85g','prod_royal5.jpg',30000,0,0);
+INSERT INTO `products` VALUES (1,'Thức Ăn Hạt Cho Mèo Trưởng Thành Nuôi Trong Nhà Royal Canin Indoor 27','prod_royal1.jpg',132000,0,0,'Thức ăn hạt cao cấp dành cho mèo trưởng thành nuôi trong nhà'),(2,'Thức Ăn Hạt Cho Mèo Con Royal Canin Kitten 36','prod_royal2.jpg',135000,0,0,'Thức ăn hạt dinh dưỡng cho mèo con từ 4-12 tháng tuổi'),(3,'Thức Ăn Hạt Cho Mèo Sỏi Thận Royal Canin Urinary S/O','prod_royal3.jpg',185000,0,0,'Thức ăn chuyên dụng hỗ trợ điều trị sỏi thận cho mèo'),(4,'Pate Cho Mèo Trưởng Thành Royal Canin Instinctive 85g','prod_royal4.jpg',27000,34000,20,'Pate thơm ngon cho mèo trưởng thành'),(5,'Pate Cho Mèo Con Royal Canin Kitten Instinctive 85g','prod_royal5.jpg',30000,0,0,'Pate dinh dưỡng cho mèo con');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -185,16 +192,19 @@ CREATE TABLE `users` (
   `status` varchar(20) DEFAULT 'active',
   `phone` varchar(20) DEFAULT NULL,
   `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expiry` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Thêm tài khoản demo
 INSERT INTO `users` (`username`, `password`, `fullname`, `email`, `role`, `status`, `phone`, `address`) VALUES
-('admin', '123456', 'Quản trị viên', 'admin@petvaccine.com', 'admin', 'active', '0901234567', 'Số 1 Đường ABC, Quận 1, TP.HCM'),
+('admin', 'Admin@123', 'Quản trị viên', 'admin@gmail.com', 'admin', 'active', '0901234567', 'Số 1 Đường ABC, Quận 1, TP.HCM'),
 ('doctor1', '123456', 'Bác sĩ Ngọc Thành', 'doctor1@petvaccine.com', 'doctor', 'active', '0902345678', 'Số 2 Đường XYZ, Quận 2, TP.HCM'),
-('user1', '123456', 'Nguyễn Văn A', 'user1@gmail.com', 'user', 'active', '0904567890', 'Số 10 Nguyễn Huệ, Quận 1, TP.HCM');
+('user1', 'Thanh@123', 'Nguyễn Văn A', 'user1@gmail.com', 'user', 'active', '0904567890', 'Số 10 Nguyễn Huệ, Quận 1, TP.HCM');
 
 
 -- =============================================
@@ -207,15 +217,19 @@ CREATE TABLE `services` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `price` varchar(100) DEFAULT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `category` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'Khám chữa bệnh',
+  `duration_minutes` int DEFAULT 30,
+  `is_active` tinyint(1) DEFAULT 1,
+  `image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `services` (`id`, `name`, `price`, `description`) VALUES
-(1, 'Khám & Điều trị', '150,000đ', 'Khám tổng quát và điều trị bệnh'),
-(2, 'Phẫu thuật', 'Theo ca', 'Phẫu thuật các loại'),
-(3, 'Tiêm phòng Vaccine', 'Tùy loại', 'Tiêm vaccine phòng bệnh'),
-(4, 'Spa & Làm đẹp', '350,000đ', 'Tắm, cắt tỉa lông, làm đẹp'),
-(5, 'Khách Sạn Thú Cưng', '200,000đ/ngày', 'Gửi thú cưng qua đêm');
+INSERT INTO `services` (`id`, `name`, `price`, `description`, `category`, `duration_minutes`, `is_active`) VALUES
+(1, 'Khám & Điều trị', '150,000đ', 'Khám tổng quát và điều trị bệnh', 'Khám chữa bệnh', 30, 1),
+(2, 'Phẫu thuật', 'Theo ca', 'Phẫu thuật các loại', 'Phẫu thuật', 120, 1),
+(3, 'Tiêm phòng Vaccine', 'Tùy loại', 'Tiêm vaccine phòng bệnh', 'Tiêm chủng', 15, 1),
+(4, 'Spa & Làm đẹp', '350,000đ', 'Tắm, cắt tỉa lông, làm đẹp', 'Spa & Grooming', 60, 1),
+(5, 'Khách Sạn Thú Cưng', '200,000đ/ngày', 'Gửi thú cưng qua đêm', 'Lưu trú', 1440, 1);
 
 -- =============================================
 -- BẢNG APPOINTMENTS (LỊCH HẸN)
@@ -297,6 +311,7 @@ CREATE TABLE `pets` (
   `image` varchar(255) DEFAULT NULL,
   `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
