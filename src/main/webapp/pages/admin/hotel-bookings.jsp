@@ -130,11 +130,13 @@
             align-items: center !important;
             gap: 6px !important;
             transition: all 0.2s;
-            margin-right: 16px;
+            margin-right: 8px;
             margin-bottom: 6px;
             white-space: nowrap;
             vertical-align: middle;
             border: none !important;
+            width: auto !important;
+            height: auto !important;
         }
         .action-btn i {
             font-size: 1rem !important;

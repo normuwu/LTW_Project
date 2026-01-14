@@ -1073,7 +1073,7 @@ vaccination_records (n) >────── (1) vaccines
 - ✅ Quản lý đặt phòng khách sạn
 - ✅ Quản lý đặt lịch spa
 - ✅ Quản lý blog/bài viết
-- ✅ Gửi email thông báo
+-  Gửi email thông báo(đang hoàn thiện)
 
 ---
 
